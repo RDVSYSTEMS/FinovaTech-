@@ -1,0 +1,87 @@
+/* =====================================================
+   NOTIFICACION.CSS — FinovaTech — SENA 2026
+   ===================================================== */
+
+.notif-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 16px;
+}
+
+.notif-card {
+    border-radius: 14px;
+    padding: 20px;
+    display: flex;
+    align-items: flex-start;
+    gap: 16px;
+    border: 1px solid rgba(255,255,255,0.06);
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+    animation: fadeSlideUp 0.5s ease both;
+}
+
+@keyframes fadeSlideUp {
+    from { opacity: 0; transform: translateY(16px); }
+    to   { opacity: 1; transform: translateY(0); }
+}
+
+.notif-card:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 12px 30px rgba(0,0,0,0.3);
+}
+
+.notif-card.exito      { background: rgba(16,185,129,0.08);  border-color: rgba(16,185,129,0.2); }
+.notif-card.error      { background: rgba(220,38,38,0.08);   border-color: rgba(220,38,38,0.2); }
+.notif-card.advertencia{ background: rgba(251,191,36,0.08);  border-color: rgba(251,191,36,0.2); }
+.notif-card.informacion{ background: rgba(96,165,250,0.08);  border-color: rgba(96,165,250,0.2); }
+.notif-card.alerta     { background: rgba(251,146,60,0.08);  border-color: rgba(251,146,60,0.2); }
+
+.notif-icono {
+    font-size: 1.8rem;
+    flex-shrink: 0;
+    width: 44px;
+    height: 44px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.notif-body {
+    flex: 1;
+}
+
+.notif-body h3 {
+    font-size: 0.95rem;
+    font-weight: 700;
+    color: white;
+    margin-bottom: 4px;
+}
+
+.notif-body p {
+    font-size: 0.82rem;
+    color: #94a3b8;
+    line-height: 1.5;
+    margin-bottom: 8px;
+}
+
+.notif-time {
+    font-size: 0.72rem;
+    color: #64748b;
+}
+
+.notif-btn {
+    flex-shrink: 0;
+    font-size: 0.78rem;
+    font-weight: 600;
+    color: #FACC15;
+    text-decoration: none;
+    white-space: nowrap;
+    transition: opacity 0.2s;
+    align-self: center;
+}
+
+.notif-btn:hover { opacity: 0.75; }
+
+/* === RESPONSIVE === */
+@media (max-width: 768px) {
+    .notif-grid { grid-template-columns: 1fr; }
+}

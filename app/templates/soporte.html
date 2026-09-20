@@ -1,0 +1,139 @@
+<!DOCTYPE html>
+<!-- ============================================================================
+     FinovaTech — soporte.html 
+     Descripción: Centro de ayuda. Formulario de solicitudes de soporte técnico. Muestra logo y nombre de RDV Systems. 
+     ---------------------------------------------------------------------------- 
+     Proyecto SENA 2026 — Técnico en Programación de Software 
+     Sistema: Gestión de finanzas personales para estudiantes de bachillerato 
+     ============================================================================ -->
+
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <link rel="icon" type="image/svg+xml" href="/static/assets/img/favicon.svg"    >
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Soporte - FinovaTech</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;900&display=swap" rel="stylesheet">
+    <link href="/static/vendor/aos.css" rel="stylesheet">
+    <link rel="stylesheet" href="/static/css/header_footer.css">
+    <link rel="stylesheet" href="/static/css/soporte.css">
+</head>
+<body>
+
+<div id="header"></div>
+
+<main class="soporte-main">
+
+    <div class="soporte-video-bg">
+        <video autoplay muted loop playsinline>
+            <source src="/static/assets/video/institucional.mp4" type="video/mp4">
+        </video>
+        <div class="soporte-overlay"></div>
+    </div>
+
+    <div class="soporte-contenido">
+
+        <!-- IZQUIERDO -->
+        <div class="soporte-info" data-aos="fade-right">
+
+            <span class="sena-tag">🛠 Centro de Ayuda</span>
+            <h1>¿Necesitas<br>soporte?</h1>
+            <p>Nuestro equipo está disponible para ayudarte con problemas técnicos, dudas o sugerencias.</p>
+
+            <div class="soporte-datos">
+                <div class="dato-card">
+                    <div class="dato-icono">📧</div>
+                    <div class="dato-texto">
+                        <p>Correo de Soporte</p>
+                        <span>soporte@finanzasbachiller.com</span>
+                    </div>
+                </div>
+                <div class="dato-card">
+                    <div class="dato-icono">⏰</div>
+                    <div class="dato-texto">
+                        <p>Horario de Atención</p>
+                        <span>Lunes a Viernes — 7:00 AM - 5:00 PM</span>
+                    </div>
+                </div>
+                <div class="dato-card">
+                    <div class="dato-icono">💡</div>
+                    <div class="dato-texto">
+                        <p>Sugerencias</p>
+                        <span>Ayúdanos a mejorar enviando ideas</span>
+                    </div>
+                </div>
+                <div class="dato-card rdv-card">
+                    <img src="/static/assets/img/RDV_systems logo 200x200px.png" alt="Logo RDV Systems" class="rdv-logo">
+                    <div class="dato-texto">
+                        <p>Empresa</p>
+                        <span>RDV Systems</span>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+
+        <!-- DERECHO -->
+        <div class="soporte-card" data-aos="fade-left">
+
+            <div class="soporte-card-header">
+                <div class="logo-circle">💬</div>
+                <h2>Enviar Solicitud</h2>
+                <p>Cuéntanos en qué podemos ayudarte</p>
+            </div>
+
+            <div id="soporte-exito" class="soporte-mensaje exito" style="display:none">✅ Solicitud enviada. Te responderemos pronto.</div>
+            <div id="soporte-error" class="soporte-mensaje error" style="display:none"></div>
+
+            <form id="formSoporte" novalidate>
+
+                <div class="grupo-formulario">
+                    <label for="soporte-nombre">Nombre completo</label>
+                    <input id="soporte-nombre" type="text" placeholder="Ingrese su nombre" required>
+                </div>
+
+                <div class="grupo-formulario">
+                    <label for="soporte-correo">Correo electrónico</label>
+                    <input id="soporte-correo" type="email" placeholder="correo@ejemplo.com" required>
+                </div>
+
+                <div class="grupo-formulario">
+                    <label for="soporte-asunto">Asunto</label>
+                    <select id="soporte-asunto" required>
+                        <option value="">Seleccione un asunto</option>
+                        <option value="tecnico">Problema técnico</option>
+                        <option value="error">Error en la plataforma</option>
+                        <option value="consulta">Consulta general</option>
+                        <option value="sugerencia">Sugerencia</option>
+                    </select>
+                </div>
+
+                <div class="grupo-formulario">
+                    <label for="soporte-mensaje">Describe tu solicitud</label>
+                    <textarea id="soporte-mensaje" rows="4" placeholder="Escribe aquí tu mensaje..." required></textarea>
+                </div>
+
+                <div class="soporte-botones">
+                    <button type="submit" class="btn-primario">Enviar Solicitud 🚀</button>
+                    <button type="reset" class="btn-secundario">Limpiar</button>
+                </div>
+
+            </form>
+
+            <p class="soporte-link">
+                <a href="index.html">← Volver al inicio</a>
+            </p>
+
+        </div>
+
+    </div>
+
+</main>
+
+<div id="footer"></div>
+<button id="btn-arriba" onclick="window.scrollTo({top:0, behavior:'smooth'})">↑</button>
+<script src="/static/vendor/aos.js"></script>
+<script src="/static/js/global.js"></script>
+
+</body>
+</html>

@@ -1,0 +1,376 @@
+<!DOCTYPE html>
+<!-- ============================================================================
+     FinovaTech — lista.html 
+     Descripción: Lista REAL de ingresos y gastos con buscador, filtros,
+     formulario para AGREGAR movimientos y opción de ELIMINAR.
+     ---------------------------------------------------------------------------- 
+     Proyecto SENA 2026 — Técnico en Programación de Software 
+     Sistema: Gestión de finanzas personales para estudiantes de bachillerato 
+     ============================================================================ -->
+
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <link rel="icon" type="image/svg+xml" href="/static/assets/img/favicon.svg" >
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Registros - FinovaTech</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;900&display=swap" rel="stylesheet">
+    <link href="/static/vendor/aos.css" rel="stylesheet">
+    <link rel="stylesheet" href="/static/css/header_footer.css">
+    <link rel="stylesheet" href="/static/css/panel.css">
+    <link rel="stylesheet" href="/static/css/lista.css">
+</head>
+<body>
+
+<div id="header"></div>
+
+<div class="panel">
+
+    <!-- Botón menú móvil -->
+    <button id="sidebar-toggle" class="sidebar-toggle" aria-label="Abrir menú">☰</button>
+
+    <!-- SIDEBAR (misma estructura que el panel) -->
+    <aside class="panel-sidebar">
+        <div class="sidebar-logo">
+            <div class="sidebar-logo-icono">💰</div>
+            <div class="sidebar-logo-texto">
+                <strong>Finanzas</strong>
+                <span>FinovaTech</span>
+            </div>
+        </div>
+        <nav class="sidebar-nav">
+            <span class="sidebar-seccion">Menú</span>
+            <a href="/panel" class="sidebar-enlace">
+                <span class="enlace-icono">📊</span> Dashboard
+            </a>
+            <a href="/lista" class="sidebar-enlace activo">
+                <span class="enlace-icono">📋</span> Lista
+            </a>
+            <a href="/agendamiento" class="sidebar-enlace">
+                <span class="enlace-icono">📅</span> Agendar
+            </a>
+            <a href="/notificacion" class="sidebar-enlace">
+                <span class="enlace-icono">🔔</span> Notificaciones
+            </a>
+        </nav>
+
+        <!-- Reloj y fecha reales (bloque de la barra lateral) -->
+        <div class="sidebar-tiempo">
+            <div class="tiempo-hora" id="hora-ahora">--:--:--</div>
+            <div class="tiempo-fecha">📅 <span id="fecha-hoy"></span></div>
+        </div>
+
+        <a href="/logout" class="sidebar-salir">🚪 Cerrar sesión</a>
+    </aside>
+
+    <!-- CONTENIDO -->
+    <main class="panel-contenido">
+
+        <!-- Barra superior: título y botón de acción (estilo panel) -->
+        <section class="panel-topbar">
+            <div class="topbar-saludo">
+                <h1>📋 Historial de Registros</h1>
+                <p class="topbar-bienvenida">Administra tus ingresos y gastos</p>
+            </div>
+            <div class="topbar-derecha">
+                <button type="button" class="btn-agregar" id="btnAgregar"
+                        onclick="document.getElementById('modalMovimiento').classList.add('abierto'); document.getElementById('modalMovimiento').setAttribute('aria-hidden', 'false');">
+                    + Agregar movimiento
+                </button>
+            </div>
+        </section>
+
+        <script>
+            // ── Reloj en vivo y fecha completa en español ──────────────
+            (function () {
+                document.getElementById("fecha-hoy").textContent =
+                    new Date().toLocaleDateString("es-CO", {
+                        weekday: "long", year: "numeric", month: "long", day: "numeric"
+                    });
+
+                function actualizarHora() {
+                    document.getElementById("hora-ahora").textContent =
+                        new Date().toLocaleTimeString("es-CO", {
+                            hour: "2-digit", minute: "2-digit", second: "2-digit", hour12: true
+                        });
+                }
+                actualizarHora();
+                setInterval(actualizarHora, 1000);
+            })();
+        </script>
+
+        <!-- Mensajes de éxito/error (llegan por la URL: ?ok=... o ?error=...) -->
+        <div id="alertaCaja"></div>
+
+        <!-- Stats rápidas (datos REALES de MySQL, estilo panel) -->
+        <section class="panel-stats">
+            <article class="stat-card stat-verde">
+                <div class="stat-icono">💰</div>
+                <div class="stat-dato">
+                    <span class="stat-numero">{{ total_ingresos }}</span>
+                    <span class="stat-etiqueta">Total ingresos</span>
+                </div>
+            </article>
+            <article class="stat-card stat-rojo">
+                <div class="stat-icono">💸</div>
+                <div class="stat-dato">
+                    <span class="stat-numero">{{ total_gastos }}</span>
+                    <span class="stat-etiqueta">Total gastos</span>
+                </div>
+            </article>
+            <article class="stat-card stat-azul">
+                <div class="stat-icono">⚖️</div>
+                <div class="stat-dato">
+                    <span class="stat-numero">{{ balance }}</span>
+                    <span class="stat-etiqueta">Balance actual</span>
+                </div>
+            </article>
+            <article class="stat-card stat-ambar">
+                <div class="stat-icono">🧾</div>
+                <div class="stat-dato">
+                    <span class="stat-numero">{{ total_registros }}</span>
+                    <span class="stat-etiqueta">Registros</span>
+                </div>
+            </article>
+        </section>
+
+        <!-- Buscador y filtros -->
+        <div class="lista-toolbar" data-aos="fade-up">
+            <div class="lista-search">
+                <span>🔍</span>
+                <input type="text" id="buscador" placeholder="Buscar registros...">
+            </div>
+            <select class="lista-filtro" id="filtroTipo">
+                <option value="">Todos</option>
+                <option value="Ingreso">Ingresos</option>
+                <option value="Gasto">Gastos</option>
+            </select>
+        </div>
+
+        <!-- Tabla de movimientos REALES -->
+        <div class="lista-tabla" data-aos="fade-up">
+            <table>
+                <thead>
+                    <tr>
+                        <th>Concepto</th>
+                        <th>Monto</th>
+                        <th>Fecha</th>
+                        <th>Tipo</th>
+                        <th>Acciones</th>
+                    </tr>
+                </thead>
+                <tbody id="cuerpoTabla">
+                    {% for r in registros %}
+                    <tr>
+                        <td>{{ r.descripcion }}</td>
+                        <td class="{{ 'monto-ingreso' if r.tipo == 'Ingreso' else 'monto-gasto' }}">
+                            {{ '+' if r.tipo == 'Ingreso' else '-' }} {{ r.monto_texto }}
+                        </td>
+                        <td>{{ r.fecha }}</td>
+                        <td>
+                            <span class="{{ 'badge-ingreso' if r.tipo == 'Ingreso' else 'badge-gasto' }}">{{ r.tipo }}</span>
+                        </td>
+                        <td class="acciones-td">
+                            <form action="/registro/eliminar/{{ r.tipo }}/{{ r.id }}" method="POST"
+                                  onsubmit="return confirm('¿Eliminar este registro?');">
+                                <input type="hidden" name="csrf_token" value="{{ csrf_token }}">
+                                <button type="submit" class="btn-tabla eliminar" title="Eliminar" aria-label="Eliminar">🗑️</button>
+                            </form>
+                        </td>
+                    </tr>
+                    {% else %}
+                    <tr>
+                        <td colspan="5" class="lista-vacio">
+                            Aún no tienes movimientos. Pulsa <strong>➕ Nuevo registro</strong> para empezar.
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+
+    </main>
+</div>
+
+<!-- MODAL: agregar movimiento (idéntico al del panel) -->
+<div class="modal-fondo" id="modalMovimiento" aria-hidden="true">
+    <div class="modal-caja" role="dialog" aria-modal="true" aria-labelledby="modalTitulo">
+
+        <div class="modal-cabecera">
+            <h3 id="modalTitulo">Nuevo movimiento</h3>
+            <button type="button" class="modal-cerrar" id="btnCerrarModal" aria-label="Cerrar"
+                    onclick="document.getElementById('modalMovimiento').classList.remove('abierto'); document.getElementById('modalMovimiento').setAttribute('aria-hidden', 'true');">×</button>
+        </div>
+
+        <form action="/registro/nuevo" method="POST" id="formModal">
+            <input type="hidden" name="tipo" id="tipoSeleccionado" value="Gasto">
+            <!-- Token CSRF: lo valida el servidor en cada POST -->
+            <input type="hidden" name="csrf_token" value="{{ csrf_token }}">
+
+            <div class="selector-tipo">
+                <button type="button" class="tipo-btn activo" data-tipo="Gasto"
+                        onclick="document.querySelectorAll('.tipo-btn').forEach(function (b) { b.classList.remove('activo'); }); this.classList.add('activo'); document.getElementById('tipoSeleccionado').value='Gasto'; document.getElementById('campoCategoriaModal').style.display=''; document.getElementById('selectCategoria').value='Alimentación';">
+                    💸 Gasto
+                </button>
+                <button type="button" class="tipo-btn" data-tipo="Ingreso"
+                        onclick="document.querySelectorAll('.tipo-btn').forEach(function (b) { b.classList.remove('activo'); }); this.classList.add('activo'); document.getElementById('tipoSeleccionado').value='Ingreso'; document.getElementById('campoCategoriaModal').style.display='none'; document.getElementById('selectCategoria').value='Ingreso';">
+                    💰 Ingreso
+                </button>
+            </div>
+
+            <label class="modal-campo">
+                <span>Descripción</span>
+                <input type="text" name="descripcion" maxlength="60"
+                       placeholder="Ej: Almuerzo, pase, mesada..." required>
+            </label>
+
+            <label class="modal-campo">
+                <span>Monto</span>
+                <input type="text" name="monto" inputmode="numeric" placeholder="$0" required>
+            </label>
+
+            <label class="modal-campo" id="campoCategoriaModal">
+                <span>Categoría</span>
+                <select name="categoria" id="selectCategoria">
+                    <option>Ingreso</option>
+                    <option selected>Alimentación</option>
+                    <option>Transporte</option>
+                    <option>Educación</option>
+                    <option>Ahorro</option>
+                    <option>Ocio</option>
+                    <option>Salud</option>
+                    <option>Servicios</option>
+                    <option>Otros</option>
+                </select>
+            </label>
+
+            <label class="modal-campo">
+                <span>Fecha (vacío = hoy)</span>
+                <input type="date" name="fecha">
+            </label>
+
+            <div class="modal-acciones">
+                <button type="button" class="btn-cancelar" id="btnCancelar"
+                        onclick="document.getElementById('modalMovimiento').classList.remove('abierto'); document.getElementById('modalMovimiento').setAttribute('aria-hidden', 'true');">Cancelar</button>
+                <button type="submit" class="btn-guardar">Guardar</button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<div id="footer"></div>
+<button id="btn-arriba" onclick="window.scrollTo({top:0, behavior:'smooth'})">↑</button>
+<script src="/static/vendor/aos.js"></script>
+<script src="/static/js/global.js"></script>
+<script>
+    // ── Modal de movimiento (idéntico al del panel) ────────────────
+    (function () {
+        var modal        = document.getElementById("modalMovimiento");
+        var btnAbrir     = document.getElementById("btnAgregar");
+        var btnCerrar    = document.getElementById("btnCerrarModal");
+        var btnCancelar  = document.getElementById("btnCancelar");
+        var tipoOculto   = document.getElementById("tipoSeleccionado");
+        var campoCat     = document.getElementById("campoCategoriaModal");
+        var selectCat    = document.getElementById("selectCategoria");
+
+        function abrirModal() {
+            modal.classList.add("abierto");
+            modal.setAttribute("aria-hidden", "false");
+            var desc = modal.querySelector('input[name="descripcion"]');
+            if (desc) desc.focus();
+        }
+        function cerrarModal() {
+            modal.classList.remove("abierto");
+            modal.setAttribute("aria-hidden", "true");
+        }
+
+        btnAbrir.addEventListener("click", abrirModal);
+        btnCerrar.addEventListener("click", cerrarModal);
+        btnCancelar.addEventListener("click", cerrarModal);
+        modal.addEventListener("click", function (e) {
+            if (e.target === modal) cerrarModal();
+        });
+        document.addEventListener("keydown", function (e) {
+            if (e.key === "Escape") cerrarModal();
+        });
+
+        // Gasto muestra categorías; Ingreso las envía fijas como "Ingreso"
+        modal.querySelectorAll(".tipo-btn").forEach(function (btn) {
+            btn.addEventListener("click", function () {
+                modal.querySelectorAll(".tipo-btn").forEach(function (b) {
+                    b.classList.remove("activo");
+                });
+                btn.classList.add("activo");
+
+                var esGasto = btn.dataset.tipo === "Gasto";
+                tipoOculto.value = btn.dataset.tipo;
+                campoCat.style.display = esGasto ? "" : "none";
+                if (!esGasto) selectCat.value = "Ingreso";
+            });
+        });
+
+        // Formato de moneda en el monto (120000 → $120.000)
+        var inputMonto = modal.querySelector('input[name="monto"]');
+        inputMonto.addEventListener("input", function (e) {
+            var soloDigitos = e.target.value.replace(/\D/g, "").slice(0, 9);
+            e.target.value = soloDigitos ? "$" + Number(soloDigitos).toLocaleString("es-CO") : "";
+        });
+
+        // Validación rápida antes de enviar
+        document.getElementById("formModal").addEventListener("submit", function (e) {
+            var monto = inputMonto.value.replace(/\D/g, "");
+            if (parseFloat(monto) <= 0) { e.preventDefault(); alert("Ingresa un monto mayor a cero."); }
+        });
+    })();
+
+    // ── Buscador y filtro (sin recargar la página) ─────────────────
+    const buscador = document.getElementById("buscador");
+    const filtro = document.getElementById("filtroTipo");
+    function filtrar() {
+        const texto = buscador.value.toLowerCase();
+        const tipo = filtro.value;
+        document.querySelectorAll("#cuerpoTabla tr").forEach(fila => {
+            const concepto = (fila.cells[0]?.textContent || "").toLowerCase();
+            const filaTipo = fila.cells[3]?.textContent || "*";
+            const coincideTexto = concepto.includes(texto);
+            const coincideTipo = !tipo || filaTipo === tipo || filaTipo.includes(tipo);
+            fila.style.display = (coincideTexto && coincideTipo) ? "" : "none";
+        });
+    }
+    buscador.addEventListener("input", filtrar);
+    filtro.addEventListener("change", filtrar);
+
+    // ── Alerta de éxito/error (?ok=... o ?error=...) ───────────────
+    // SEGURIDAD (XSS): el mensaje llega de la URL, así que se inserta con
+    // textContent (texto plano) y NUNCA con innerHTML. Así, aunque alguien
+    // cree un enlace malicioso tipo /lista?error=<script>..., el navegador
+    // solo mostrará el texto, sin ejecutar nada.
+    (function mostrarAlerta() {
+        const q = new URLSearchParams(location.search);
+        const mensaje = q.get("ok") || q.get("error");
+        if (!mensaje) return;
+        const ok = Boolean(q.get("ok"));
+        const div = document.getElementById("alertaCaja");
+
+        const caja = document.createElement("div");
+        caja.className = "alerta " + (ok ? "alerta-ok" : "alerta-error");
+
+        const texto = document.createElement("span");
+        texto.textContent = mensaje;
+
+        const boton = document.createElement("button");
+        boton.type = "button";
+        boton.textContent = "×";
+        boton.addEventListener("click", function () {
+            caja.remove();
+            history.replaceState({}, "", "/lista");
+        });
+
+        caja.appendChild(texto);
+        caja.appendChild(boton);
+        div.appendChild(caja);
+    })();
+</script>
+
+</body>
+</html>

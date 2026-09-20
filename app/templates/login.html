@@ -1,0 +1,171 @@
+<!DOCTYPE html>
+<!-- ============================================================================
+     FinovaTech — login.html 
+     Descripción: Inicio de sesión. Envía email y password al servidor (POST a /login). 
+     ---------------------------------------------------------------------------- 
+     Proyecto SENA 2026 — Técnico en Programación de Software 
+     Sistema: Gestión de finanzas personales para estudiantes de bachillerato 
+     ============================================================================ -->
+
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <link rel="icon" type="image/svg+xml" href="/static/assets/img/favicon.svg" >
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Iniciar Sesión - FinovaTech</title>
+
+
+<!-- Google Fonts -->
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;900&display=swap" rel="stylesheet">
+
+<!-- AOS Animaciones -->
+<link href="/static/vendor/aos.css" rel="stylesheet">
+
+<!-- CSS ***///Siempre debe estar css/headader_foter.css\\\\*** -->
+<link rel="stylesheet" href="/static/css/header_footer.css"> 
+<link rel="stylesheet" href="/static/css/login.css">
+
+</head>
+<body>
+
+
+<!-- HEADER -->
+<div id="header"></div>
+
+
+
+<!-- MAIN -->
+<main class="login-main">
+
+    <!-- Video de fondo -->
+    <div class="login-video-bg">
+        <video autoplay muted loop playsinline>
+            <source src="/static/assets/video/institucional.mp4" type="video/mp4">
+        </video>
+        <div class="login-overlay"></div>
+    </div>
+
+    <!-- Contenido -->
+    <div class="login-contenido">
+
+        <!-- Lado izquierdo -->
+        <div class="login-info" data-aos="fade-right">
+
+            <span class="hero-etiqueta">🎓 Proyecto SENA 2026</span>
+
+            <h1>Bienvenido de<br><span class="highlight">nuevo</span></h1>
+
+            <p>Gestiona tus finanzas de forma inteligente. Inicia sesión para acceder a tu panel personal.</p>
+
+            <div class="login-features">
+                <div class="login-feature">
+                    <span>💰</span>
+                    <p>Control de gastos</p>
+                </div>
+                <div class="login-feature">
+                    <span>📈</span>
+                    <p>Reportes financieros</p>
+                </div>
+                <div class="login-feature">
+                    <span>🎯</span>
+                    <p>Metas de ahorro</p>
+                </div>
+            </div>
+
+        </div>
+
+        <!-- Formulario -->
+        <div class="login-card" data-aos="fade-left">
+
+            <div class="login-card-header">
+                <img src="/static/assets/img/RDV_systems logo 200x200px.png" alt="Logo" width="55">
+                <h2>Iniciar Sesión</h2>
+                <p>Ingresa tus credenciales</p>
+            </div>
+
+            {% if error_message %}
+            <div id="login-error" class="login-mensaje error">
+                ❌ {{ error_message }}
+            </div>
+            {% endif %}
+
+            <form id="loginForm" method="post" action="/login" novalidate>
+                <!-- Token CSRF: lo valida el servidor en cada POST -->
+                <input type="hidden" name="csrf_token" value="{{ csrf_token }}">
+
+                <div class="grupo-formulario">
+                    <label for="usuario">Correo electrónico</label>
+                    <input id="usuario"
+                           name="email"
+                           type="email"
+                           placeholder="correo@ejemplo.com"
+                           autocomplete="email"
+                           required>
+                </div>
+
+                <div class="grupo-formulario">
+                    <label for="password">Contraseña</label>
+                    <div class="input-password">
+                        <input id="password"
+                               name="password"
+                               type="password"
+                               placeholder="••••••••"
+                               autocomplete="current-password"
+                               required>
+                        <button type="button" id="togglePassword" class="btn-toggle-pass">
+                            👁️
+                        </button>
+                    </div>
+                </div>
+
+                <div class="login-opciones">
+                    <label class="checkbox-label">
+                        <input type="checkbox" id="recordar">
+                        Recordarme
+                    </label>
+                    <a href="#" class="link-olvide">¿Olvidaste tu contraseña?</a>
+                </div>
+
+                <button type="submit" class="btn-principal w-full" id="btn-login">
+                    Ingresar al sistema
+                </button>
+
+            </form>
+
+            <p class="login-registro">
+                ¿No tienes cuenta?
+                <a href="registro.html">Regístrate aquí</a>
+            </p>
+
+        </div>
+
+    </div>
+
+</main>
+<!-- FOOTER dinámico -->
+ 
+<div id="footer"></div>
+
+<!-- Botón volver arriba -->
+<button id="btn-arriba" onclick="window.scrollTo({top:0, behavior:'smooth'})">↑</button>
+
+<!-- AOS -->
+<script src="/static/vendor/aos.js"></script>
+<!-- JS global -->
+<script src="/static/js/global.js"></script>
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        const passwordInput = document.getElementById('password');
+        const toggleButton = document.getElementById('togglePassword');
+        if (toggleButton && passwordInput) {
+            toggleButton.addEventListener('click', function () {
+                const type = passwordInput.type === 'password' ? 'text' : 'password';
+                passwordInput.type = type;
+                toggleButton.textContent = type === 'password' ? '👁️' : '🙈';
+            });
+        }
+    });
+</script>
+
+</body>
+</html>

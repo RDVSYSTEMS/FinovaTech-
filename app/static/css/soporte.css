@@ -1,0 +1,381 @@
+/* =====================================================
+   soporte.css — Página de soporte
+   FinovaTech | SENA 2026
+   ===================================================== */
+
+/* =====================================================
+   FONDO GENERAL
+   ===================================================== */
+
+.soporte-main {
+    position: relative;
+    padding: 90px 40px 100px;
+    background: #0f172a;
+}
+
+.soporte-video-bg {
+    position: absolute;
+    top: 0; left: 0;
+    width: 100%; height: 100%;
+    z-index: 0;
+    overflow: hidden;
+}
+
+.soporte-video-bg video {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.soporte-overlay {
+    position: absolute;
+    top: 0; left: 0;
+    width: 100%; height: 100%;
+    background: linear-gradient(135deg,
+        rgba(15,23,42,0.92) 0%,
+        rgba(30,41,59,0.88) 60%,
+        rgba(17,24,39,0.92) 100%);
+}
+
+.soporte-contenido {
+    position: relative;
+    z-index: 1;
+    display: flex;
+    align-items: center;
+    gap: 60px;
+    width: 100%;
+    max-width: 1050px;
+    margin: 0 auto;
+}
+
+/* =====================================================
+   LADO IZQUIERDO
+   ===================================================== */
+
+.soporte-info {
+    flex: 1;
+    color: white;
+}
+
+.soporte-info .sena-tag {
+    font-size: 0.72rem;
+    font-weight: 500;
+    color: #6ee7b7;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    display: inline-block;
+    margin-bottom: 10px;
+}
+
+.soporte-info h1 {
+    font-size: clamp(1.8rem, 3.5vw, 2.6rem);
+    font-weight: 900;
+    line-height: 1.2;
+    margin: 0 0 14px;
+    color: white;
+}
+
+.soporte-info > p {
+    color: #94a3b8;
+    font-size: 0.95rem;
+    line-height: 1.7;
+    max-width: 360px;
+    margin-bottom: 28px;
+}
+
+.soporte-datos {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.dato-card {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    background: rgba(255,255,255,0.06);
+    border: 1px solid rgba(255,255,255,0.1);
+    border-radius: 12px;
+    padding: 14px 16px;
+    transition: transform 0.3s ease, background 0.3s ease;
+    animation: fadeSlideIn 0.5s ease both;
+}
+
+.dato-card:nth-child(1) { animation-delay: 0.1s; }
+.dato-card:nth-child(2) { animation-delay: 0.2s; }
+.dato-card:nth-child(3) { animation-delay: 0.3s; }
+
+@keyframes fadeSlideIn {
+    from { opacity: 0; transform: translateX(-16px); }
+    to   { opacity: 1; transform: translateX(0); }
+}
+
+.dato-card:hover {
+    transform: translateX(6px);
+    background: rgba(255,255,255,0.1);
+}
+
+.dato-icono {
+    font-size: 1.4rem;
+    flex-shrink: 0;
+}
+
+.rdv-card:nth-child(4) { animation-delay: 0.4s; }
+
+.rdv-logo {
+    width: 44px;
+    height: 44px;
+    border-radius: 10px;
+    object-fit: contain;
+    flex-shrink: 0;
+}
+
+.dato-texto p    { font-size: 0.82rem; font-weight: 600; color: #e2e8f0; margin: 0; }
+.dato-texto span { font-size: 0.75rem; color: #64748b; }
+
+/* =====================================================
+   CARD DEL FORMULARIO
+   ===================================================== */
+
+.soporte-card {
+    background: rgba(255,255,255,0.06);
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
+    border: 1px solid rgba(255,255,255,0.12);
+    border-radius: 20px;
+    padding: 36px;
+    width: 100%;
+    max-width: 440px;
+    box-shadow: 0 25px 60px rgba(0,0,0,0.5);
+    animation: fadeIn 0.4s ease;
+}
+
+@keyframes fadeIn {
+    from { opacity: 0; transform: translateY(12px); }
+    to   { opacity: 1; transform: translateY(0); }
+}
+
+.soporte-card-header {
+    text-align: center;
+    margin-bottom: 24px;
+}
+
+.soporte-card-header .logo-circle {
+    width: 46px;
+    height: 46px;
+    border-radius: 50%;
+    background: #e11d48;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: 0 auto 10px;
+    font-size: 1.2rem;
+    color: white;
+    transition: transform 0.3s ease;
+}
+
+.soporte-card-header .logo-circle:hover {
+    transform: rotate(8deg) scale(1.08);
+}
+
+.soporte-card-header h2 {
+    color: white;
+    font-size: 1.35rem;
+    font-weight: 800;
+    margin-bottom: 4px;
+}
+
+.soporte-card-header p {
+    color: #94a3b8;
+    font-size: 0.85rem;
+}
+
+/* =====================================================
+   INPUTS
+   ===================================================== */
+
+.soporte-card .grupo-formulario {
+    display: flex;
+    flex-direction: column;
+    margin-bottom: 12px;
+}
+
+.soporte-card .grupo-formulario label {
+    color: #cbd5e1;
+    font-size: 0.82rem;
+    font-weight: 500;
+    margin-bottom: 5px;
+}
+
+.soporte-card .grupo-formulario input,
+.soporte-card .grupo-formulario select,
+.soporte-card .grupo-formulario textarea {
+    width: 100%;
+    padding: 10px 12px;
+    background: rgba(255,255,255,0.08);
+    border: 1px solid rgba(255,255,255,0.15);
+    border-radius: 10px;
+    color: white;
+    font-size: 0.88rem;
+    font-family: inherit;
+    outline: none;
+    transition: border-color 0.25s, background 0.25s, box-shadow 0.25s;
+}
+
+.soporte-card .grupo-formulario input::placeholder,
+.soporte-card .grupo-formulario textarea::placeholder {
+    color: #64748b;
+}
+
+.soporte-card .grupo-formulario select option {
+    background: #1e293b;
+    color: white;
+}
+
+.soporte-card .grupo-formulario input:focus,
+.soporte-card .grupo-formulario select:focus,
+.soporte-card .grupo-formulario textarea:focus {
+    border-color: #10b981;
+    background: rgba(255,255,255,0.11);
+    box-shadow: 0 0 0 3px rgba(16,185,129,0.15);
+}
+
+.soporte-card .grupo-formulario textarea {
+    resize: none;
+}
+
+/* =====================================================
+   BOTONES
+   ===================================================== */
+
+.soporte-botones {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    margin-top: 14px;
+}
+
+.soporte-botones .btn-primario {
+    width: 100%;
+    height: 44px;
+    border-radius: 10px;
+    font-size: 0.9rem;
+    font-weight: 600;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    background: linear-gradient(135deg, #DC2626, #B91C1C);
+    color: white;
+    border: none;
+    box-shadow: 0 4px 14px rgba(220,38,38,0.35);
+    transition: background 0.2s, transform 0.15s, box-shadow 0.2s;
+}
+
+.soporte-botones .btn-primario:hover {
+    background: linear-gradient(135deg, #EF4444, #DC2626);
+    transform: translateY(-2px);
+    box-shadow: 0 6px 20px rgba(220,38,38,0.5);
+}
+
+.soporte-botones .btn-primario:active { transform: scale(0.97); }
+
+.soporte-botones .btn-secundario {
+    width: 100%;
+    height: 40px;
+    border-radius: 10px;
+    font-size: 0.85rem;
+    font-weight: 500;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: transparent;
+    color: #94a3b8;
+    border: 1px solid rgba(255,255,255,0.15);
+    transition: background 0.2s, color 0.2s, transform 0.15s;
+}
+
+.soporte-botones .btn-secundario:hover {
+    background: rgba(255,255,255,0.08);
+    color: #e2e8f0;
+    transform: translateY(-1px);
+}
+
+/* =====================================================
+   MENSAJES
+   ===================================================== */
+
+.soporte-mensaje {
+    padding: 10px 14px;
+    border-radius: 10px;
+    font-size: 0.85rem;
+    margin-bottom: 14px;
+    text-align: center;
+}
+
+.soporte-mensaje.error {
+    background: rgba(220,38,38,0.15);
+    border: 1px solid #DC2626;
+    color: #fca5a5;
+}
+
+.soporte-mensaje.exito {
+    background: rgba(16,185,129,0.15);
+    border: 1px solid #10b981;
+    color: #6ee7b7;
+}
+
+/* =====================================================
+   LINK VOLVER
+   ===================================================== */
+
+.soporte-link {
+    text-align: center;
+    margin-top: 18px;
+}
+
+.soporte-link a {
+    color: #FACC15;
+    font-size: 0.85rem;
+    font-weight: 600;
+    text-decoration: none;
+    transition: opacity 0.2s;
+}
+
+.soporte-link a:hover { opacity: 0.75; }
+
+/* =====================================================
+   RESPONSIVE
+   ===================================================== */
+
+@media (max-width: 900px) {
+    .soporte-contenido {
+        flex-direction: column;
+        padding: 20px;
+        gap: 30px;
+    }
+    .soporte-info {
+        text-align: center;
+    }
+    .soporte-info > p {
+        max-width: 100%;
+        margin-left: auto;
+        margin-right: auto;
+    }
+    .soporte-datos {
+        align-items: center;
+    }
+    .dato-card {
+        width: 100%;
+        max-width: 340px;
+    }
+    .soporte-card {
+        max-width: 100%;
+        padding: 24px 16px;
+    }
+    .soporte-main {
+        padding: 80px 16px 80px;
+    }
+}

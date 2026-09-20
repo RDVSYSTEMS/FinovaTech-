@@ -1,0 +1,451 @@
+/* =====================================================
+   agendamiento.css — Página de agendamiento de clases
+   FinovaTech | SENA 2026
+   
+   Diseño de dos columnas: info izquierda + formulario
+   derecho. Video de fondo con overlay oscuro.
+   ===================================================== */
+
+/* =====================================================
+   CONTENEDOR PRINCIPAL
+   Ocupa todo el espacio disponible entre header y footer
+   gracias al flex: 1 global. Video y overlay absolutos.
+   ===================================================== */
+
+.agendamiento-main {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    min-height: auto;
+    position: relative;
+    padding: 90px 40px 100px;
+    background: #0f172a;
+}
+
+/* =====================================================
+   VIDEO DE FONDO
+   Cubre todo el main, con overlay para legibilidad
+   ===================================================== */
+
+.agendamiento-video-bg {
+    position: absolute;
+    top: 0; left: 0;
+    width: 100%; height: 100%;
+    z-index: 0;
+    overflow: hidden;
+}
+
+.agendamiento-video-bg video {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.agendamiento-overlay {
+    position: absolute;
+    top: 0; left: 0;
+    width: 100%; height: 100%;
+    background: linear-gradient(135deg,
+        rgba(15,23,42,0.92) 0%,
+        rgba(30,41,59,0.88) 60%,
+        rgba(17,24,39,0.92) 100%);
+}
+
+/* =====================================================
+   CONTENEDOR FLEX — Dos columnas
+   gap: 60px separa la info del formulario
+   ===================================================== */
+
+.agendamiento-contenido {
+    position: relative;
+    z-index: 1;
+    display: flex;
+    align-items: center;
+    gap: 60px;
+    width: 100%;
+    max-width: 1050px;
+    margin: 0 auto;
+}
+
+/* =====================================================
+   COLUMNA IZQUIERDA — Información y beneficios
+   ===================================================== */
+
+.agendamiento-info {
+    flex: 1;
+    color: white;
+}
+
+/* Etiqueta "Proyecto SENA" en verde menta */
+.agendamiento-info .sena-tag {
+    font-size: 0.72rem;
+    font-weight: 500;
+    color: #6ee7b7;
+    letter-spacing: 0.08em;
+    display: block;
+    margin-bottom: 10px;
+}
+
+.agendamiento-info h1 {
+    font-size: clamp(1.8rem, 3.5vw, 2.6rem);
+    font-weight: 900;
+    line-height: 1.2;
+    margin: 0 0 14px;
+    color: white;
+}
+
+.agendamiento-info > p {
+    color: #94a3b8;
+    font-size: 0.95rem;
+    line-height: 1.7;
+    max-width: 360px;
+    margin-bottom: 24px;
+}
+
+/* Imagen decorativa con borde sutil y hover zoom */
+.agendamiento-imagen-inner {
+    width: 100%;
+    max-width: 280px;
+    border-radius: 16px;
+    overflow: hidden;
+    border: 1px solid rgba(255,255,255,0.08);
+    margin-bottom: 24px;
+}
+
+.agendamiento-imagen-inner img {
+    width: 100%;
+    height: 180px;
+    object-fit: cover;
+    display: block;
+    transition: transform 0.5s ease;
+}
+
+.agendamiento-imagen-inner img:hover {
+    transform: scale(1.06);
+}
+
+/* Lista de características con animación fadeSlideIn */
+.agenda-features {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.agenda-feature {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    background: rgba(255,255,255,0.06);
+    border: 1px solid rgba(255,255,255,0.1);
+    border-radius: 12px;
+    padding: 12px 16px;
+    cursor: default;
+    transition: transform 0.3s ease, background 0.3s ease, border-color 0.3s ease;
+    animation: fadeSlideIn 0.5s ease both;
+}
+
+.agenda-feature:nth-child(1) { animation-delay: 0.1s; }
+.agenda-feature:nth-child(2) { animation-delay: 0.2s; }
+.agenda-feature:nth-child(3) { animation-delay: 0.3s; }
+
+@keyframes fadeSlideIn {
+    from { opacity: 0; transform: translateX(-16px); }
+    to   { opacity: 1; transform: translateX(0); }
+}
+
+.agenda-feature:hover {
+    transform: translateX(6px);
+    background: rgba(255,255,255,0.1);
+    border-color: rgba(110,231,183,0.35);
+}
+
+/* Iconos circulares de cada feature con colores semánticos */
+.agenda-icono {
+    width: 36px;
+    height: 36px;
+    border-radius: 10px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 17px;
+    flex-shrink: 0;
+    transition: transform 0.3s ease;
+}
+
+.agenda-feature:hover .agenda-icono { transform: scale(1.12); }
+
+.agenda-icono.verde { background: rgba(16,185,129,0.15); color: #6ee7b7; }
+.agenda-icono.ambar { background: rgba(251,191,36,0.15);  color: #fbbf24; }
+.agenda-icono.azul  { background: rgba(96,165,250,0.15);  color: #60a5fa; }
+
+.agenda-texto p    { font-size: 0.85rem; font-weight: 500; color: #cbd5e1; margin: 0; }
+.agenda-texto span { font-size: 0.72rem; color: #64748b; }
+
+/* Flecha animada tipo "call to action" */
+.beneficio-flecha {
+    font-size: 1rem;
+    color: rgba(255,255,255,0.2);
+    flex-shrink: 0;
+    transition: transform 0.3s ease, color 0.3s ease;
+    animation: pulseArrow 1.5s ease-in-out infinite;
+}
+
+.agenda-feature:hover .beneficio-flecha {
+    color: #6ee7b7;
+    transform: translateX(5px);
+    animation: none;
+}
+
+@keyframes pulseArrow {
+    0%, 100% { transform: translateX(0);   opacity: 0.25; }
+    50%       { transform: translateX(5px); opacity: 1; }
+}
+
+/* =====================================================
+   COLUMNA DERECHA — Card del formulario
+   Efecto glass con blur, sombra y borde sutil
+   ===================================================== */
+
+.agendamiento-card {
+    background: rgba(255,255,255,0.06);
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
+    border: 1px solid rgba(255,255,255,0.12);
+    border-radius: 20px;
+    padding: 36px;
+    width: 100%;
+    max-width: 440px;
+    box-shadow: 0 25px 60px rgba(0,0,0,0.5);
+    animation: fadeIn 0.4s ease;
+}
+
+@keyframes fadeIn {
+    from { opacity: 0; transform: translateY(12px); }
+    to   { opacity: 1; transform: translateY(0); }
+}
+
+.agendamiento-card-header {
+    text-align: center;
+    margin-bottom: 20px;
+}
+
+/* Círculo decorativo con icono en el header del card */
+.agendamiento-card-header .logo-circle {
+    width: 46px;
+    height: 46px;
+    border-radius: 50%;
+    background: #e11d48;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: 0 auto 10px;
+    font-size: 1.2rem;
+    color: white;
+    transition: transform 0.3s ease;
+}
+
+.agendamiento-card-header .logo-circle:hover {
+    transform: rotate(8deg) scale(1.08);
+}
+
+.agendamiento-card-header h2 {
+    color: white;
+    font-size: 1.35rem;
+    font-weight: 800;
+    margin-bottom: 4px;
+}
+
+.agendamiento-card-header p {
+    color: #94a3b8;
+    font-size: 0.85rem;
+}
+
+/* =====================================================
+   GRUPOS DE FORMULARIO
+   Inputs, selects y textareas con estilo dark
+   ===================================================== */
+
+.agendamiento-card .grupo-formulario {
+    display: flex;
+    flex-direction: column;
+    margin-bottom: 12px;
+}
+
+.agendamiento-card .grupo-formulario label {
+    color: #cbd5e1;
+    font-size: 0.82rem;
+    font-weight: 500;
+    margin-bottom: 5px;
+}
+
+.agendamiento-card .grupo-formulario input,
+.agendamiento-card .grupo-formulario select,
+.agendamiento-card .grupo-formulario textarea {
+    width: 100%;
+    padding: 10px 12px;
+    background: rgba(255,255,255,0.08);
+    border: 1px solid rgba(255,255,255,0.15);
+    border-radius: 10px;
+    color: white;
+    font-size: 0.88rem;
+    font-family: inherit;
+    outline: none;
+    transition: border-color 0.25s, background 0.25s, box-shadow 0.25s;
+}
+
+.agendamiento-card .grupo-formulario input::placeholder,
+.agendamiento-card .grupo-formulario textarea::placeholder {
+    color: #4b5563;
+}
+
+.agendamiento-card .grupo-formulario select option {
+    background: #1e293b;
+    color: white;
+}
+
+.agendamiento-card .grupo-formulario input:focus,
+.agendamiento-card .grupo-formulario select:focus,
+.agendamiento-card .grupo-formulario textarea:focus {
+    border-color: #10b981;
+    background: rgba(255,255,255,0.11);
+    box-shadow: 0 0 0 3px rgba(16,185,129,0.15);
+}
+
+.agendamiento-card .grupo-formulario textarea {
+    resize: none;
+}
+
+/* =====================================================
+   BOTONES — Guardar (primario) y Limpiar (secundario)
+   ===================================================== */
+
+.agendamiento-botones {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    margin-top: 14px;
+}
+
+.agendamiento-botones .btn-primario {
+    width: 100%;
+    height: 44px;
+    border-radius: 10px;
+    font-size: 0.9rem;
+    font-weight: 600;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    background: linear-gradient(135deg, #DC2626, #B91C1C);
+    color: white;
+    border: none;
+    box-shadow: 0 4px 14px rgba(220,38,38,0.35);
+    transition: background 0.2s, transform 0.15s, box-shadow 0.2s;
+}
+
+.agendamiento-botones .btn-primario:hover {
+    background: linear-gradient(135deg, #EF4444, #DC2626);
+    transform: translateY(-2px);
+    box-shadow: 0 6px 20px rgba(220,38,38,0.5);
+}
+
+.agendamiento-botones .btn-primario:active { transform: scale(0.97); }
+
+.agendamiento-botones .btn-secundario {
+    width: 100%;
+    height: 40px;
+    border-radius: 10px;
+    font-size: 0.85rem;
+    font-weight: 500;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: transparent;
+    color: #94a3b8;
+    border: 1px solid rgba(255,255,255,0.15);
+    transition: background 0.2s, color 0.2s, transform 0.15s;
+}
+
+.agendamiento-botones .btn-secundario:hover {
+    background: rgba(255,255,255,0.08);
+    color: #e2e8f0;
+    transform: translateY(-1px);
+}
+
+/* =====================================================
+   MENSAJES DE RETROALIMENTACIÓN
+   Error (rojo) y éxito (verde) con glass
+   ===================================================== */
+
+.agenda-mensaje {
+    padding: 10px 14px;
+    border-radius: 10px;
+    font-size: 0.85rem;
+    margin-bottom: 14px;
+    text-align: center;
+}
+
+.agenda-mensaje.error {
+    background: rgba(220,38,38,0.15);
+    border: 1px solid #DC2626;
+    color: #fca5a5;
+}
+
+.agenda-mensaje.exito {
+    background: rgba(16,185,129,0.15);
+    border: 1px solid #10b981;
+    color: #6ee7b7;
+}
+
+/* =====================================================
+   ENLACE — "Ver mis agendamientos"
+   ===================================================== */
+
+.agenda-link {
+    text-align: center;
+    margin-top: 16px;
+    color: #94a3b8;
+    font-size: 0.85rem;
+}
+
+.agenda-link a {
+    color: #FACC15;
+    font-weight: 600;
+    text-decoration: none;
+    transition: opacity 0.2s;
+}
+
+.agenda-link a:hover { opacity: 0.75; }
+
+/* =====================================================
+   RESPONSIVE — Tablets y móviles
+   Las columnas se apilan, la info se centra
+   ===================================================== */
+
+@media (max-width: 900px) {
+    .agendamiento-contenido {
+        flex-direction: column;
+        padding: 20px;
+        gap: 30px;
+    }
+    .agendamiento-info {
+        text-align: center;
+    }
+    .agendamiento-info > p {
+        max-width: 100%;
+        margin-left: auto;
+        margin-right: auto;
+    }
+    .agendamiento-imagen-inner {
+        max-width: 220px;
+        margin-left: auto;
+        margin-right: auto;
+    }
+    .agendamiento-card {
+        max-width: 100%;
+        padding: 24px 16px;
+    }
+}

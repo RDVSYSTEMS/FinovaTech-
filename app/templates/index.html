@@ -1,0 +1,190 @@
+<!DOCTYPE html>
+<!-- ============================================================================
+     FinovaTech — index.html 
+     Descripción: Página principal (inicio). Presenta el sistema, estadísticas animadas y beneficios. 
+     ---------------------------------------------------------------------------- 
+     Proyecto SENA 2026 — Técnico en Programación de Software 
+     Sistema: Gestión de finanzas personales para estudiantes de bachillerato 
+     ============================================================================ -->
+
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <link rel="icon" type="image/svg+xml" href="/static/assets/img/favicon.svg">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>FinovaTech</title>
+
+
+<!-- Google Fonts -->
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;900&display=swap" rel="stylesheet">
+
+<!-- AOS Animaciones -->
+<link href="/static/vendor/aos.css" rel="stylesheet">
+
+<!-- CSS -->
+<link rel="stylesheet" href="/static/css/header_footer.css"> 
+<link rel="stylesheet" href="/static/css/index.css">
+
+</head>
+<body>
+
+
+<!-- HEADER -->
+<div id="header"></div>
+
+<main>
+
+    <!-- HERO -->
+    <section class="hero">
+
+        <div class="hero-texto" data-aos="fade-right">
+
+            <span class="hero-etiqueta">🎓 Proyecto SENA 2026</span>
+
+            <h1>
+                Administra tus finanzas<br>
+                <span class="highlight">de forma inteligente</span>
+            </h1>
+
+            <p>
+                Gestiona tus ingresos, gastos y metas de ahorro desde una plataforma diseñada para fortalecer la educación financiera de los estudiantes de bachillerato.
+            </p>
+
+            <div class="hero-botones">
+                <a href="registro.html">
+                    <button class="btn-principal">Crear cuenta</button>
+                </a>
+
+                <a href="servicios.html">
+                    <button class="btn-secundario">Conocer servicios</button>
+                </a>
+            </div>
+
+        </div>
+
+        <div class="hero-imagen" data-aos="fade-left">
+            <img src="/static/assets/img/estudiante de grado bachiller.png" alt="Estudiante de bachillerato">
+        </div>
+
+    </section>
+
+    <!-- ESTADÍSTICAS -->
+    <section class="estadisticas" data-aos="fade-up">
+
+        <div class="stat">
+            <span class="numero" data-target="500">0</span><span>+</span>
+            <p>Usuarios registrados</p>
+        </div>
+
+        <div class="stat">
+            <span class="numero" data-target="3">0</span>
+            <p>Módulos disponibles</p>
+        </div>
+
+        <div class="stat">
+            <span class="numero" data-target="100">0</span><span>%</span>
+            <p>Acceso gratuito</p>
+        </div>
+
+    </section>
+
+    <!-- CÓMO FUNCIONA -->
+    <section class="como-funciona" data-aos="fade-up">
+
+        <h2>¿Cómo funciona?</h2>
+
+        <div class="pasos">
+
+            <div class="paso">
+                <span class="paso-numero">1</span>
+                <h3>Regístrate</h3>
+                <p>Regístrate de forma rápida y segura.</p>
+            </div>
+
+            <div class="paso">
+                <span class="paso-numero">2</span>
+                <h3>Registra tus movimientos</h3>
+                <p>Registra y organiza tus movimientos financieros.</p>
+            </div>
+
+            <div class="paso">
+                <span class="paso-numero">3</span>
+                <h3>Alcanza tus metas</h3>
+                <p>Monitorea tus avances y alcanza tus metas de ahorro.</p>
+            </div>
+
+        </div>
+
+    </section>
+
+    <!-- PREVIEW -->
+    <section class="preview" data-aos="fade-up">
+
+        <h2>Visualiza tus finanzas en tiempo real</h2>
+
+        <p>
+            Consulta información clara y organizada desde tu panel de control.
+        </p>
+
+        <div class="preview-imagen">
+            <img src="/static/assets/img/reporte financiero img.png" alt="Panel financiero">
+        </div>
+
+    </section>
+
+    <!-- CARDS -->
+    <section class="cards" data-aos="fade-up">
+
+        <div class="card" data-aos="fade-up" data-aos-delay="0">
+            <div class="card-icono">💰</div>
+            <h3>Control de Gastos</h3>
+            <p>
+                Mantén un seguimiento detallado de tus gastos para tomar mejores decisiones financieras.
+            </p>
+        </div>
+
+        <div class="card" data-aos="fade-up" data-aos-delay="150">
+            <div class="card-icono">📈</div>
+            <h3>Reportes Financieros</h3>
+            <p>
+                Obtén reportes claros y gráficos que faciliten el análisis de tu situación financiera.
+            </p>
+        </div>
+
+        <div class="card" data-aos="fade-up" data-aos-delay="300">
+            <div class="card-icono">🎯</div>
+            <h3>Metas de Ahorro</h3>
+            <p>
+                Define metas de ahorro y supervisa tu avance de manera constante.
+            </p>
+        </div>
+
+    </section>
+
+    <!-- OBJETIVO -->
+    <section class="objetivo" data-aos="fade-up">
+
+        <h2>Objetivo del Proyecto</h2>
+
+        <p>
+            Fortalecer las competencias financieras de los estudiantes mediante una plataforma digital que facilite la gestión responsable de los ingresos, gastos y metas de ahorro.
+        </p>
+
+    </section>
+
+</main>
+
+<!-- FOOTER dinámico -->
+ 
+<div id="footer"></div>
+
+<!-- Botón volver arriba -->
+<button id="btn-arriba" onclick="window.scrollTo({top:0, behavior:'smooth'})">↑</button>
+
+<!-- AOS -->
+<script src="/static/vendor/aos.js"></script>
+<!-- JS global -->
+<script src="/static/js/global.js"></script>
+
+</body>
+</html>

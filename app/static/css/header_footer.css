@@ -1,0 +1,361 @@
+/* =====================================================
+   RESET GENERAL
+===================================================== */
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  font-family: 'Inter', 'Segoe UI', Arial, sans-serif;
+}
+
+/* Solo <html> lleva altura fija; el BODY NO: usa min-height para que
+   pueda CRECER hacia abajo con el contenido. Si body tuviera height
+   fijo, el footer quedaria montado sobre las tablas/graficas cuando
+   el contenido es mas alto que la pantalla. */
+html {
+  height: 100%;
+}
+
+body {
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;      /* altura dinamica: crece segun el contenido */
+  background: #F3F4F6;
+  color: #111827;
+}
+
+/* Empuja el footer al fondo cuando el contenido es corto */
+main {
+  flex: 1;
+}
+
+/* El footer SIEMPRE queda pegado al fondo de la ventana.
+   Funciona en todas las páginas y con cualquier cantidad
+   de contenido: si sobra espacio, baja hasta el borde;
+   si falta, se coloca después del contenido sin huecos. */
+#footer {
+  margin-top: auto;
+}
+
+/* =====================================================
+   HEADER — Gradient Premium
+===================================================== */
+header {
+  background: linear-gradient(135deg, #0f172a 0%, #1e293b 50%, #dc2626 100%);
+  color: white;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 64px;
+  height: 72px;
+}
+
+.header-glass {
+  position: sticky;
+  top: 0;
+  z-index: 1000;
+  border-bottom: 1px solid rgba(255,255,255,0.06);
+  box-shadow: 0 4px 30px rgba(0,0,0,0.25);
+}
+
+/* Decorative glow line */
+.header-glass::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 1px;
+  background: linear-gradient(90deg, transparent, rgba(255,255,255,0.15), transparent);
+}
+
+/* --- Logo --- */
+.logo {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.logo-img-wrap {
+  position: relative;
+  width: 38px;
+  height: 38px;
+}
+
+.logo-img-wrap img {
+  width: 38px;
+  height: 38px;
+  border-radius: 10px;
+  position: relative;
+  z-index: 1;
+}
+
+.logo-img-wrap::after {
+  content: '';
+  position: absolute;
+  inset: -2px;
+  border-radius: 12px;
+  background: linear-gradient(135deg, rgba(220,38,38,0.4), rgba(250,204,21,0.2));
+  z-index: 0;
+  animation: logoPulse 3s ease-in-out infinite;
+}
+
+@keyframes logoPulse {
+  0%, 100% { opacity: 0.5; }
+  50% { opacity: 1; }
+}
+
+.logo-text {
+  display: flex;
+  flex-direction: column;
+}
+
+.logo-text h2 {
+  font-size: 1rem;
+  line-height: 1.2;
+  font-weight: 700;
+  color: white;
+  letter-spacing: -0.01em;
+}
+
+.logo-text span {
+  font-size: 0.68rem;
+  font-weight: 400;
+  color: rgba(255,255,255,0.45);
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+}
+
+/* =====================================================
+   NAV — Underline Glow
+===================================================== */
+.menu-superior {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+}
+
+.menu-superior a {
+  color: rgba(255,255,255,0.65);
+  text-decoration: none;
+  padding: 8px 6px;
+  font-weight: 500;
+  font-size: 0.85rem;
+  letter-spacing: 0.02em;
+  position: relative;
+  transition: color 0.25s ease;
+}
+
+.menu-superior a::after {
+  content: '';
+  position: absolute;
+  bottom: 0;
+  left: 6px;
+  right: 6px;
+  height: 2px;
+  background: #FACC15;
+  border-radius: 2px;
+  transform: scaleX(0);
+  transition: transform 0.25s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+}
+
+.menu-superior a:hover {
+  color: white;
+}
+
+.menu-superior a:hover::after {
+  transform: scaleX(1);
+}
+
+/* --- CTA button --- */
+.btn-nav {
+  background: rgba(255,255,255,0.08) !important;
+  color: white !important;
+  border-radius: 100px !important;
+  padding: 8px 22px !important;
+  font-weight: 600 !important;
+  margin-left: 12px;
+  border: 1px solid rgba(255,255,255,0.12) !important;
+  backdrop-filter: blur(4px);
+  -webkit-backdrop-filter: blur(4px);
+  transition: all 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94) !important;
+}
+
+.btn-nav::after {
+  display: none !important;
+}
+
+.btn-nav:hover {
+  background: rgba(255,255,255,0.15) !important;
+  border-color: rgba(255,255,255,0.25) !important;
+  transform: translateY(-2px);
+  box-shadow: 0 8px 25px rgba(0,0,0,0.2);
+}
+
+/* =====================================================
+   FOOTER
+   - Barra inferior con texto centrado
+   - Enlaces secundarios
+===================================================== */
+footer {
+  background: #0f172a;
+  color: white;
+  text-align: center;
+  padding: 20px 24px;
+  border-top: 3px solid #FACC15;
+  box-shadow: 0 -1px 0 rgba(255,255,255,0.02);
+  line-height: 1.8;
+  font-size: 0.82rem;
+}
+
+footer p {
+  color: rgba(255,255,255,0.55);
+}
+
+footer p:first-child {
+  font-weight: 600;
+  font-size: 0.85rem;
+  color: rgba(255,255,255,0.7);
+}
+
+.footer-links {
+  margin-top: 8px;
+  display: flex;
+  gap: 28px;
+  justify-content: center;
+  flex-wrap: wrap;
+}
+
+.footer-links a {
+  color: #475569;
+  text-decoration: none;
+  font-size: 0.8rem;
+  transition: color 0.3s;
+  position: relative;
+}
+
+.footer-links a::after {
+  content: '';
+  position: absolute;
+  bottom: -2px;
+  left: 0;
+  right: 0;
+  height: 1px;
+  background: rgba(250,204,21,0.3);
+  transform: scaleX(0);
+  transition: transform 0.25s ease;
+}
+
+.footer-links a:hover {
+  color: #FACC15;
+}
+
+.footer-links a:hover::after {
+  transform: scaleX(1);
+}
+
+/* =========================
+   BOTÓN VOLVER ARRIBA
+========================= */
+
+#btn-arriba {
+    position: fixed;
+    bottom: 30px;
+    right: 30px;
+    width: 44px;
+    height: 44px;
+    background: #DC2626;
+    color: white;
+    font-size: 1.2rem;
+    border-radius: 50%;
+    cursor: pointer;
+    display: none;
+    z-index: 999;
+    border: none;
+    box-shadow: 0 4px 15px rgba(220,38,38,0.4);
+    transition: all 0.25s ease;
+}
+
+#btn-arriba:hover {
+    background: #B91C1C;
+    transform: translateY(-3px) scale(1.05);
+    box-shadow: 0 6px 25px rgba(220,38,38,0.5);
+}
+
+/* === RESPONSIVE GLOBAL === */
+
+/* Menú hamburguesa */
+.menu-toggle {
+    display: none;
+    background: transparent;
+    border: none;
+    color: white;
+    font-size: 1.5rem;
+    cursor: pointer;
+    padding: 4px 8px;
+}
+
+@media (max-width: 900px) {
+
+    header {
+        padding: 0 16px;
+        height: 60px;
+    }
+
+    .menu-toggle {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        width: 36px;
+        height: 36px;
+        border-radius: 9px;
+        background: rgba(255,255,255,0.04);
+        border: 1px solid rgba(255,255,255,0.06);
+        color: white;
+        font-size: 1.2rem;
+        cursor: pointer;
+        transition: background 0.2s;
+    }
+
+    .menu-toggle:hover {
+        background: rgba(255,255,255,0.08);
+    }
+
+    .menu-superior {
+        display: none;
+        flex-direction: column;
+        width: 100%;
+        margin: 0;
+        padding: 6px;
+        gap: 2px;
+        border-radius: 14px;
+        background: rgba(12, 20, 38, 0.96);
+        backdrop-filter: blur(24px) saturate(1.4);
+        -webkit-backdrop-filter: blur(24px) saturate(1.4);
+        border: 1px solid rgba(255,255,255,0.06);
+        position: absolute;
+        top: 100%;
+        left: 8px;
+        right: 8px;
+        box-shadow: 0 20px 60px rgba(0,0,0,0.5);
+        margin-top: 6px;
+    }
+
+    .menu-superior.abierto {
+        display: flex;
+    }
+
+    .menu-superior a {
+        width: 100%;
+        text-align: center;
+        border-radius: 8px;
+        padding: 11px 16px;
+    }
+
+    .btn-nav {
+        margin-left: 0;
+        margin-top: 2px;
+    }
+
+}
+

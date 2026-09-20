@@ -1,0 +1,215 @@
+/* =====================================================
+   terminos.css — Términos y Condiciones
+   FinovaTech | SENA 2026
+   ===================================================== */
+
+/* =====================================================
+   FONDO GENERAL
+   ===================================================== */
+
+.terminos-main {
+    position: relative;
+    padding: 90px 20px 100px;
+    background: #0f172a;
+}
+
+/* Video de fondo */
+.terminos-video-bg {
+    position: absolute;
+    top: 0; left: 0;
+    width: 100%; height: 100%;
+    z-index: 0;
+    overflow: hidden;
+}
+
+.terminos-video-bg video {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.terminos-overlay {
+    position: absolute;
+    top: 0; left: 0;
+    width: 100%; height: 100%;
+    background: linear-gradient(135deg,
+        rgba(15,23,42,0.92) 0%,
+        rgba(30,41,59,0.88) 60%,
+        rgba(17,24,39,0.92) 100%);
+}
+
+.terminos-contenido {
+    position: relative;
+    z-index: 1;
+    max-width: 900px;
+    margin: 0 auto;
+}
+
+/* =====================================================
+   HEADER
+   ===================================================== */
+
+.terminos-header {
+    text-align: center;
+    margin-bottom: 50px;
+    color: white;
+}
+
+.terminos-tag {
+    background: rgba(220,38,38,0.15);
+    border: 1px solid #DC2626;
+    color: #fca5a5;
+    padding: 6px 16px;
+    border-radius: 99px;
+    font-size: 0.85rem;
+    font-weight: 600;
+    display: inline-block;
+    margin-bottom: 20px;
+}
+
+.terminos-header h1 {
+    font-size: clamp(2rem, 4vw, 2.8rem);
+    font-weight: 900;
+    margin-bottom: 12px;
+}
+
+.terminos-header p {
+    color: #94a3b8;
+    font-size: 1rem;
+    max-width: 500px;
+    margin: 0 auto;
+}
+
+/* =====================================================
+   GRID DE TARJETAS
+   ===================================================== */
+
+.terminos-grid {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+}
+
+/* =====================================================
+   TARJETA INDIVIDUAL
+   ===================================================== */
+
+.termino-card {
+    display: flex;
+    gap: 20px;
+    background: rgba(255,255,255,0.05);
+    border: 1px solid rgba(255,255,255,0.08);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    border-radius: 16px;
+    padding: 24px 28px;
+    transition: transform 0.3s ease, border-color 0.3s ease, box-shadow 0.3s ease;
+}
+
+.termino-card:hover {
+    transform: translateY(-4px);
+    border-color: rgba(220,38,38,0.3);
+    box-shadow: 0 20px 40px rgba(0,0,0,0.3);
+}
+
+/* Número grande al costado */
+.termino-numero {
+    font-size: 2rem;
+    font-weight: 900;
+    color: rgba(220,38,38,0.25);
+    line-height: 1;
+    flex-shrink: 0;
+    min-width: 48px;
+    font-family: 'Inter', sans-serif;
+}
+
+/* Contenido de la tarjeta */
+.termino-contenido {
+    flex: 1;
+}
+
+.termino-contenido h2 {
+    color: white;
+    font-size: 1.1rem;
+    font-weight: 700;
+    margin-bottom: 8px;
+}
+
+.termino-contenido p {
+    color: #94a3b8;
+    line-height: 1.7;
+    font-size: 0.92rem;
+}
+
+.termino-contenido ul {
+    margin: 10px 0 0;
+    padding-left: 20px;
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+}
+
+.termino-contenido ul li {
+    color: #94a3b8;
+    font-size: 0.88rem;
+    line-height: 1.6;
+}
+
+.termino-contenido ul li::marker {
+    color: #DC2626;
+}
+
+.termino-contenido a {
+    color: #FACC15;
+    font-weight: 600;
+    text-decoration: none;
+    transition: opacity 0.2s;
+}
+
+.termino-contenido a:hover {
+    opacity: 0.75;
+}
+
+.termino-contenido strong {
+    color: #e2e8f0;
+}
+
+/* =====================================================
+   PIE LEGAL
+   ===================================================== */
+
+.terminos-footer-legal {
+    text-align: center;
+    margin-top: 40px;
+    padding: 24px;
+    background: rgba(255,255,255,0.03);
+    border: 1px solid rgba(255,255,255,0.06);
+    border-radius: 12px;
+}
+
+.terminos-footer-legal p {
+    color: #475569;
+    font-size: 0.85rem;
+    margin-bottom: 4px;
+}
+
+/* =====================================================
+   RESPONSIVE
+   ===================================================== */
+
+@media (max-width: 768px) {
+    .termino-card {
+        flex-direction: column;
+        gap: 10px;
+        padding: 20px 18px;
+    }
+
+    .termino-numero {
+        font-size: 1.5rem;
+        min-width: auto;
+    }
+
+    .terminos-main {
+        padding: 80px 16px 80px;
+    }
+}

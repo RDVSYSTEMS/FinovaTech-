@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<!-- ============================================================================
+     FinovaTech — servicios.html 
+     Descripción: Catálogo de servicios que ofrece la plataforma (reportes, educación, notificaciones y exportación). 
+     ---------------------------------------------------------------------------- 
+     Proyecto SENA 2026 — Técnico en Programación de Software 
+     Sistema: Gestión de finanzas personales para estudiantes de bachillerato 
+     ============================================================================ -->
+
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <link rel="icon" type="image/svg+xml" href="/static/assets/img/favicon.svg"    >
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Servicios - FinovaTech</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;900&display=swap" rel="stylesheet">
+    <link href="/static/vendor/aos.css" rel="stylesheet">
+    <link rel="stylesheet" href="/static/css/header_footer.css">
+    <link rel="stylesheet" href="/static/css/servicios.css">
+</head>
+<body>
+
+<div id="header"></div>
+
+<main class="servicios-main">
+
+    <!-- ENCABEZADO DE LA PÁGINA -->
+    <div class="servicios-header" data-aos="fade-down">
+        <span class="sena-tag">🎓 Proyecto SENA 2026</span>
+        <h1>Nuestros Servicios</h1>
+        <p>Herramientas diseñadas para que controles tu dinero de forma inteligente.</p>
+    </div>
+
+   <!-- CATÁLOGO DE SERVICIOS -->
+   <section class="catalogo">
+
+    <!-- Servicio 1: Reportes financieros -->
+    <article class="card-producto" data-aos="fade-up">
+        <img src="/static/assets/img/reporte financiero img.png" alt="Reportes financieros">
+        <div class="card-body">
+            <span class="card-badge">📊 Análisis</span>
+            <h3>Reportes Financieros</h3>
+            <p>Gráficas completas con toda la información de tus ingresos y gastos en tiempo real.</p>
+            <button type="button" class="btn-card" onclick="location.href='/agendamiento'">Seleccionar →</button>
+        </div>
+    </article>
+
+    <!-- Servicio 2: Educación financiera -->
+    <article class="card-producto" data-aos="fade-up" data-aos-delay="100">
+        <img src="/static/assets/img/educacion financiera.png" alt="Educación financiera">
+        <div class="card-body">
+            <span class="card-badge">🎓 Educación</span>
+            <h3>Educación Financiera</h3>
+            <p>Clases con profesores certificados. Aprende tips para ahorrar y administrar mejor tu dinero.</p>
+            <button type="button" class="btn-card" onclick="location.href='/agendamiento'">Seleccionar →</button>
+        </div>
+    </article>
+
+    <!-- Servicio 3: Notificaciones y recordatorios -->
+    <article class="card-producto" data-aos="fade-up" data-aos-delay="200">
+        <img src="/static/assets/img/notificaciones y recordatorios.png" alt="Notificaciones">
+        <div class="card-body">
+            <span class="card-badge">🔔 Alertas</span>
+            <h3>Notificaciones y Recordatorios</h3>
+            <p>Recibe correos y mensajes sobre gastos elevados, recordatorios de registro y mucho más.</p>
+            <button type="button" class="btn-card" onclick="location.href='/agendamiento'">Seleccionar →</button>
+        </div>
+    </article>
+
+    <!-- Servicio 4: Exportación de reportes -->
+        <article class="card-producto" data-aos="fade-up" data-aos-delay="300">
+        <img src="/static/assets/img/Exportacion de graficos.png" alt="Exportación">
+        <div class="card-body">
+            <span class="card-badge">📥 Exportar</span>
+            <h3>Exportación de Reportes</h3>
+            <p>Descarga tus reportes y gráficos en PDF, Excel, PNG y más formatos disponibles.</p>
+            <button type="button" class="btn-card" onclick="location.href='/agendamiento'">Seleccionar →</button>
+        </div>
+    </article>
+
+   </section>   
+
+</main>
+
+<div id="footer"></div>
+<button id="btn-arriba" onclick="window.scrollTo({top:0, behavior:'smooth'})">↑</button>
+
+<script src="/static/vendor/aos.js"></script>
+<script src="/static/js/global.js"></script>
+
+</body>
+</html>
+
+

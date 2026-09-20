@@ -1,0 +1,168 @@
+<!DOCTYPE html>
+<!-- ============================================================================
+     FinovaTech — agendamiento.html 
+     Descripción: Agendamiento de clases de educación financiera (fecha, hora y categoría). 
+     ---------------------------------------------------------------------------- 
+     Proyecto SENA 2026 — Técnico en Programación de Software 
+     Sistema: Gestión de finanzas personales para estudiantes de bachillerato 
+     ============================================================================ -->
+
+<html lang="es">
+<head>
+
+    <meta charset="UTF-8">
+    <link rel="icon" type="image/svg+xml" href="/static/assets/img/favicon.svg" >
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>FinovaTech</title>
+    
+<!-- Google Fonts -->
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;900&display=swap" rel="stylesheet">
+
+<!-- AOS Animaciones -->
+<link href="/static/vendor/aos.css" rel="stylesheet">
+
+<!-- CSS ***///Siempre debe estar css/headader_foter.css\\\\*** -->
+<link rel="stylesheet" href="/static/css/header_footer.css"> 
+<link rel="stylesheet" href="/static/css/agendamiento.css">
+
+</head>
+<body>
+
+
+<!-- HEADER -->
+<div id="header"></div>
+
+
+
+<!-- CONTENIDO -->
+
+<main class="agendamiento-main">
+
+    <!-- Video de fondo -->
+    <div class="agendamiento-video-bg">
+        <video autoplay muted loop playsinline>
+            <source src="/static/assets/video/institucional.mp4" type="video/mp4">
+        </video>
+        <div class="agendamiento-overlay"></div>
+    </div>
+
+    <div class="agendamiento-contenido">
+
+        <!-- IZQUIERDO -->
+        <div class="agendamiento-info" data-aos="fade-right">
+            <span class="sena-tag">🎓 Proyecto SENA 2026</span>
+            <h1>Agenda tu clase<br>financiera</h1>
+            <p>Reserva tu sesión con un profesor certificado y aprende a gestionar tu dinero inteligentemente.</p>
+
+            <div class="agendamiento-imagen-inner">
+                <img src="/static/assets/img/estudiante de grado bachiller.png" alt="Estudiante">
+            </div>
+
+            <div class="agenda-features">
+                <div class="agenda-feature">
+                    <div class="agenda-icono verde">📅</div>
+                    <div class="agenda-texto">
+                        <p>Horarios flexibles</p>
+                        <span>Elige el día y hora que más te convenga</span>
+                    </div>
+                    <span class="beneficio-flecha">→</span>
+                </div>
+                <div class="agenda-feature">
+                    <div class="agenda-icono ambar">👨‍🏫</div>
+                    <div class="agenda-texto">
+                        <p>Profesores certificados</p>
+                        <span>Expertos en educación financiera</span>
+                    </div>
+                    <span class="beneficio-flecha">→</span>
+                </div>
+                <div class="agenda-feature">
+                    <div class="agenda-icono azul">🎯</div>
+                    <div class="agenda-texto">
+                        <p>Atención personalizada</p>
+                        <span>Enfocada en tus metas financieras</span>
+                    </div>
+                    <span class="beneficio-flecha">→</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- DERECHO — formulario -->
+        <div class="agendamiento-card" data-aos="fade-left">
+
+            <div class="agendamiento-card-header">
+                <div class="logo-circle">📅</div>
+                <h2>Agendar Sesión</h2>
+                <p>Completa el formulario para reservar</p>
+            </div>
+
+            <div id="agenda-error" class="agenda-mensaje error" style="display:none"></div>
+            <div id="agenda-exito" class="agenda-mensaje exito" style="display:none">✅ ¡Sesión agendada! Te contactaremos pronto.</div>
+
+            <form id="formAgenda" novalidate>
+
+                <div class="grupo-formulario">
+                    <label for="fecha">Fecha</label>
+                    <input id="fecha" type="date" required>
+                </div>
+
+                <div class="grupo-formulario">
+                    <label for="hora">Hora</label>
+                    <input id="hora" type="time" required>
+                </div>
+
+                <div class="grupo-formulario">
+                    <label for="categoria">Categoría</label>
+                    <select id="categoria" required>
+                        <option value="">Seleccione una opción</option>
+                        <option value="reserva">Reserva</option>
+                        <option value="consultoria">Consultoría</option>
+                        <option value="taller">Taller grupal</option>
+                    </select>
+                </div>
+
+                <div class="grupo-formulario">
+                    <label for="estado">Estado</label>
+                    <select id="estado">
+                        <option value="pendiente">Pendiente</option>
+                        <option value="confirmado">Confirmado</option>
+                        <option value="cancelado">Cancelado</option>
+                        <option value="completado">Completado</option>
+                    </select>
+                </div>
+
+                <div class="grupo-formulario">
+                    <label for="comentarios">¿Qué te gustaría aprender?</label>
+                    <textarea id="comentarios" rows="3" placeholder="Cuéntanos tus metas financieras..."></textarea>
+                </div>
+
+                <div class="agendamiento-botones">
+                    <button type="submit" class="btn-primario">💾 Guardar</button>
+                    <button type="reset" class="btn-secundario">Limpiar</button>
+                </div>
+
+            </form>
+
+            <p class="agenda-link">
+                ¿Ya tienes una cita? <a href="/lista">Ver mis agendamientos</a>
+            </p>
+
+        </div>
+
+    </div>
+
+</main>
+
+<!-- FOOTER dinámico -->
+ 
+<div id="footer"></div>
+
+<!-- Botón volver arriba -->
+<button id="btn-arriba" onclick="window.scrollTo({top:0, behavior:'smooth'})">↑</button>
+
+<!-- AOS -->
+<script src="/static/vendor/aos.js"></script>
+<!-- JS global -->
+<script src="/static/js/global.js"></script>
+
+</body>
+</html>

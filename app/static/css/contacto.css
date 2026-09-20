@@ -1,0 +1,348 @@
+/* =====================================================
+   contacto.css — Página de contacto y créditos
+   FinovaTech | SENA 2026
+   
+   Diseño de dos columnas: info de contacto a la
+   izquierda, botones de redes y créditos a la derecha.
+   ===================================================== */
+
+/* =====================================================
+   CONTENEDOR PRINCIPAL
+   Gradiente oscuro de fondo con overlay para dar
+   profundidad. Padding superior e inferior amplio
+   para separar del header y footer.
+   ===================================================== */
+
+.contacto-main {
+    position: relative;
+    padding: 90px 40px 100px;
+    background: #0f172a;
+}
+
+/* Capa de overlay con gradiente sobre el fondo */
+.contacto-video-bg {
+    position: absolute;
+    top: 0; left: 0;
+    width: 100%; height: 100%;
+    z-index: 0;
+    overflow: hidden;
+}
+
+.contacto-video-bg video {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.contacto-overlay {
+    position: absolute;
+    top: 0; left: 0;
+    width: 100%; height: 100%;
+    background: linear-gradient(135deg,
+        rgba(15,23,42,0.92) 0%,
+        rgba(30,41,59,0.88) 60%,
+        rgba(17,24,39,0.92) 100%);
+}
+
+/* =====================================================
+   CONTENEDOR FLEX — Dos columnas
+   ===================================================== */
+
+.contacto-contenido {
+    position: relative;
+    z-index: 1;
+    display: flex;
+    align-items: center;
+    gap: 60px;
+    width: 100%;
+    max-width: 1050px;
+    margin: 0 auto;
+}
+
+/* =====================================================
+   COLUMNA IZQUIERDA — Info de contacto
+   ===================================================== */
+
+.contacto-info {
+    flex: 1;
+    color: white;
+}
+
+.contacto-info .sena-tag {
+    font-size: 0.72rem;
+    font-weight: 500;
+    color: #6ee7b7;
+    letter-spacing: 0.08em;
+    display: block;
+    margin-bottom: 10px;
+}
+
+.contacto-info h1 {
+    font-size: clamp(1.8rem, 3.5vw, 2.6rem);
+    font-weight: 900;
+    line-height: 1.2;
+    margin: 0 0 14px;
+    color: white;
+}
+
+.contacto-info > p {
+    color: #94a3b8;
+    font-size: 0.95rem;
+    line-height: 1.7;
+    max-width: 360px;
+    margin-bottom: 28px;
+}
+
+/* =====================================================
+   TARJETAS DE DATOS DE CONTACTO
+   Cada una con icono, texto y hover slide
+   ===================================================== */
+
+.contacto-datos {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.dato-card {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    background: rgba(255,255,255,0.06);
+    border: 1px solid rgba(255,255,255,0.1);
+    border-radius: 12px;
+    padding: 14px 16px;
+    transition: transform 0.3s ease, background 0.3s ease;
+    animation: fadeSlideIn 0.5s ease both;
+}
+
+.dato-card:nth-child(1) { animation-delay: 0.1s; }
+.dato-card:nth-child(2) { animation-delay: 0.2s; }
+.dato-card:nth-child(3) { animation-delay: 0.3s; }
+.dato-card:nth-child(4) { animation-delay: 0.4s; }
+
+@keyframes fadeSlideIn {
+    from { opacity: 0; transform: translateX(-16px); }
+    to   { opacity: 1; transform: translateX(0); }
+}
+
+.dato-card:hover {
+    transform: translateX(6px);
+    background: rgba(255,255,255,0.1);
+}
+
+.dato-icono {
+    font-size: 1.4rem;
+    flex-shrink: 0;
+}
+
+.dato-texto p    { font-size: 0.82rem; font-weight: 600; color: #e2e8f0; margin: 0; }
+.dato-texto span { font-size: 0.75rem; color: #64748b; }
+
+/* =====================================================
+   COLUMNA DERECHA — Card con botones y créditos
+   ===================================================== */
+
+.contacto-card {
+    background: rgba(255,255,255,0.06);
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
+    border: 1px solid rgba(255,255,255,0.12);
+    border-radius: 20px;
+    padding: 36px;
+    width: 100%;
+    max-width: 440px;
+    box-shadow: 0 25px 60px rgba(0,0,0,0.5);
+    animation: fadeIn 0.4s ease;
+}
+
+@keyframes fadeIn {
+    from { opacity: 0; transform: translateY(12px); }
+    to   { opacity: 1; transform: translateY(0); }
+}
+
+.contacto-card-header {
+    text-align: center;
+    margin-bottom: 24px;
+}
+
+.contacto-card-header .logo-circle {
+    width: 46px;
+    height: 46px;
+    border-radius: 50%;
+    background: #e11d48;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: 0 auto 10px;
+    font-size: 1.2rem;
+    transition: transform 0.3s ease;
+}
+
+.contacto-card-header .logo-circle:hover {
+    transform: rotate(8deg) scale(1.08);
+}
+
+.contacto-card-header h2 {
+    color: white;
+    font-size: 1.35rem;
+    font-weight: 800;
+    margin-bottom: 4px;
+}
+
+.contacto-card-header p {
+    color: #94a3b8;
+    font-size: 0.85rem;
+}
+
+/* =====================================================
+   BOTONES DE CONTACTO
+   Cada uno con color semántico: verde email,
+   azul teléfono, verde WhatsApp
+   ===================================================== */
+
+.contacto-botones {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    margin-bottom: 20px;
+}
+
+.contacto-btn {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    padding: 14px 16px;
+    border-radius: 12px;
+    text-decoration: none;
+    border: 1px solid rgba(255,255,255,0.1);
+    transition: transform 0.2s, background 0.2s, border-color 0.2s;
+}
+
+.contacto-btn:hover {
+    transform: translateX(5px);
+}
+
+.contacto-btn.email {
+    background: rgba(16,185,129,0.1);
+    border-color: rgba(16,185,129,0.25);
+}
+.contacto-btn.email:hover { background: rgba(16,185,129,0.18); }
+
+.contacto-btn.telefono {
+    background: rgba(96,165,250,0.1);
+    border-color: rgba(96,165,250,0.25);
+}
+.contacto-btn.telefono:hover { background: rgba(96,165,250,0.18); }
+
+.contacto-btn.whatsapp {
+    background: rgba(34,197,94,0.1);
+    border-color: rgba(34,197,94,0.25);
+}
+.contacto-btn.whatsapp:hover { background: rgba(34,197,94,0.18); }
+
+.btn-icono { font-size: 1.4rem; flex-shrink: 0; }
+
+.btn-info { flex: 1; }
+.btn-info strong { display: block; font-size: 0.88rem; color: white; font-weight: 600; }
+.btn-info small  { font-size: 0.75rem; color: #64748b; }
+
+.btn-arrow { color: rgba(255,255,255,0.3); font-size: 1rem; }
+
+/* Separador visual entre botones y créditos */
+.contacto-divider {
+    height: 1px;
+    background: rgba(255,255,255,0.06);
+    margin-bottom: 20px;
+}
+
+/* =====================================================
+   CRÉDITOS DEL PROYECTO
+   Lista de desarrolladores y tecnologías usadas
+   ===================================================== */
+
+.contacto-creditos h3 {
+    font-size: 0.78rem;
+    font-weight: 600;
+    color: #64748b;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    margin-bottom: 12px;
+}
+
+.credito-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 8px 0;
+    border-bottom: 1px solid rgba(255,255,255,0.04);
+}
+
+.credito-item:last-child { border-bottom: none; }
+
+.credito-empresa .credito-empresa-info {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.credito-logo {
+    width: 36px;
+    height: 36px;
+    border-radius: 8px;
+    object-fit: contain;
+}
+
+.credito-rol  { font-size: 0.8rem; color: #64748b; }
+.credito-nombre { font-size: 0.8rem; color: #cbd5e1; font-weight: 500; }
+
+/* =====================================================
+   ENLACE — Volver al inicio
+   ===================================================== */
+
+.contacto-link {
+    text-align: center;
+    margin-top: 18px;
+}
+
+.contacto-link a {
+    color: #FACC15;
+    font-size: 0.85rem;
+    font-weight: 600;
+    text-decoration: none;
+    transition: opacity 0.2s;
+}
+
+.contacto-link a:hover { opacity: 0.75; }
+
+/* =====================================================
+   RESPONSIVE — Tablets y móviles
+   Columnas se apilan, datos se centran
+   ===================================================== */
+
+@media (max-width: 900px) {
+    .contacto-contenido {
+        flex-direction: column;
+        padding: 20px;
+        gap: 30px;
+    }
+    .contacto-info {
+        text-align: center;
+    }
+    .contacto-info > p {
+        max-width: 100%;
+        margin-left: auto;
+        margin-right: auto;
+    }
+    .contacto-datos {
+        align-items: center;
+    }
+    .dato-card {
+        width: 100%;
+        max-width: 340px;
+    }
+    .contacto-card {
+        max-width: 100%;
+        padding: 24px 16px;
+    }
+}

@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<!-- ============================================================================
+     FinovaTech — notificacion.html 
+     Descripción: Centro de notificaciones y recordatorios del usuario. 
+     ---------------------------------------------------------------------------- 
+     Proyecto SENA 2026 — Técnico en Programación de Software 
+     Sistema: Gestión de finanzas personales para estudiantes de bachillerato 
+     ============================================================================ -->
+
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <link rel="icon" type="image/svg+xml" href="/static/assets/img/favicon.svg" >
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Notificaciones - FinovaTech</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;900&display=swap" rel="stylesheet">
+    <link href="/static/vendor/aos.css" rel="stylesheet">
+    <link rel="stylesheet" href="/static/css/header_footer.css">
+    <link rel="stylesheet" href="/static/css/panel.css">
+    <link rel="stylesheet" href="/static/css/notificacion.css">
+</head>
+<body>
+
+<div id="header"></div>
+
+<div class="panel">
+
+    <!-- Botón menú móvil -->
+    <button id="sidebar-toggle" class="sidebar-toggle" aria-label="Abrir menú">☰</button>
+
+    <!-- SIDEBAR (misma estructura que el panel) -->
+    <aside class="panel-sidebar">
+        <div class="sidebar-logo">
+            <div class="sidebar-logo-icono">💰</div>
+            <div class="sidebar-logo-texto">
+                <strong>Finanzas</strong>
+                <span>FinovaTech</span>
+            </div>
+        </div>
+        <nav class="sidebar-nav">
+            <span class="sidebar-seccion">Menú</span>
+            <a href="/panel" class="sidebar-enlace">
+                <span class="enlace-icono">📊</span> Dashboard
+            </a>
+            <a href="/lista" class="sidebar-enlace">
+                <span class="enlace-icono">📋</span> Lista
+            </a>
+            <a href="/agendamiento" class="sidebar-enlace">
+                <span class="enlace-icono">📅</span> Agendar
+            </a>
+            <a href="/notificacion" class="sidebar-enlace activo">
+                <span class="enlace-icono">🔔</span> Notificaciones
+            </a>
+        </nav>
+        <a href="/logout" class="sidebar-salir">🚪 Cerrar sesión</a>
+    </aside>
+
+    <!-- CONTENIDO -->
+    <main class="panel-contenido">
+
+        <!-- Barra superior (estilo panel) -->
+        <section class="panel-topbar">
+            <div class="topbar-saludo">
+                <h1>🔔 Notificaciones</h1>
+                <p class="topbar-bienvenida">Estado de tus procesos y alertas del sistema</p>
+            </div>
+        </section>
+
+        <!-- Notificaciones REALES generadas desde tus movimientos -->
+        <div class="notif-grid">
+            {% for n in notificaciones %}
+            <div class="notif-card {{ n.clase }}" data-aos="fade-up" data-aos-delay="{{ loop.index0 * 80 }}">
+                <div class="notif-icono">{{ n.icono }}</div>
+                <div class="notif-body">
+                    <h3>{{ n.titulo }}</h3>
+                    <p>{{ n.mensaje }}</p>
+                    <span class="notif-time">{{ n.tiempo }}</span>
+                </div>
+            </div>
+            {% else %}
+            <div class="notif-card informacion">
+                <div class="notif-icono">📭</div>
+                <div class="notif-body">
+                    <h3>Sin notificaciones por ahora</h3>
+                    <p>Cuando registres ingresos y gastos, aquí verás avisos sobre
+                       tu presupuesto, gastos elevados y tu balance.</p>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+
+    </main>
+</div>
+
+<div id="footer"></div>
+<button id="btn-arriba" onclick="window.scrollTo({top:0, behavior:'smooth'})">↑</button>
+<script src="/static/vendor/aos.js"></script>
+<script src="/static/js/global.js"></script>
+
+</body>
+</html>

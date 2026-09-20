@@ -1,0 +1,373 @@
+/* =====================================================
+   index.css — Página principal
+   FinovaTech | SENA 2026
+   ===================================================== */
+
+/* =====================================================
+   HERO
+   Sección principal con gradiente oscuro
+   Texto a la izquierda, imagen a la derecha
+   ===================================================== */
+
+.hero{
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 40px;
+    padding: 80px 60px;
+    background: linear-gradient(135deg, #0f172a 0%, #1e293b 60%, #111827 100%);
+    min-height: 88vh;
+}
+
+/* Etiqueta "Proyecto SENA 2026" */
+.hero-etiqueta{
+    background: rgba(220,38,38,0.15);
+    border: 1px solid #DC2626;
+    color: #fca5a5;
+    padding: 6px 16px;
+    border-radius: 99px;
+    font-size: 13px;
+    font-weight: 600;
+    display: inline-block;
+    margin-bottom: 22px;
+}
+
+.hero h1{
+    font-size: clamp(2rem, 5vw, 3.5rem);
+    font-weight: 900;
+    color: white;
+    line-height: 1.15;
+    margin-bottom: 20px;
+}
+
+.highlight{
+    color: #FACC15;
+}
+
+.hero-texto p{
+    color: #94a3b8;
+    font-size: 1.1rem;
+    max-width: 500px;
+    line-height: 1.7;
+    margin-bottom: 32px;
+}
+
+.hero-botones{
+    display: flex;
+    gap: 14px;
+    flex-wrap: wrap;
+}
+
+/* Botón primario (rojo) */
+.btn-principal{
+    padding: 13px 28px;
+    background: #DC2626;
+    color: white;
+    border: none;
+    border-radius: 10px;
+    font-weight: 700;
+    font-size: 1rem;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.btn-principal:hover{
+    background: #B91C1C;
+    transform: translateY(-2px);
+    box-shadow: 0 8px 20px rgba(220,38,38,0.4);
+}
+
+/* Botón secundario (outline amarillo) */
+.btn-secundario{
+    padding: 13px 28px;
+    border: 2px solid #FACC15;
+    border-radius: 10px;
+    background: transparent;
+    color: #FACC15;
+    font-weight: 700;
+    font-size: 1rem;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.btn-secundario:hover{
+    background: #FACC15;
+    color: #111827;
+    transform: translateY(-2px);
+}
+
+.hero-imagen img{
+    max-width: 440px;
+    width: 100%;
+    border-radius: 20px;
+    filter: drop-shadow(0 20px 40px rgba(0,0,0,0.5));
+}
+
+/* =====================================================
+   ESTADÍSTICAS
+   Barra con contadores animados
+   ===================================================== */
+
+.estadisticas{
+    display: flex;
+    justify-content: center;
+    gap: 60px;
+    padding: 50px 40px;
+    background: #111827;
+    flex-wrap: wrap;
+}
+
+.stat{
+    text-align: center;
+}
+
+.stat .numero{
+    font-size: 3rem;
+    font-weight: 900;
+    color: #FACC15;
+}
+
+.stat > span{
+    font-size: 2rem;
+    font-weight: 900;
+    color: #FACC15;
+}
+
+.stat p{
+    color: #9ca3af;
+    margin-top: 4px;
+    font-size: 0.95rem;
+}
+
+/* =====================================================
+   CÓMO FUNCIONA
+   Cards con número circular y hover flotante
+   ===================================================== */
+
+.como-funciona {
+    padding: 60px;
+    text-align: center;
+    background: #F3F4F6;
+}
+
+.como-funciona h2 {
+    font-size: 1.8rem;
+    font-weight: 800;
+    margin-bottom: 40px;
+    color: #111827;
+}
+
+/* Línea decorativa debajo del título */
+.como-funciona h2::after {
+    content: '';
+    display: block;
+    width: 60px;
+    height: 4px;
+    background: #DC2626;
+    margin: 10px auto 0;
+    border-radius: 99px;
+}
+
+.pasos {
+    display: flex;
+    justify-content: center;
+    gap: 40px;
+    flex-wrap: wrap;
+}
+
+.paso {
+    background: white;
+    border-radius: 15px;
+    padding: 30px 25px;
+    width: 220px;
+    box-shadow: 0 10px 20px rgba(0,0,0,0.07);
+    transition: all 0.3s ease;
+}
+
+.paso:hover {
+    transform: translateY(-6px);
+    box-shadow: 0 20px 40px rgba(0,0,0,0.12);
+}
+
+/* Número circular rojo */
+.paso-numero {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 48px;
+    height: 48px;
+    background: #DC2626;
+    color: white;
+    font-size: 1.4rem;
+    font-weight: 900;
+    border-radius: 50%;
+    margin-bottom: 14px;
+}
+
+.paso h3 {
+    font-size: 1rem;
+    font-weight: 700;
+    margin-bottom: 8px;
+    color: #111827;
+}
+
+.paso p {
+    font-size: 0.9rem;
+    color: #6b7280;
+    line-height: 1.5;
+}
+
+/* =====================================================
+   PREVIEW
+   Vista previa del panel financiero
+   ===================================================== */
+
+.preview {
+    padding: 60px;
+    text-align: center;
+    background: #111827;
+}
+
+.preview h2 {
+    font-size: 1.8rem;
+    font-weight: 800;
+    color: white;
+    margin-bottom: 8px;
+}
+
+.preview p {
+    color: #9ca3af;
+    margin-bottom: 30px;
+}
+
+.preview-imagen img {
+    max-width: 800px;
+    width: 100%;
+    border-radius: 16px;
+    box-shadow: 0 25px 60px rgba(0,0,0,0.5);
+    border: 2px solid rgba(255,255,255,0.1);
+}
+
+/* =====================================================
+   CARDS
+   Tres columnas con iconos y borde rojo superior
+   ===================================================== */
+
+.cards{
+    display:flex;
+    gap:20px;
+    flex-wrap:wrap;
+    padding: 50px 60px;
+    background: #F3F4F6;
+}
+
+.card{
+    flex:1;
+    min-width:220px;
+    background:white;
+    padding:30px 25px;
+    border-radius:15px;
+    box-shadow:0 10px 20px rgba(0,0,0,0.08);
+    border-top:5px solid #DC2626;
+    transition: all 0.3s ease;
+    text-align: center;
+}
+
+.card:hover{
+    transform:translateY(-6px);
+    box-shadow:0 20px 40px rgba(0,0,0,0.12);
+}
+
+.card-icono{
+    font-size: 2.8rem;
+    margin-bottom: 14px;
+    display: block;
+}
+
+.card h3{
+    margin-bottom:10px;
+    color:#DC2626;
+    font-size: 1.1rem;
+}
+
+.card p{
+    font-size: 0.95rem;
+    font-weight: normal;
+    color:#374151;
+    line-height: 1.6;
+}
+
+/* =====================================================
+   OBJETIVO
+   Sección final con el propósito del proyecto
+   ===================================================== */
+
+.objetivo{
+    background: white;
+    padding: 60px;
+    text-align: center;
+}
+
+.objetivo h2{
+    font-size: 1.8rem;
+    font-weight: 800;
+    color: #111827;
+    margin-bottom: 16px;
+}
+
+/* Línea decorativa roja */
+.objetivo h2::after{
+    content: '';
+    display: block;
+    width: 60px;
+    height: 4px;
+    background: #DC2626;
+    margin: 10px auto 0;
+    border-radius: 99px;
+}
+
+.objetivo p{
+    color: #6b7280;
+    font-size: 1.05rem;
+    max-width: 600px;
+    margin: 0 auto;
+    line-height: 1.8;
+}
+
+/* =====================================================
+   RESPONSIVE
+   Ajustes para tablets y móviles
+   ===================================================== */
+
+@media(max-width: 900px) {
+    .hero {
+        flex-direction: column;
+        padding: 50px 24px;
+        text-align: center;
+        min-height: auto;
+    }
+    .hero-botones { justify-content: center; }
+    .hero-imagen img { max-width: 280px; }
+
+    .estadisticas {
+        gap: 30px;
+        padding: 40px 20px;
+    }
+
+    .como-funciona { padding: 40px 20px; }
+    .pasos { flex-direction: column; align-items: center; }
+
+    .preview { padding: 40px 20px; }
+
+    .cards {
+        flex-direction: column;
+        padding: 30px 20px;
+    }
+
+    .objetivo { padding: 40px 20px; }
+}
+
+@media(max-width: 480px) {
+    .hero h1 { font-size: 2rem; }
+    .stat .numero { font-size: 2.2rem; }
+}

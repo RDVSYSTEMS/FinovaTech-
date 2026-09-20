@@ -1,0 +1,180 @@
+/* =====================================================
+   servicios.css — Página de servicios
+   FinovaTech | SENA 2026
+   ===================================================== */
+
+/* =====================================================
+   FONDO GENERAL
+   ===================================================== */
+
+.servicios-main {
+    background: linear-gradient(135deg, #0f172a 0%, #1e293b 60%, #111827 100%);
+    padding: 90px 70px 100px;
+}
+
+/* =====================================================
+   ENCABEZADO DE LA SECCIÓN
+   ===================================================== */
+
+.servicios-header {
+    text-align: center;
+    margin-bottom: 50px;
+    color: white;
+}
+
+.servicios-header .sena-tag {
+    font-size: 0.72rem;
+    font-weight: 500;
+    color: #6ee7b7;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    display: block;
+    margin-bottom: 10px;
+}
+
+.servicios-header h1 {
+    font-size: clamp(1.8rem, 3.5vw, 2.8rem);
+    font-weight: 900;
+    color: white;
+    margin-bottom: 12px;
+    text-shadow: 0 0 20px rgba(220,38,38,0.4);
+}
+
+.servicios-header p {
+    color: #94a3b8;
+    font-size: 1rem;
+    max-width: 480px;
+    margin: 0 auto;
+    line-height: 1.7;
+}
+
+/* =====================================================
+   GRID DE CATÁLOGO
+   4 columnas en desktop, 2 en tablet, 1 en móvil
+   ===================================================== */
+
+.catalogo{
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 30px;
+    max-width: 1400px;
+    margin: 0 auto;
+    align-items: stretch;
+}
+
+/* =====================================================
+   CARD DE PRODUCTO/SERVICIO
+   Efecto glass con hover flotante
+   ===================================================== */
+
+.card-producto{
+    background: rgba(255,255,255,0.05);
+    border: 1px solid rgba(255,255,255,0.1);
+    border-radius: 16px;
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+    min-height: 430px;
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+    transition: transform 0.3s ease, border-color 0.3s ease, box-shadow 0.3s ease;
+}
+
+.card-producto:hover{
+    transform: translateY(-8px);
+    border-color: rgba(110,231,183,0.35);
+    box-shadow: 0 25px 50px rgba(0,0,0,0.45);
+}
+
+/* Imagen superior de la card */
+.card-producto img{
+    display: block;
+    width: 100%;
+    height: 200px;
+    object-fit: cover;
+    flex-shrink: 0;
+    border-bottom: 1px solid rgba(255,255,255,0.08);
+}
+
+/* Cuerpo de la card */
+.card-body{
+    padding: 20px;
+    display: flex;
+    flex-direction: column;
+    flex: 1;
+}
+
+.card-badge{
+    font-weight: 700;
+    letter-spacing: 0.5px;
+    margin-bottom: 8px;
+}
+
+.card-producto h3{
+    font-size: 1.1rem;
+    margin-bottom: 5px;
+    color: white;
+}
+
+.card-producto p{
+    color: #cbd5e1;
+    min-height: 75px;
+    line-height: 1.6;
+    flex: 1;
+}
+
+/* Botón de la card — siempre al fondo */
+.card-producto .btn-card{
+    margin-top: auto;
+    width: 100%;
+    padding: 12px;
+    border: none;
+    border-radius: 12px;
+    background: linear-gradient(135deg, #DC2626, #B91C1C);
+    color: white;
+    font-size: 0.9rem;
+    font-weight: 700;
+    text-decoration: none;
+    cursor: pointer;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 8px;
+    box-shadow: 0 6px 15px rgba(220,38,38,0.35);
+    transition: all 0.3s ease;
+}
+
+.card-producto .btn-card:hover{
+    transform: translateY(-3px);
+    box-shadow: 0 10px 25px rgba(220,38,38,0.5);
+    background: linear-gradient(135deg, #EF4444, #DC2626);
+}
+
+.card-producto .btn-card:active{
+    transform: scale(0.97);
+}
+
+.card-producto a{
+    color: white;
+    text-decoration: none;
+}
+
+/* =====================================================
+   RESPONSIVE
+   ===================================================== */
+
+@media (max-width: 1024px){
+    .catalogo{
+        grid-template-columns: repeat(2, 1fr);
+    }
+}
+
+@media (max-width: 768px){
+    .catalogo{
+        grid-template-columns: 1fr;
+    }
+    .servicios-main {
+        padding: 20px 20px 80px;
+    }
+}

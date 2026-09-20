@@ -1,0 +1,571 @@
+<!DOCTYPE html>
+<!-- ============================================================================
+     FinovaTech v6 — panel.html
+     Panel de control (dashboard) del usuario autenticado.
+     Reconstruido desde cero.
+
+     Datos que entrega Flask (services/datos.py -> get_datos_panel):
+       total_ingresos, total_gastos, balance, total_registros,
+       movimientos[{tipo, descripcion, monto, fecha}],
+       categorias[{categoria, total, porcentaje}], categorias_datos[...],
+       presupuesto{periodo, limite, gastado, disponible, usado},
+       evolucion[{mes, ingresos, gastos}]
+     ============================================================================ -->
+
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <link rel="icon" type="image/svg+xml" href="/static/assets/img/favicon.svg">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Panel - FinovaTech</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;900&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="/static/css/header_footer.css">
+    <link rel="stylesheet" href="/static/css/panel.css">
+</head>
+<body>
+
+    <!-- Header dinámico (lo inyecta global.js según la sesión) -->
+    <div id="header"></div>
+
+    <div class="panel">
+
+        <!-- Botón para abrir/cerrar el menú en móvil -->
+        <button id="sidebar-toggle" class="sidebar-toggle" aria-label="Abrir menú">☰</button>
+
+        <!-- ============ SIDEBAR ============ -->
+        <aside class="panel-sidebar">
+            <div class="sidebar-logo">
+                <div class="sidebar-logo-icono">💰</div>
+                <div class="sidebar-logo-texto">
+                    <strong>Finanzas</strong>
+                    <span>FinovaTech</span>
+                </div>
+            </div>
+
+            <nav class="sidebar-nav">
+                <span class="sidebar-seccion">Menú</span>
+                <a href="/panel" class="sidebar-enlace activo">
+                    <span class="enlace-icono">📊</span> Dashboard
+                </a>
+                <a href="/lista" class="sidebar-enlace">
+                    <span class="enlace-icono">📋</span> Lista
+                </a>
+                <a href="/agendamiento" class="sidebar-enlace">
+                    <span class="enlace-icono">📅</span> Agendar
+                </a>
+                <a href="/notificacion" class="sidebar-enlace">
+                    <span class="enlace-icono">🔔</span> Notificaciones
+                </a>
+            </nav>
+
+            <!-- Reloj y fecha reales (bloque de la barra lateral) -->
+            <div class="sidebar-tiempo">
+                <div class="tiempo-hora" id="hora-ahora">--:--:--</div>
+                <div class="tiempo-fecha">📅 <span id="fecha-hoy"></span></div>
+            </div>
+
+            <a href="/logout" class="sidebar-salir">🚪 Cerrar sesión</a>
+        </aside>
+
+        <!-- ============ CONTENIDO PRINCIPAL ============ -->
+        <main class="panel-contenido">
+
+            <!-- Barra superior: saludo según la hora, reloj y fecha reales -->
+            <section class="panel-topbar">
+                <div class="topbar-saludo">
+                    <h1><span id="saludo-icono">👋</span> <span id="saludo-texto">Hola</span>,
+                        <strong class="bienvenida-nombre">{{ session.get('user_name', 'usuario') }}</strong>
+                    </h1>
+                    <p class="topbar-bienvenida">Este es el estado actual de tus finanzas</p>
+                </div>
+                <div class="topbar-derecha">
+                    <!-- Único botón de acción: agregar movimiento rápido -->
+                    <button type="button" class="btn-agregar" id="btnAgregar">
+                        ＋ Agregar movimiento
+                    </button>
+                </div>
+            </section>
+
+            <!-- Tarjetas de estadísticas (datos reales del usuario) -->
+            <section class="panel-stats">
+                <article class="stat-card stat-verde">
+                    <div class="stat-icono">💰</div>
+                    <div class="stat-dato">
+                        <span class="stat-numero">{{ total_ingresos }}</span>
+                        <span class="stat-etiqueta">Total ingresos</span>
+                        <span class="stat-tendencia" id="tendencia-ingresos"></span>
+                    </div>
+                </article>
+
+                <article class="stat-card stat-rojo">
+                    <div class="stat-icono">💸</div>
+                    <div class="stat-dato">
+                        <span class="stat-numero">{{ total_gastos }}</span>
+                        <span class="stat-etiqueta">Total gastos</span>
+                        <span class="stat-tendencia" id="tendencia-gastos"></span>
+                    </div>
+                </article>
+
+                <article class="stat-card stat-azul">
+                    <div class="stat-icono">🏦</div>
+                    <div class="stat-dato">
+                        <span class="stat-numero">{{ balance }}</span>
+                        <span class="stat-etiqueta">Balance actual</span>
+                    </div>
+                </article>
+
+                <article class="stat-card stat-ambar">
+                    <div class="stat-icono">📋</div>
+                    <div class="stat-dato">
+                        <span class="stat-numero numero" data-target="{{ total_registros }}">{{ total_registros }}</span>
+                        <span class="stat-etiqueta">Total registros</span>
+                    </div>
+                </article>
+            </section>
+
+            <!-- Zona de gráficas y análisis -->
+            <section class="panel-graficas">
+
+                <!-- Gráfica de línea: evolución financiera -->
+                <article class="panel-card tarjeta-evolucion">
+                    <div class="card-cabecera">
+                        <h3>📈 Evolución financiera</h3>
+                        <span class="card-subtitulo">Últimos 6 meses · ingresos vs gastos</span>
+                    </div>
+
+                    {% if hay_evolucion %}
+                    <div class="grafica-caja">
+                        <canvas id="grafEvolucion"></canvas>
+                    </div>
+                    <div class="grafica-leyenda">
+                        <span class="leyenda-item"><i class="leyenda-punto punto-verde"></i> Ingresos</span>
+                        <span class="leyenda-item"><i class="leyenda-punto punto-rojo"></i> Gastos</span>
+                    </div>
+                    {% else %}
+                    <p class="card-vacio">Registra movimientos para ver aquí tu evolución mes a mes.</p>
+                    {% endif %}
+                </article>
+
+                <!-- Columna derecha: dona de categorías + presupuesto -->
+                <div class="columna-lateral">
+
+                    <article class="panel-card">
+                        <div class="card-cabecera">
+                            <h3>Gastos por categoría</h3>
+                        </div>
+                        {% if hay_categorias %}
+                        <div class="grafica-caja caja-dona">
+                            <canvas id="grafCategorias"></canvas>
+                        </div>
+                        {% else %}
+                        <p class="card-vacio">Aún no registras gastos.</p>
+                        {% endif %}
+                    </article>
+
+                    <article class="panel-card">
+                        <div class="card-cabecera">
+                            <h3>Presupuesto del periodo</h3>
+                        </div>
+                        {% if presupuesto %}
+                        <div class="presupuesto-cabecera">
+                            <span class="presupuesto-periodo">{{ presupuesto.periodo }}</span>
+                            <span class="presupuesto-porcentaje">{{ presupuesto.usado }}% usado</span>
+                        </div>
+                        <div class="presupuesto-barra">
+                            <div class="presupuesto-lleno" style="width: {{ presupuesto.usado }}%"></div>
+                        </div>
+                        <div class="presupuesto-valores">
+                            <div><span>{{ presupuesto.gastado }}</span><small>Gastado</small></div>
+                            <div><span>{{ presupuesto.disponible }}</span><small>Disponible</small></div>
+                            <div><span>{{ presupuesto.limite }}</span><small>Límite</small></div>
+                        </div>
+                        {% else %}
+                        <p class="card-vacio">Sin presupuesto configurado aún.</p>
+                        {% endif %}
+                    </article>
+
+                </div>
+            </section>
+
+            <!-- Últimos movimientos (información real, sin botones de más) -->
+            <section class="panel-tabla">
+                <div class="tabla-cabecera">
+                    <h3>Últimos movimientos</h3>
+                    {% if hay_movimientos %}
+                    <span class="tabla-info">{{ movimientos | length }} registros recientes</span>
+                    {% endif %}
+                </div>
+
+                {% if hay_movimientos %}
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Concepto</th>
+                            <th>Monto</th>
+                            <th>Fecha</th>
+                            <th>Tipo</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for m in movimientos %}
+                        <tr>
+                            <td>{{ m.descripcion }}</td>
+                            <td>{{ m.monto }}</td>
+                            <td>{{ m.fecha }}</td>
+                            <td>
+                                <span class="{{ 'etiqueta-ingreso' if m.tipo == 'Ingreso' else 'etiqueta-gasto' }}">{{ m.tipo }}</span>
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+                {% else %}
+                <p class="card-vacio vacio-tabla">Aún no tienes movimientos registrados.</p>
+                {% endif %}
+            </section>
+
+        </main>
+    </div>
+
+    <!-- Footer dinámico -->
+    <div id="footer"></div>
+
+    <button id="btn-arriba" onclick="window.scrollTo({top:0, behavior:'smooth'})">↑</button>
+
+    <!-- Modal: agregar movimiento rápido (gasto o ingreso) -->
+    <div class="modal-fondo" id="modalMovimiento" aria-hidden="true">
+        <div class="modal-caja" role="dialog" aria-modal="true" aria-labelledby="modalTitulo">
+
+            <div class="modal-cabecera">
+                <h3 id="modalTitulo">Nuevo movimiento</h3>
+                <button type="button" class="modal-cerrar" id="btnCerrarModal" aria-label="Cerrar">×</button>
+            </div>
+
+            <form action="/registro/nuevo" method="POST" id="formModal">
+                <input type="hidden" name="tipo" id="tipoSeleccionado" value="Gasto">
+                <!-- Token CSRF: lo valida el servidor en cada POST -->
+                <input type="hidden" name="csrf_token" value="{{ csrf_token }}">
+
+                <div class="selector-tipo">
+                    <button type="button" class="tipo-btn activo" data-tipo="Gasto"
+                            onclick="document.querySelectorAll('.tipo-btn').forEach(function (b) { b.classList.remove('activo'); }); this.classList.add('activo'); document.getElementById('tipoSeleccionado').value='Gasto'; document.getElementById('campoCategoriaModal').style.display=''; document.getElementById('selectCategoria').value='Alimentación';">
+                        💸 Gasto
+                    </button>
+                    <button type="button" class="tipo-btn" data-tipo="Ingreso"
+                            onclick="document.querySelectorAll('.tipo-btn').forEach(function (b) { b.classList.remove('activo'); }); this.classList.add('activo'); document.getElementById('tipoSeleccionado').value='Ingreso'; document.getElementById('campoCategoriaModal').style.display='none'; document.getElementById('selectCategoria').value='Ingreso';">
+                        💰 Ingreso
+                    </button>
+                </div>
+
+                <label class="modal-campo">
+                    <span>Descripción</span>
+                    <input type="text" name="descripcion" maxlength="60"
+                           placeholder="Ej: Almuerzo, pase, mesada..." required>
+                </label>
+
+                <label class="modal-campo">
+                    <span>Monto</span>
+                    <input type="text" name="monto" inputmode="numeric" placeholder="$0" required>
+                </label>
+
+                <label class="modal-campo" id="campoCategoriaModal">
+                    <span>Categoría</span>
+                    <select name="categoria" id="selectCategoria">
+                        <option>Ingreso</option>
+                        <option selected>Alimentación</option>
+                        <option>Transporte</option>
+                        <option>Educación</option>
+                        <option>Ahorro</option>
+                        <option>Ocio</option>
+                        <option>Salud</option>
+                        <option>Servicios</option>
+                        <option>Otros</option>
+                    </select>
+                </label>
+
+                <label class="modal-campo">
+                    <span>Fecha (vacío = hoy)</span>
+                    <input type="date" name="fecha">
+                </label>
+
+                <div class="modal-acciones">
+                    <button type="button" class="btn-cancelar" id="btnCancelar">Cancelar</button>
+                    <button type="submit" class="btn-guardar">Guardar</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Los datos de las gráficas llegan desde Flask en JSON -->
+    <script type="application/json" id="datos-graficas">
+    {
+        "evolucion": {{ evolucion | tojson }},
+        "categorias": {{ categorias_datos | tojson }}
+    }
+    </script>
+
+    <script src="/static/vendor/chart.umd.min.js"></script>
+    <script src="/static/js/global.js"></script>
+
+    <script>
+        // ── Fecha, hora real y saludo según la hora del día ──────
+        (function () {
+            var ahora = new Date();
+            var hora = ahora.getHours();
+
+            var texto = hora < 12 ? "Buenos días" : (hora < 19 ? "Buenas tardes" : "Buenas noches");
+            var icono = hora < 12 ? "🌞" : (hora < 19 ? "🌤️" : "🌙");
+            document.getElementById("saludo-texto").textContent = texto;
+            document.getElementById("saludo-icono").textContent = icono;
+
+            document.getElementById("fecha-hoy").textContent =
+                ahora.toLocaleDateString("es-CO", {
+                    weekday: "long", year: "numeric", month: "long", day: "numeric"
+                });
+
+            function actualizarHora() {
+                document.getElementById("hora-ahora").textContent =
+                    new Date().toLocaleTimeString("es-CO", {
+                        hour: "2-digit", minute: "2-digit", second: "2-digit", hour12: true
+                    });
+            }
+            actualizarHora();
+            setInterval(actualizarHora, 1000);
+        })();
+
+        // ── Tendencia real: mes actual vs mes anterior ───────────
+        // Se calcula con la evolución de los últimos 6 meses que
+        // entrega el servidor, así el porcentaje es de verdad.
+        (function () {
+            var evo = JSON.parse(document.getElementById("datos-graficas").textContent).evolucion;
+            if (!evo || evo.length < 2) return;
+
+            function pintar(id, serie) {
+                var anterior = serie[evo.length - 2];
+                var actual   = serie[evo.length - 1];
+                var el = document.getElementById(id);
+                if (!el) return;
+
+                if (!anterior && !actual) { el.textContent = ""; return; }
+                if (!anterior) {
+                    el.textContent = "▲ nuevo este mes";
+                    el.classList.add("trend-arriba");
+                    return;
+                }
+                var cambio = Math.round((actual - anterior) / anterior * 100);
+                if (cambio === 0) {
+                    el.textContent = "= igual que el mes pasado";
+                    el.classList.add("trend-plano");
+                } else if (cambio > 0) {
+                    el.textContent = "▲ " + cambio + "% vs mes anterior";
+                    el.classList.add("trend-arriba");
+                } else {
+                    el.textContent = "▼ " + Math.abs(cambio) + "% vs mes anterior";
+                    el.classList.add("trend-abajo");
+                }
+            }
+
+            pintar("tendencia-ingresos", evo.map(function (e) { return e.ingresos; }));
+            pintar("tendencia-gastos",   evo.map(function (e) { return e.gastos; }));
+        })();
+    </script>
+
+    <script>
+        // ── Gráficas del panel (Chart.js, librería local) ────────
+        (function () {
+            var datos = JSON.parse(document.getElementById("datos-graficas").textContent);
+
+            var VERDE = "#10b981";
+            var ROJO  = "#ef4444";
+            var TEXTO = "#94a3b8";
+            var LINEA = "rgba(148,163,184,0.15)";
+
+            // 1) EVOLUCIÓN FINANCIERA (línea con área degradada)
+            var lienzoEvo = document.getElementById("grafEvolucion");
+            if (lienzoEvo && window.Chart && datos.evolucion.length) {
+
+                function degradado(ctx, color) {
+                    var g = ctx.createLinearGradient(0, 0, 0, 260);
+                    g.addColorStop(0, color + "40");
+                    g.addColorStop(1, color + "00");
+                    return g;
+                }
+
+                new Chart(lienzoEvo, {
+                    type: "line",
+                    data: {
+                        labels: datos.evolucion.map(function (e) { return e.mes; }),
+                        datasets: [
+                            {
+                                label: "Ingresos",
+                                data: datos.evolucion.map(function (e) { return e.ingresos; }),
+                                borderColor: VERDE,
+                                backgroundColor: function (c) { return degradado(c.chart.ctx, VERDE); },
+                                tension: 0.4,
+                                fill: true,
+                                borderWidth: 3,
+                                pointRadius: 4,
+                                pointBackgroundColor: VERDE,
+                                pointHoverRadius: 7
+                            },
+                            {
+                                label: "Gastos",
+                                data: datos.evolucion.map(function (e) { return e.gastos; }),
+                                borderColor: ROJO,
+                                backgroundColor: function (c) { return degradado(c.chart.ctx, ROJO); },
+                                tension: 0.4,
+                                fill: true,
+                                borderWidth: 3,
+                                pointRadius: 4,
+                                pointBackgroundColor: ROJO,
+                                pointHoverRadius: 7
+                            }
+                        ]
+                    },
+                    options: {
+                        responsive: true,
+                        maintainAspectRatio: false,
+                        animation: { duration: 1200, easing: "easeOutQuart" },
+                        plugins: {
+                            legend: { display: false },
+                            tooltip: {
+                                backgroundColor: "#0f172a",
+                                borderColor: LINEA,
+                                borderWidth: 1,
+                                padding: 12,
+                                titleColor: "#fff",
+                                callbacks: {
+                                    label: function (c) {
+                                        return " " + c.dataset.label + ": $" +
+                                            c.parsed.y.toLocaleString("es-CO");
+                                    }
+                                }
+                            }
+                        },
+                        scales: {
+                            x: {
+                                grid: { display: false },
+                                ticks: { color: TEXTO }
+                            },
+                            y: {
+                                beginAtZero: true,
+                                grid: { color: LINEA },
+                                border: { display: false },
+                                ticks: {
+                                    color: TEXTO,
+                                    maxTicksLimit: 6,
+                                    callback: function (v) { return "$" + v.toLocaleString("es-CO"); }
+                                }
+                            }
+                        }
+                    }
+                });
+            }
+
+            // 2) DONA DE GASTOS POR CATEGORÍA
+            var lienzoDon = document.getElementById("grafCategorias");
+            if (lienzoDon && window.Chart && datos.categorias.length) {
+                var paleta = [
+                    "#DC2626", "#facc15", "#10b981", "#2563eb",
+                    "#f97316", "#a855f7", "#06b6d4", "#ec4899"
+                ];
+
+                new Chart(lienzoDon, {
+                    type: "doughnut",
+                    data: {
+                        labels: datos.categorias.map(function (c) { return c.categoria; }),
+                        datasets: [{
+                            data: datos.categorias.map(function (c) { return c.total; }),
+                            backgroundColor: datos.categorias.map(function (_, i) {
+                                return paleta[i % paleta.length];
+                            }),
+                            borderColor: "#0f172a",
+                            borderWidth: 3,
+                            hoverOffset: 12
+                        }]
+                    },
+                    options: {
+                        responsive: true,
+                        maintainAspectRatio: false,
+                        cutout: "62%",
+                        plugins: {
+                            legend: {
+                                position: "bottom",
+                                labels: { color: TEXTO, boxWidth: 12, padding: 10 }
+                            },
+                            tooltip: {
+                                backgroundColor: "#0f172a",
+                                borderColor: LINEA,
+                                borderWidth: 1,
+                                padding: 12,
+                                callbacks: {
+                                    label: function (c) {
+                                        var suma = c.dataset.data.reduce(function (a, b) { return a + b; }, 0);
+                                        var pct = suma ? Math.round(c.parsed / suma * 100) : 0;
+                                        return " " + c.label + ": $" + c.parsed.toLocaleString("es-CO") + " (" + pct + "%)";
+                                    }
+                                }
+                            }
+                        }
+                    }
+                });
+            }
+        })();
+    </script>
+
+    <script>
+        // ── Modal de movimiento rápido ───────────────────────────
+        (function () {
+            var modal    = document.getElementById("modalMovimiento");
+            var btnAbrir = document.getElementById("btnAgregar");
+            var btnCerrar = document.getElementById("btnCerrarModal");
+            var btnCancelar = document.getElementById("btnCancelar");
+            var tipoOculto  = document.getElementById("tipoSeleccionado");
+            var campoCategoria = document.getElementById("campoCategoriaModal");
+            var selectCategoria = document.getElementById("selectCategoria");
+
+            function abrirModal() {
+                modal.classList.add("abierto");
+                modal.setAttribute("aria-hidden", "false");
+                var desc = modal.querySelector('input[name="descripcion"]');
+                if (desc) desc.focus();
+            }
+
+            function cerrarModal() {
+                modal.classList.remove("abierto");
+                modal.setAttribute("aria-hidden", "true");
+            }
+
+            btnAbrir.addEventListener("click", abrirModal);
+            btnCerrar.addEventListener("click", cerrarModal);
+            btnCancelar.addEventListener("click", cerrarModal);
+
+            // Clic fuera de la caja o tecla Esc también cierran
+            modal.addEventListener("click", function (e) {
+                if (e.target === modal) cerrarModal();
+            });
+            document.addEventListener("keydown", function (e) {
+                if (e.key === "Escape") cerrarModal();
+            });
+
+            // Alternar entre Gasto e Ingreso.
+            // Si es ingreso, la categoría se envía como "Ingreso"
+            // (igual que lo espera el backend) y el selector se oculta.
+            modal.querySelectorAll(".tipo-btn").forEach(function (btn) {
+                btn.addEventListener("click", function () {
+                    modal.querySelectorAll(".tipo-btn").forEach(function (b) {
+                        b.classList.remove("activo");
+                    });
+                    btn.classList.add("activo");
+
+                    var esGasto = btn.dataset.tipo === "Gasto";
+                    tipoOculto.value = btn.dataset.tipo;
+                    campoCategoria.style.display = esGasto ? "" : "none";
+                    if (!esGasto) selectCategoria.value = "Ingreso";
+                });
+            });
+        })();
+    </script>
+
+</body>
+</html>

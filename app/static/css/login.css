@@ -1,0 +1,397 @@
+/* =====================================================
+   login.css — Página de inicio de sesión
+   FinovaTech | SENA 2026
+   ===================================================== */
+
+/* =====================================================
+   FONDO GENERAL
+   ===================================================== */
+
+.login-main {
+    flex: 1;
+    min-height: auto;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    position: relative;
+    background: #0f172a;
+    padding-bottom: 40px;
+}
+
+/* =====================================================
+   VIDEO DE FONDO
+   ===================================================== */
+
+.login-video-bg {
+    position: absolute;
+    top: 0; left: 0;
+    width: 100%; height: 100%;
+    z-index: 0;
+    overflow: hidden;
+}
+
+.login-video-bg video {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.login-overlay {
+    position: absolute;
+    top: 0; left: 0;
+    width: 100%; height: 100%;
+    background: linear-gradient(135deg,
+        rgba(15,23,42,0.92) 0%,
+        rgba(30,41,59,0.88) 60%,
+        rgba(17,24,39,0.92) 100%);
+}
+
+/* =====================================================
+   CONTENIDO
+   ===================================================== */
+
+.login-contenido {
+    position: relative;
+    z-index: 1;
+    display: flex;
+    align-items: center;
+    gap: 60px;
+    padding: 60px 40px;
+    width: 100%;
+    max-width: 1000px;
+    margin: 0 auto;
+}
+
+/* =====================================================
+   LADO IZQUIERDO — Info
+   ===================================================== */
+
+.login-info {
+    flex: 1;
+    color: white;
+}
+
+.login-info h1 {
+    font-size: clamp(2rem, 4vw, 3rem);
+    font-weight: 900;
+    line-height: 1.15;
+    margin: 16px 0;
+    color: white;
+}
+
+.hero-etiqueta {
+    background: rgba(220,38,38,0.15);
+    border: 1px solid #DC2626;
+    color: #fca5a5;
+    padding: 6px 16px;
+    border-radius: 99px;
+    font-size: 13px;
+    font-weight: 600;
+    display: inline-block;
+    margin-bottom: 22px;
+}
+
+.login-info .highlight {
+    background: linear-gradient(135deg, #DC2626, #EF4444);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+}
+
+.login-info > p {
+    color: #94a3b8;
+    font-size: 1rem;
+    line-height: 1.7;
+    max-width: 380px;
+    margin-bottom: 30px;
+}
+
+.login-features {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+
+.login-feature {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    background: rgba(255,255,255,0.06);
+    border: 1px solid rgba(255,255,255,0.1);
+    padding: 12px 16px;
+    border-radius: 10px;
+    transition: transform 0.3s ease, background 0.3s ease, border-color 0.3s ease;
+}
+
+.login-feature:hover {
+    transform: translateX(6px);
+    background: rgba(255,255,255,0.1);
+    border-color: rgba(110,231,183,0.35);
+}
+
+.login-feature span { font-size: 1.4rem; }
+
+.login-feature p {
+    color: #cbd5e1;
+    font-size: 0.9rem;
+    margin: 0;
+}
+
+/* =====================================================
+   CARD DEL FORMULARIO
+   ===================================================== */
+
+.login-card {
+    background: rgba(255,255,255,0.06);
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
+    border: 1px solid rgba(255,255,255,0.12);
+    border-radius: 20px;
+    padding: 40px 36px;
+    width: 100%;
+    max-width: 420px;
+    box-shadow: 0 25px 60px rgba(0,0,0,0.4);
+}
+
+.login-card-header {
+    text-align: center;
+    margin-bottom: 28px;
+}
+
+.login-card-header img {
+    border-radius: 50%;
+    margin-bottom: 12px;
+}
+
+.login-card-header h2 {
+    color: white;
+    font-size: 1.5rem;
+    font-weight: 800;
+    margin-bottom: 4px;
+}
+
+.login-card-header p {
+    color: #94a3b8;
+    font-size: 0.9rem;
+}
+
+/* Inputs dentro del card */
+.login-card .grupo-formulario {
+    display: flex;
+    flex-direction: column;
+    margin-bottom: 12px;
+}
+
+.login-card .grupo-formulario label {
+    color: #cbd5e1;
+    font-size: 0.9rem;
+    font-weight: 500;
+    margin-bottom: 5px;
+}
+
+.login-card .grupo-formulario input {
+    padding: 12px;
+    border: 1px solid rgba(255,255,255,0.15);
+    border-radius: 10px;
+    outline: none;
+    background: rgba(255,255,255,0.08);
+    color: white;
+    font-size: 0.9rem;
+    font-family: inherit;
+    transition: border-color 0.25s, background 0.25s, box-shadow 0.25s;
+}
+
+.login-card .grupo-formulario input::placeholder {
+    color: #64748b;
+}
+
+.login-card .grupo-formulario input:focus {
+    border-color: #DC2626;
+    background: rgba(255,255,255,0.12);
+    box-shadow: 0 0 0 3px rgba(220,38,38,0.15);
+}
+
+/* Input password con ojo */
+.input-password {
+    position: relative;
+    display: flex;
+}
+
+.input-password input {
+    flex: 1;
+    padding-right: 50px !important;
+}
+
+.btn-toggle-pass {
+    position: absolute;
+    right: 8px;
+    top: 50%;
+    transform: translateY(-50%);
+    background: transparent !important;
+    border: none;
+    cursor: pointer;
+    padding: 4px 8px;
+    font-size: 1rem;
+    color: #94a3b8;
+    box-shadow: none !important;
+    transition: transform 0.2s ease;
+}
+
+.btn-toggle-pass:hover {
+    transform: translateY(-50%) scale(1.15);
+}
+
+/* Recordarme y olvidé contraseña */
+.login-opciones {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin: 4px 0 16px;
+}
+
+.checkbox-label {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    color: #94a3b8;
+    font-size: 0.85rem;
+    cursor: pointer;
+}
+
+.checkbox-label input {
+    width: auto;
+    padding: 0;
+    accent-color: #DC2626;
+}
+
+.link-olvide {
+    color: #FACC15;
+    font-size: 0.85rem;
+    text-decoration: none;
+    transition: opacity 0.2s ease;
+}
+
+.link-olvide:hover { opacity: 0.7; }
+
+/* =====================================================
+   BOTÓN PRINCIPAL
+   ===================================================== */
+
+.btn-principal.w-full {
+    width: 100%;
+    height: 44px;
+    border-radius: 10px;
+    font-size: 0.9rem;
+    font-weight: 600;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    background: linear-gradient(135deg, #DC2626, #B91C1C);
+    color: white;
+    border: none;
+    box-shadow: 0 4px 14px rgba(220,38,38,0.35);
+    transition: background 0.2s, transform 0.15s, box-shadow 0.2s;
+}
+
+.btn-principal.w-full:hover {
+    background: linear-gradient(135deg, #EF4444, #DC2626);
+    transform: translateY(-2px);
+    box-shadow: 0 6px 20px rgba(220,38,38,0.5);
+}
+
+.btn-principal.w-full:active {
+    transform: scale(0.97);
+}
+
+.btn-principal.w-full:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+    transform: none;
+}
+
+/* =====================================================
+   MENSAJES ERROR / ÉXITO
+   ===================================================== */
+
+.login-mensaje {
+    padding: 10px 14px;
+    border-radius: 10px;
+    font-size: 0.9rem;
+    margin-bottom: 16px;
+    text-align: center;
+}
+
+.login-mensaje.error {
+    background: rgba(220,38,38,0.15);
+    border: 1px solid #DC2626;
+    color: #fca5a5;
+}
+
+.login-mensaje.exito {
+    background: rgba(16,185,129,0.15);
+    border: 1px solid #10b981;
+    color: #6ee7b7;
+}
+
+/* =====================================================
+   LINK A REGISTRO
+   ===================================================== */
+
+.login-registro {
+    text-align: center;
+    margin-top: 20px;
+    color: #94a3b8;
+    font-size: 0.9rem;
+}
+
+.login-registro a {
+    color: #FACC15;
+    font-weight: 600;
+    text-decoration: none;
+    transition: opacity 0.2s ease;
+}
+
+.login-registro a:hover { opacity: 0.8; }
+
+/* =====================================================
+   ANIMACIÓN SHAKE
+   ===================================================== */
+
+@keyframes shake {
+    0%, 100% { transform: translateX(0); }
+    25%       { transform: translateX(-8px); }
+    75%       { transform: translateX(8px); }
+}
+
+/* =====================================================
+   RESPONSIVE
+   ===================================================== */
+
+@media (max-width: 768px) {
+    .login-contenido {
+        flex-direction: column;
+        padding: 40px 20px;
+        gap: 30px;
+    }
+    .login-info {
+        text-align: center;
+    }
+    .login-info > p {
+        max-width: 100%;
+        margin-left: auto;
+        margin-right: auto;
+    }
+    .login-features {
+        align-items: center;
+    }
+    .login-feature {
+        width: 100%;
+        max-width: 320px;
+    }
+    .login-card {
+        max-width: 100%;
+        padding: 28px 20px;
+    }
+}

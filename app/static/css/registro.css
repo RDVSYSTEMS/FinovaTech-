@@ -1,0 +1,508 @@
+/* =====================================================
+   registra.css — Página de registro de usuario
+   FinovaTech | SENA 2026
+
+   Diseño de dos columnas: info con beneficios a la
+   izquierda, formulario de registro a la derecha.
+   Video de fondo con overlay oscuro.
+   ===================================================== */
+
+/* =====================================================
+   CONTENEDOR PRINCIPAL
+   ===================================================== */
+
+.registro-main {
+    position: relative;
+    padding: 90px 20px 100px;
+    background: #0f172a;
+}
+
+/* =====================================================
+   VIDEO DE FONDO
+   ===================================================== */
+
+.registro-video-bg {
+    position: absolute;
+    top: 0; left: 0;
+    width: 100%; height: 100%;
+    z-index: 0;
+}
+
+.registro-video-bg video {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.registro-overlay {
+    position: absolute;
+    top: 0; left: 0;
+    width: 100%; height: 100%;
+    background: linear-gradient(135deg,
+        rgba(15,23,42,0.92) 0%,
+        rgba(30,41,59,0.88) 60%,
+        rgba(17,24,39,0.92) 100%);
+    z-index: 0;
+}
+
+/* =====================================================
+   CONTENEDOR FLEX — Dos columnas
+   ===================================================== */
+
+.registro-contenido {
+    position: relative;
+    z-index: 1;
+    display: flex;
+    align-items: center;
+    gap: 60px;
+    width: 100%;
+    max-width: 1050px;
+    margin: 0 auto;
+}
+
+/* =====================================================
+   COLUMNA IZQUIERDA — Info y beneficios
+   ===================================================== */
+
+.registro-info {
+    flex: 1;
+    color: white;
+}
+
+.registro-info .sena-tag {
+    font-size: 0.72rem;
+    font-weight: 500;
+    color: #6ee7b7;
+    letter-spacing: 0.08em;
+    display: block;
+    margin-bottom: 10px;
+}
+
+.registro-info h1 {
+    font-size: clamp(1.8rem, 3.5vw, 2.6rem);
+    font-weight: 900;
+    line-height: 1.2;
+    margin: 0 0 14px;
+    color: white;
+}
+
+.registro-info > p {
+    color: #94a3b8;
+    font-size: 0.95rem;
+    line-height: 1.7;
+    max-width: 360px;
+    margin-bottom: 28px;
+}
+
+/* Imagen decorativa con hover zoom */
+.registro-imagen-inner {
+    width: 100%;
+    max-width: 280px;
+    border-radius: 16px;
+    overflow: hidden;
+    border: 1px solid rgba(255,255,255,0.08);
+    margin-bottom: 28px;
+}
+
+.registro-imagen-inner img {
+    width: 100%;
+    height: 180px;
+    object-fit: cover;
+    transition: transform 0.5s ease;
+    display: block;
+}
+
+.registro-imagen-inner img:hover {
+    transform: scale(1.06);
+}
+
+/* =====================================================
+   TARJETAS DE BENEFICIOS
+   Iconos con colores semánticos y flecha animada
+   ===================================================== */
+
+.registro-beneficios {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.beneficio-card {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 12px;
+    background: rgba(255,255,255,0.07);
+    border: 1px solid rgba(255,255,255,0.1);
+    border-radius: 10px;
+    padding: 12px 16px;
+    cursor: default;
+    transition: transform 0.3s ease, background 0.3s ease, border-color 0.3s ease;
+    animation: fadeSlideIn 0.5s ease both;
+}
+
+.beneficio-card:nth-child(1) { animation-delay: 0.1s; }
+.beneficio-card:nth-child(2) { animation-delay: 0.2s; }
+.beneficio-card:nth-child(3) { animation-delay: 0.3s; }
+
+@keyframes fadeSlideIn {
+    from { opacity: 0; transform: translateX(-16px); }
+    to   { opacity: 1; transform: translateX(0); }
+}
+
+.beneficio-card:hover {
+    transform: translateX(6px);
+    background: rgba(255,255,255,0.11);
+    border-color: rgba(110,231,183,0.3);
+}
+
+.beneficio-icono {
+    width: 36px;
+    height: 36px;
+    border-radius: 10px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 17px;
+    flex-shrink: 0;
+    transition: transform 0.3s ease;
+}
+
+.beneficio-card:hover .beneficio-icono {
+    transform: scale(1.12);
+}
+
+.beneficio-icono.verde { background: rgba(16,185,129,0.15); color: #6ee7b7; }
+.beneficio-icono.ambar { background: rgba(251,191,36,0.15);  color: #fbbf24; }
+.beneficio-icono.azul  { background: rgba(96,165,250,0.15);  color: #60a5fa; }
+
+.beneficio-texto p    { font-size: 0.85rem; font-weight: 500; color: #cbd5e1; }
+.beneficio-texto span { font-size: 0.72rem; color: #64748b; }
+
+/* Flecha animada tipo CTA */
+.beneficio-flecha {
+    font-size: 1rem;
+    color: rgba(255,255,255,0.2);
+    flex-shrink: 0;
+    transition: transform 0.3s ease, color 0.3s ease;
+    animation: pulseArrow 1.5s ease-in-out infinite;
+}
+
+.beneficio-card:hover .beneficio-flecha {
+    color: #6ee7b7;
+    transform: translateX(5px);
+    animation: none;
+}
+
+@keyframes pulseArrow {
+    0%, 100% { transform: translateX(0);   opacity: 0.3; }
+    50%       { transform: translateX(5px); opacity: 1;   }
+}
+
+/* =====================================================
+   COLUMNA DERECHA — Card del formulario
+   Efecto glass con blur de 20px y sombra profunda
+   ===================================================== */
+
+.registro-card {
+    background: rgba(255,255,255,0.06);
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
+    border: 1px solid rgba(255,255,255,0.12);
+    border-radius: 20px;
+    padding: 40px 36px;
+    width: 100%;
+    max-width: 440px;
+    box-shadow: 0 25px 60px rgba(0,0,0,0.4);
+    animation: fadeIn 0.4s ease;
+}
+
+@keyframes fadeIn {
+    from { opacity: 0; transform: translateY(12px); }
+    to   { opacity: 1; transform: translateY(0); }
+}
+
+.registro-card-header {
+    text-align: center;
+    margin-bottom: 24px;
+}
+
+/* Círculo decorativo con icono en el header */
+.registro-card-header .logo-circle {
+    width: 46px;
+    height: 46px;
+    border-radius: 50%;
+    background: #e11d48;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: 0 auto 10px;
+    font-size: 1.2rem;
+    color: white;
+    transition: transform 0.3s ease;
+}
+
+.registro-card-header .logo-circle:hover {
+    transform: rotate(8deg) scale(1.08);
+}
+
+.registro-card-header h2 {
+    color: white;
+    font-size: 1.45rem;
+    font-weight: 800;
+    margin-bottom: 4px;
+}
+
+.registro-card-header p {
+    color: #94a3b8;
+    font-size: 0.85rem;
+}
+
+/* =====================================================
+   INPUTS DEL FORMULARIO
+   Fondo semitransparente, borde sutil, foco verde
+   ===================================================== */
+
+.registro-card .grupo-formulario {
+    display: flex;
+    flex-direction: column;
+    margin-bottom: 12px;
+}
+
+.registro-card .grupo-formulario label {
+    color: #cbd5e1;
+    font-size: 0.82rem;
+    font-weight: 500;
+    margin-bottom: 5px;
+}
+
+.registro-card .grupo-formulario input,
+.registro-card .grupo-formulario select {
+    width: 100%;
+    height: 42px;
+    padding: 0 12px;
+    background: rgba(255,255,255,0.08);
+    border: 1px solid rgba(255,255,255,0.15);
+    border-radius: 10px;
+    color: white;
+    font-size: 0.88rem;
+    font-family: inherit;
+    outline: none;
+    transition: border-color 0.25s, background 0.25s, box-shadow 0.25s;
+}
+
+.registro-card .grupo-formulario input::placeholder {
+    color: #64748b;
+}
+
+.registro-card .grupo-formulario select option {
+    background: #1e293b;
+    color: white;
+}
+
+.registro-card .grupo-formulario input:focus,
+.registro-card .grupo-formulario select:focus {
+    border-color: #10b981;
+    background: rgba(255,255,255,0.12);
+    box-shadow: 0 0 0 3px rgba(16,185,129,0.15);
+}
+
+/* =====================================================
+   INPUT DE CONTRASEÑA — Botón toggle visibilidad
+   ===================================================== */
+
+.input-password {
+    position: relative;
+    display: flex;
+}
+
+.input-password input {
+    flex: 1;
+    padding-right: 44px !important;
+}
+
+.btn-toggle-pass {
+    position: absolute;
+    right: 10px;
+    top: 50%;
+    transform: translateY(-50%);
+    background: transparent !important;
+    border: none;
+    cursor: pointer;
+    padding: 4px;
+    font-size: 1rem;
+    color: #94a3b8;
+    box-shadow: none !important;
+    transition: color 0.2s, transform 0.2s;
+}
+
+.btn-toggle-pass:hover {
+    color: #6ee7b7;
+    transform: translateY(-50%) scale(1.15);
+    background: transparent !important;
+}
+
+/* =====================================================
+   BOTONES — Crear cuenta y Limpiar
+   ===================================================== */
+
+.registro-botones {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    margin-top: 14px;
+}
+
+.registro-botones .btn-primario {
+    width: 100%;
+    height: 44px;
+    border-radius: 10px;
+    font-size: 0.9rem;
+    font-weight: 600;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    background: linear-gradient(135deg, #DC2626, #B91C1C);
+    color: white;
+    border: none;
+    box-shadow: 0 4px 14px rgba(220,38,38,0.35);
+    transition: background 0.2s, transform 0.15s, box-shadow 0.2s;
+}
+
+.registro-botones .btn-primario:hover {
+    background: linear-gradient(135deg, #EF4444, #DC2626);
+    transform: translateY(-2px);
+    box-shadow: 0 6px 20px rgba(220,38,38,0.5);
+}
+
+.registro-botones .btn-primario:active {
+    transform: scale(0.97);
+    box-shadow: none;
+}
+
+.registro-botones .btn-secundario {
+    width: 100%;
+    height: 40px;
+    border-radius: 10px;
+    font-size: 0.85rem;
+    font-weight: 500;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: transparent;
+    color: #94a3b8;
+    border: 1px solid rgba(255,255,255,0.12);
+    transition: background 0.2s, color 0.2s, transform 0.15s;
+}
+
+.registro-botones .btn-secundario:hover {
+    background: rgba(255,255,255,0.06);
+    color: #cbd5e1;
+    transform: translateY(-1px);
+}
+
+.registro-botones .btn-secundario:active {
+    transform: scale(0.97);
+}
+
+/* =====================================================
+   MENSAJES DE RETROALIMENTACIÓN
+   ===================================================== */
+
+.registro-mensaje {
+    padding: 10px 14px;
+    border-radius: 10px;
+    font-size: 0.85rem;
+    margin-bottom: 14px;
+    text-align: center;
+    animation: fadeIn 0.3s ease;
+}
+
+.registro-mensaje.error {
+    background: rgba(220,38,38,0.15);
+    border: 1px solid #DC2626;
+    color: #fca5a5;
+}
+
+.registro-mensaje.exito {
+    background: rgba(16,185,129,0.15);
+    border: 1px solid #10b981;
+    color: #6ee7b7;
+}
+
+/* =====================================================
+   ENLACE — Ir a iniciar sesión
+   ===================================================== */
+
+.registro-link {
+    text-align: center;
+    margin-top: 18px;
+    color: #94a3b8;
+    font-size: 0.85rem;
+}
+
+.registro-link a {
+    color: #FACC15;
+    font-weight: 600;
+    text-decoration: none;
+    transition: opacity 0.2s;
+}
+
+.registro-link a:hover { opacity: 0.75; }
+
+/* =====================================================
+   ANIMACIÓN SHAKE para errores
+   ===================================================== */
+
+@keyframes shake {
+    0%, 100% { transform: translateX(0); }
+    25%       { transform: translateX(-8px); }
+    75%       { transform: translateX(8px); }
+}
+
+.shake { animation: shake 0.35s ease; }
+
+/* =====================================================
+   RESPONSIVE — Tablets y móviles
+   ===================================================== */
+
+@media (max-width: 900px) {
+    .registro-contenido {
+        flex-direction: column;
+        padding: 40px 20px;
+        gap: 30px;
+    }
+
+    .registro-info {
+        text-align: center;
+    }
+
+    .registro-info > p {
+        max-width: 100%;
+        margin-left: auto;
+        margin-right: auto;
+    }
+
+    .registro-imagen-inner {
+        max-width: 200px;
+        margin-left: auto;
+        margin-right: auto;
+    }
+
+    .registro-beneficios {
+        align-items: center;
+    }
+
+    .beneficio-card {
+        width: 100%;
+        max-width: 320px;
+    }
+
+    .registro-card {
+        max-width: 100%;
+        padding: 30px 20px;
+    }
+}
