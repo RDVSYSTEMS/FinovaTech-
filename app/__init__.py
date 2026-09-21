@@ -23,6 +23,7 @@ from app.config import Config
 
 
 def create_app():
+    """Construye la aplicación y registra sus límites funcionales."""
     app = Flask(__name__, static_folder="static", template_folder="templates")
     app.secret_key = Config.SECRET_KEY
 
@@ -32,7 +33,7 @@ def create_app():
         SESSION_COOKIE_SAMESITE="Lax",
     )
 
-    # Registro de blueprints (cada uno conserva las URLs de v8)
+    # Cada blueprint agrupa una parte del sistema y conserva sus rutas públicas.
     from app.blueprints.publicas import publicas_bp
     from app.blueprints.panel import panel_bp
     from app.blueprints.registros import registros_bp

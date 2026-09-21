@@ -1,10 +1,10 @@
-# REQUISITOS DEL PROYECTO — FinovaTech v9
+# REQUISITOS DEL PROYECTO — FinovaTech v10
 
 **Proyecto:** Sistema de Finanzas Personales para Estudiantes de Bachillerato
 **Empresa desarrolladora:** RDV Systems
 **Entidad formadora:** SENA
-**Versión del documento:** 1.0.0
-**Estado:** Validado con cliente simulado (contexto educativo)
+**Versión del documento:** 10.0.0
+**Estado:** Documentación consolidada de la versión v10 (contexto educativo)
 
 ---
 
@@ -33,6 +33,7 @@ aplicación web educativa. El alcance cubre:
 - Panel de resumen con totales, gráficas y evolución mensual.
 - Presupuesto mensual con alertas.
 - Notificaciones automáticas sobre el comportamiento financiero.
+- Agendamiento de sesiones de educación financiera.
 - Generación de reportes (procedimiento almacenado).
 - Vista de resumen financiero por usuario (vista SQL).
 
@@ -107,6 +108,11 @@ en línea, y despliegue en servidores de producción externos.
 ### RF-09 Páginas institucionales
 - Inicio, contacto, servicios, soporte y términos accesibles sin sesión.
 
+### RF-10 Agendamiento de sesiones
+- Permite reservar una sesión indicando fecha, hora, categoría, estado y comentarios.
+- Rechaza fechas anteriores al día actual y valores no permitidos.
+- Guarda cada agendamiento asociado al usuario autenticado.
+
 ---
 
 ## 5. Requisitos no funcionales
@@ -127,8 +133,8 @@ en línea, y despliegue en servidores de producción externos.
 ## 6. Requisitos de base de datos
 
 - Motor InnoDB en tablas de negocio; utf8mb4 / utf8mb4_general_ci.
-- Siete tablas: `administrador`, `usuario`, `estudiante`, `ingreso`,
-  `gasto`, `presupuesto`, `reporte`.
+- Ocho tablas: `administrador`, `usuario`, `estudiante`, `ingreso`,
+  `gasto`, `presupuesto`, `reporte`, `agendamiento`.
 - Cuatro triggers que mantienen `estudiante.saldo_actual`.
 - Cuatro stored procedures: `sp_registrar_movimiento`,
   `sp_eliminar_movimiento`, `sp_resumen_mensual`, `sp_generar_reporte`.
@@ -147,11 +153,61 @@ en línea, y despliegue en servidores de producción externos.
 6. Tras 5 intentos fallidos de login, la cuenta se bloquea temporalmente.
 7. Con MySQL apagado, la aplicación avisa (no crashea) en el arranque.
 8. El usuario `root` de XAMPP (sin contraseña) conecta sin cambios.
+9. Una sesión válida de agendamiento se guarda asociada al usuario autenticado.
+10. Una fecha anterior al día actual o un valor no permitido se rechaza.
 
 ---
 
 ## 8. Verificación
 
 - `tests/test_smoke.py` cubre: públicas 200, protegidas → login,
-  registro de usuario, login demo + panel, CSRF bloquea POST.
+  aliases `.html`, registro de usuario, login demo + panel, acceso a lista
+  y rechazo de POST sin token CSRF.
+- La suite smoke requiere MySQL/MariaDB encendido, el esquema aplicado y la
+  cuenta demo disponible; no sustituye pruebas unitarias o de navegador.
 - Script `scripts/seed_demo.py` genera datos de demostración repetibles.
+
+---
+
+## 9. Mapa de rutas
+
+### Rutas públicas
+
+| Método | Ruta | Responsabilidad |
+|---|---|---|
+| GET | `/` | Página principal. |
+| GET/POST | `/login` | Inicio de sesión y validación de credenciales. |
+| GET/POST | `/registro` | Creación de cuentas y perfil de estudiante. |
+| GET | `/logout` | Cierre de sesión. |
+| GET | `/<pagina>.html` | Aliases de páginas públicas permitidas. |
+
+### Rutas protegidas
+
+| Método | Ruta | Responsabilidad |
+|---|---|---|
+| GET | `/panel` | Resumen financiero y gráficas. |
+| GET | `/lista` | Historial de ingresos y gastos. |
+| POST | `/registro/nuevo` | Creación de un ingreso o gasto. |
+| POST | `/registro/eliminar/<tipo>/<id>` | Eliminación autorizada de un movimiento. |
+| GET | `/notificacion` | Notificaciones calculadas del usuario. |
+| GET | `/agendamiento` | Formulario para reservar una sesión. |
+| POST | `/agendamiento` | Validación y guardado de una sesión. Devuelve JSON. |
+
+Todas las rutas `POST` requieren `csrf_token`. Las rutas protegidas requieren
+una sesión activa y limitan las operaciones a los datos del usuario actual.
+
+## 10. Contrato de agendamiento
+
+El formulario envía estos campos mediante `POST /agendamiento`:
+
+| Campo | Obligatorio | Valores o formato |
+|---|---|---|
+| `fecha` | Sí | `YYYY-MM-DD`, desde el día actual. |
+| `hora` | Sí | `HH:MM`. |
+| `categoria` | Sí | `reserva`, `consultoria` o `taller`. |
+| `estado` | No | `pendiente`, `confirmado`, `cancelado` o `completado`. |
+| `comentarios` | No | Texto de hasta 1000 caracteres. |
+| `csrf_token` | Sí | Token de seguridad de la sesión. |
+
+Una respuesta exitosa devuelve `{ "ok": true, "mensaje": "..." }`. Los
+errores de validación devuelven HTTP 400 con `ok: false` y un mensaje.

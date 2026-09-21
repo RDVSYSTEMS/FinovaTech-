@@ -62,6 +62,8 @@ def get_estudiante_id(usuario_id: int):
 def get_datos_panel(usuario_id: int) -> dict:
     """Todos los datos que necesita panel.html (totales, movimientos, categorías,
     presupuesto y evolución mensual)."""
+    # Se devuelve una estructura completa incluso sin perfil o movimientos,
+    # para que el template pueda renderizar estados vacíos sin condiciones extra.
     datos = {
         "total_ingresos": "$0",
         "total_gastos": "$0",
@@ -289,6 +291,7 @@ def crear_registro(usuario_id: int, tipo: str, descripcion: str,
     if estudiante_id is None:
         return False, "Tu cuenta aún no tiene perfil de estudiante."
 
+    # La tabla se selecciona de una lista blanca; los valores siguen parametrizados.
     tablas = {"Ingreso": "ingreso", "Gasto": "gasto"}
     tabla = tablas.get(tipo)
     if tabla is None:
@@ -301,6 +304,7 @@ def crear_registro(usuario_id: int, tipo: str, descripcion: str,
     if not fecha:
         fecha = date.today().isoformat()
 
+    # El estudiante_id en el DELETE impide borrar registros de otra cuenta.
     conn = get_connection()
     try:
         with conn.cursor() as cur:
@@ -365,6 +369,8 @@ def get_notificaciones(usuario_id: int) -> dict:
     if estudiante_id is None:
         return vacio
 
+    # Las notificaciones se calculan al consultar; no se duplica información
+    # derivada en una tabla adicional.
     avisos = []
     hoy = date.today()
 

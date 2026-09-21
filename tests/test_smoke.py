@@ -1,6 +1,13 @@
-"""Smoke test de FinovaTech v9: rutas públicas, protegidas, login real y CSRF."""
+"""Pruebas smoke del flujo principal de FinovaTech v9.
+
+Comprueba que la aplicación pueda arrancar, que las rutas públicas respondan,
+que las rutas privadas exijan autenticación y que los formularios respeten
+la protección CSRF. Estas pruebas usan la base de datos configurada y la
+cuenta demo, por lo que sirven como verificación rápida de integración local.
+"""
 import os
 import sys
+import uuid
 
 sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
@@ -11,12 +18,14 @@ app.config["TESTING"] = True
 
 
 def obtener_csrf(client, url="/login"):
+    """Obtiene una página para inicializar la sesión y su token CSRF."""
     r = client.get(url)
     assert r.status_code == 200, f"GET {url} -> {r.status_code}"
     return r, None
 
 
 def test_publicas():
+    """Las páginas públicas deben responder sin sesión con HTTP 200."""
     client = app.test_client()
     for url in ("/", "/login", "/registro", "/contacto.html", "/servicios.html"):
         r = client.get(url)
@@ -25,6 +34,7 @@ def test_publicas():
 
 
 def test_protegidas_sin_sesion():
+    """Las rutas privadas deben redirigir al login cuando no hay sesión."""
     client = app.test_client()
     for url in ("/panel", "/lista", "/notificacion", "/agendamiento"):
         r = client.get(url)
@@ -33,17 +43,29 @@ def test_protegidas_sin_sesion():
         print(f"OK  protegida {url} -> redirige a login")
 
 
+def test_aliases_login_registro_html():
+    """Los aliases .html de login y registro siguen disponibles."""
+    client = app.test_client()
+    for url in ("/login.html", "/registro.html"):
+        r = client.get(url)
+        assert r.status_code == 200, f"GET {url} -> {r.status_code}"
+        print(f"OK  alias público {url}")
+
+
 def test_registro():
+    """Registra un usuario nuevo usando un correo y usuario irrepetibles."""
     client = app.test_client()
     r, _ = obtener_csrf(client, "/registro")
-    # Extraemos el token CSRF de la plantilla
     import re
     token = re.search(r'name="csrf_token" value="([^"]+)"', r.get_data(as_text=True)).group(1)
-    email = "smoke@test.local"
+    # El sufijo evita colisiones al ejecutar la prueba varias veces.
+    unique = uuid.uuid4().hex[:8]
+    email = f"smoke_{unique}@test.local"
+    username = f"smoketest_{unique}"
     r = client.post("/registro", data={
         "full_name": "Smoke Test",
         "email": email,
-        "username": "smoketest",
+        "username": username,
         "password": "12345678x",
         "confirm_password": "12345678x",
         "user_type": "estudiante",
@@ -55,6 +77,7 @@ def test_registro():
 
 
 def test_login_panel():
+    """La cuenta demo puede iniciar sesión y acceder al panel."""
     client = app.test_client()
     r, _ = obtener_csrf(client, "/login")
     import re
@@ -75,6 +98,7 @@ def test_login_panel():
 
 
 def test_lista_y_csrf():
+    """La lista exige sesión y el servidor rechaza POST sin CSRF."""
     client = app.test_client()
     r, _ = obtener_csrf(client, "/login")
     import re

@@ -1,5 +1,5 @@
 /* =====================================================
-   SCRIPT.JS — Sistema de FinovaTech v5
+    SCRIPT.JS — Sistema de FinovaTech v10
    FinovaTech — SENA 2026
    
    Archivo principal del frontend. Se carga en TODAS las
@@ -69,11 +69,11 @@ document.addEventListener("DOMContentLoaded", function () {
         </nav>
     ` : `
         <nav class="menu-superior">
-            <a href="index.html">Inicio</a>
-            <a href="servicios.html">Servicios</a>
-            <a href="agendamiento.html">Agendar</a>
-            <a href="login.html">Iniciar sesión</a>
-            <a href="registro.html" class="btn-nav">Registrarse</a>
+            <a href="/">Inicio</a>
+            <a href="/servicios.html">Servicios</a>
+            <a href="/agendamiento">Agendar</a>
+            <a href="/login">Iniciar sesión</a>
+            <a href="/registro" class="btn-nav">Registrarse</a>
         </nav>
     `;
 
@@ -104,9 +104,9 @@ document.addEventListener("DOMContentLoaded", function () {
             <p>© 2026 FinovaTech. Todos los derechos reservados.</p>
             <p>Proyecto desarrollado para el SENA - Técnico en Programación de Software.</p>
             <div class="footer-links">
-                <a href="contacto.html">Contacto y Créditos</a>
-                <a href="soporte.html">Soporte</a>
-                <a href="terminos.html">Términos y condiciones</a>
+                <a href="/contacto.html">Contacto y Créditos</a>
+                <a href="/soporte.html">Soporte</a>
+                <a href="/terminos.html">Términos y condiciones</a>
             </div>
         </footer>`;
     }
@@ -172,7 +172,7 @@ window.addEventListener("scroll", function () {
     if (form) {
         form.addEventListener("submit", function (event) {
             event.preventDefault();
-            // TODO: enviar datos a Flask
+            // Este formulario pertenece al flujo legacy aún pendiente de backend.
             alert("✅ Información guardada");
             window.location.href = "lista.html";
         });
@@ -212,7 +212,7 @@ if (formSoporte) {
             return;
         }
 
-        // TODO: enviar datos a Flask
+        // Soporte muestra confirmación local; todavía no crea tickets persistentes.
         error.style.display  = "none";
         exito.style.display  = "block";
         formSoporte.reset();
@@ -260,14 +260,31 @@ if (formAgenda) {
             return;
         }
 
-        // TODO: enviar datos a Flask
-        error.style.display  = "none";
-        exito.style.display  = "block";
-        formAgenda.reset();
-
-        setTimeout(function () {
-            exito.style.display = "none";
-        }, 4000);
+        const datos = new FormData(formAgenda);
+        fetch("/agendamiento", {
+            method: "POST",
+            body: datos,
+            headers: { "X-Requested-With": "XMLHttpRequest" }
+        })
+            .then(function (respuesta) {
+                return respuesta.json().then(function (resultado) {
+                    if (!respuesta.ok) {
+                        throw new Error(resultado.mensaje || "No fue posible guardar la sesión");
+                    }
+                    return resultado;
+                });
+            })
+            .then(function (resultado) {
+                error.style.display = "none";
+                exito.textContent = "✅ " + resultado.mensaje;
+                exito.style.display = "block";
+                formAgenda.reset();
+            })
+            .catch(function (fallo) {
+                error.textContent = "❌ " + fallo.message;
+                error.style.display = "block";
+                exito.style.display = "none";
+            });
     });
 }
 

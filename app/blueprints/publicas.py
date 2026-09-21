@@ -17,11 +17,13 @@ ROLES_PERMITIDOS = {"estudiante", "empleado", "padre"}
 
 @publicas_bp.route("/")
 def index():
+    """Renderiza la página pública de inicio."""
     return render_template("index.html")
 
 
 @publicas_bp.route("/login", methods=["GET", "POST"])
 def login():
+    """Autentica al usuario y rota la sesión al iniciar correctamente."""
     error_message = None
 
     if request.method == "POST":
@@ -62,6 +64,7 @@ def login():
 
 @publicas_bp.route("/registro", methods=["GET", "POST"])
 def registro():
+    """Valida y crea cuentas públicas con roles permitidos."""
     error_message = None
     success_message = None
 
@@ -97,18 +100,26 @@ def registro():
 
 @publicas_bp.route("/logout")
 def logout():
+    """Elimina toda la sesión activa y vuelve al inicio."""
     session.clear()
     return redirect(url_for("publicas.index"))
 
 
 # Páginas públicas con enlace a ".html" (contacto, servicios, soporte...)
-PAGINAS_PUBLICAS_HTML = {"contacto", "servicios", "soporte", "terminos"}
+PAGINAS_PUBLICAS_HTML = {"contacto", "servicios", "soporte", "terminos", "login", "registro", "index"}
 
 
 @publicas_bp.route("/<page>.html")
 def render_html_page(page):
+    """Sirve aliases .html sin permitir plantillas arbitrarias."""
     if page in PAGINAS_PUBLICAS_HTML:
         try:
+            if page == "login":
+                return login()
+            if page == "registro":
+                return registro()
+            if page == "index":
+                return index()
             return render_template(f"{page}.html")
         except Exception:
             return redirect(url_for("publicas.index"))

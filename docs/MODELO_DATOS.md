@@ -1,6 +1,13 @@
-# MODELO DE DATOS — FinovaTech v9
+# MODELO DE DATOS — FinovaTech v10
 
-Base de datos `finovatech` en MySQL/MariaDB (XAMPP). Mobilidad: utf8mb4.
+**Versión del documento:** 10.0.0
+**Estado:** Documentación consolidada de la versión v10.
+
+Base de datos `finovatech` en MySQL/MariaDB (XAMPP). Codificación: utf8mb4.
+
+El modelo separa la identidad del usuario, su perfil financiero, sus
+movimientos y sus reservas de educación financiera. Las claves foráneas usan
+`ON DELETE CASCADE` en los datos dependientes para evitar perfiles huérfanos.
 
 ## 1. Diagrama de relaciones (ER)
 
@@ -9,9 +16,14 @@ administrador 1─N usuario 1─1 estudiante 1─N ingreso
                                         ├──N gasto
                                         ├──N presupuesto
                                         └──N reporte
+usuario 1─N agendamiento
 ```
 
 ## 2. Tablas
+
+El esquema contiene ocho tablas: una de administración, una de usuarios, una
+de perfiles de estudiante, cuatro relacionadas con finanzas y una para
+agendamientos.
 
 ### administrador
 | Columna | Tipo | Notas |
@@ -50,8 +62,21 @@ administrador 1─N usuario 1─1 estudiante 1─N ingreso
 | categoria | VARCHAR(50) NOT NULL | |
 | estudiante_id | INT NOT NULL FK → estudiante.id | ON DELETE CASCADE |
 
+### agendamiento
+| Columna | Tipo | Notas |
+|---|---|---|
+| id | INT PK AI | |
+| usuario_id | INT NOT NULL FK → usuario.id | ON DELETE CASCADE |
+| fecha | DATE NOT NULL | Fecha de la sesión |
+| hora | TIME NOT NULL | Hora de la sesión |
+| categoria | ENUM(reserva, consultoria, taller) | Tipo de sesión |
+| estado | ENUM(pendiente, confirmado, cancelado, completado) | default pendiente |
+| comentarios | VARCHAR(1000) NOT NULL | Metas o notas del estudiante |
+| creado_en | TIMESTAMP | default CURRENT_TIMESTAMP |
+
 ### gasto
-Misma estructura que `ingreso`.
+Tiene la misma estructura que `ingreso`; cada fila representa dinero que sale
+del presupuesto del estudiante y usa `categoria` para clasificar el gasto.
 
 ### presupuesto
 | Columna | Tipo | Notas |
@@ -73,6 +98,14 @@ Misma estructura que `ingreso`.
 | total_gastos | DECIMAL(12,2) default 0 | |
 | estudiante_id | INT NOT NULL FK → estudiante.id | ON DELETE CASCADE |
 
+### Reglas de relación
+
+- Un `usuario` puede tener un único perfil en `estudiante`.
+- Un `estudiante` puede tener muchos ingresos, gastos, presupuestos y reportes.
+- Un `usuario` puede tener muchos `agendamiento`; las citas se relacionan
+  directamente con el usuario autenticado.
+- Al borrar un usuario, sus datos dependientes se eliminan por cascada.
+
 ## 3. Triggers (mantienen saldo_actual)
 
 `saldo_actual = SUM(ingreso) - SUM(gasto)` recalculado tras:
@@ -90,6 +123,10 @@ UPDATE estudiante SET saldo_actual =
  - (SELECT COALESCE(SUM(monto),0) FROM gasto   WHERE estudiante_id = NEW.estudiante_id))
 WHERE id = NEW.estudiante_id;
 ```
+
+Los triggers de eliminación usan `OLD.estudiante_id`. El saldo no se calcula
+desde el navegador: siempre se reconstruye en MySQL a partir de los ingresos
+y gastos existentes.
 
 ## 4. Stored procedures
 
@@ -117,7 +154,23 @@ SELECT * FROM vista_resumen_financiero;
 -- saldo_actual, total_ingresos, total_gastos, balance, categoria_mas_gastada
 ```
 
-## 6. Aplicar / regenerar
+La vista es de lectura y concentra los datos que necesita un resumen
+financiero; no reemplaza las tablas originales ni permite registrar cambios.
+
+## 6. Flujo de persistencia
+
+1. Flask identifica al usuario mediante `session["user_id"]`.
+2. El modelo obtiene el `estudiante_id` cuando la operación es financiera.
+3. Los valores se envían a MySQL mediante parámetros `%s`.
+4. La conexión confirma la transacción con `commit()` o la revierte con
+  `rollback()` si ocurre un error.
+5. Los triggers actualizan el saldo después de insertar o eliminar ingresos
+  y gastos.
+
+Las reservas no modifican el saldo: se guardan en `agendamiento` con fecha,
+hora, categoría, estado y comentarios.
+
+## 7. Aplicar / regenerar
 
 ```powershell
 # Desde la raíz del proyecto, con MariaDB encendido (XAMPP):

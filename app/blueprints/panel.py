@@ -13,5 +13,6 @@ panel_bp = Blueprint("panel", __name__)
 @panel_bp.route("/panel")
 @login_requerido
 def panel():
+    """Consulta y entrega al template el resumen financiero del usuario."""
     datos = get_datos_panel(session["user_id"])
     return render_template("panel.html", **datos)

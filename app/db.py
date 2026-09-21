@@ -11,6 +11,9 @@ from app.config import Config
 
 
 def get_connection():
+    """Abre una conexión MySQL con resultados accesibles por nombre de columna."""
+    # La configuración se centraliza en Config para permitir cambiar XAMPP,
+    # credenciales o base de datos mediante variables de entorno.
     return pymysql.connect(
         host=Config.DB_HOST,
         port=Config.DB_PORT,
@@ -18,5 +21,6 @@ def get_connection():
         password=Config.DB_PASSWORD,
         database=Config.DB_NAME,
         charset="utf8mb4",
+        # DictCursor permite acceder a las columnas como fila["nombre_columna"].
         cursorclass=pymysql.cursors.DictCursor,
     )

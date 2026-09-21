@@ -6,8 +6,9 @@
 --                                                 1─N Gasto
 --                                                 1─N Presupuesto
 --                                                 1─N Reporte
+--   Usuario 1─N Agendamiento
 --
--- Incluye (además de las 7 tablas):
+-- Incluye (además de las 8 tablas):
 --   * 4 TRIGGERS   -> mantienen al día estudiante.saldo_actual
 --                     al insertar/eliminar ingresos y gastos.
 --   * 4 STORED PROCEDURES -> sp_registrar_movimiento,
@@ -29,11 +30,16 @@ USE finovatech;
 -- Tablas
 -- ------------------------------------------------------------
 
+-- Las entidades principales se crean antes de sus tablas dependientes para
+-- que las claves foráneas puedan validarse desde el primer momento.
+
+-- Tabla de roles y datos propios de administradores.
 CREATE TABLE IF NOT EXISTS administrador (
     id  INT AUTO_INCREMENT PRIMARY KEY,
     rol VARCHAR(50) NOT NULL
 ) ENGINE=InnoDB;
 
+-- Cuenta de acceso: identidad, credenciales cifradas y rol del usuario.
 CREATE TABLE IF NOT EXISTS usuario (
     id             INT AUTO_INCREMENT PRIMARY KEY,
     nombre         VARCHAR(100) NOT NULL,
@@ -48,6 +54,7 @@ CREATE TABLE IF NOT EXISTS usuario (
         ON DELETE SET NULL
 ) ENGINE=InnoDB;
 
+-- Perfil académico y saldo acumulado asociado a una única cuenta.
 CREATE TABLE IF NOT EXISTS estudiante (
     id          INT AUTO_INCREMENT PRIMARY KEY,
     grado       VARCHAR(30)  NOT NULL,
@@ -60,6 +67,7 @@ CREATE TABLE IF NOT EXISTS estudiante (
     CONSTRAINT uq_estudiante_usuario UNIQUE (usuario_id)
 ) ENGINE=InnoDB;
 
+-- Dinero recibido por el estudiante, clasificado por categoría.
 CREATE TABLE IF NOT EXISTS ingreso (
     id           INT AUTO_INCREMENT PRIMARY KEY,
     monto        DECIMAL(12, 2) NOT NULL,
@@ -72,6 +80,7 @@ CREATE TABLE IF NOT EXISTS ingreso (
         ON DELETE CASCADE
 ) ENGINE=InnoDB;
 
+-- Dinero gastado por el estudiante, usado para calcular el saldo y presupuesto.
 CREATE TABLE IF NOT EXISTS gasto (
     id           INT AUTO_INCREMENT PRIMARY KEY,
     monto        DECIMAL(12, 2) NOT NULL,
@@ -84,6 +93,7 @@ CREATE TABLE IF NOT EXISTS gasto (
         ON DELETE CASCADE
 ) ENGINE=InnoDB;
 
+-- Límite de gasto definido para un estudiante durante un periodo.
 CREATE TABLE IF NOT EXISTS presupuesto (
     id            INT AUTO_INCREMENT PRIMARY KEY,
     monto_limite  DECIMAL(12, 2) NOT NULL,
@@ -96,6 +106,7 @@ CREATE TABLE IF NOT EXISTS presupuesto (
         ON DELETE CASCADE
 ) ENGINE=InnoDB;
 
+-- Resumen financiero persistido cuando se genera un reporte.
 CREATE TABLE IF NOT EXISTS reporte (
     id               INT AUTO_INCREMENT PRIMARY KEY,
     tipo             VARCHAR(50)   NOT NULL,
@@ -108,6 +119,25 @@ CREATE TABLE IF NOT EXISTS reporte (
         ON DELETE CASCADE
 ) ENGINE=InnoDB;
 
+-- Reserva de una sesión de educación financiera asociada al usuario.
+CREATE TABLE IF NOT EXISTS agendamiento (
+    -- Las citas pertenecen al usuario autenticado, no al saldo financiero.
+    id          INT AUTO_INCREMENT PRIMARY KEY,
+    usuario_id  INT NOT NULL,
+    fecha       DATE NOT NULL,
+    hora        TIME NOT NULL,
+    categoria   ENUM('reserva', 'consultoria', 'taller') NOT NULL,
+    estado      ENUM('pendiente', 'confirmado', 'cancelado', 'completado') NOT NULL DEFAULT 'pendiente',
+    comentarios VARCHAR(1000) NOT NULL DEFAULT '',
+    creado_en   TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    CONSTRAINT fk_agendamiento_usuario
+        FOREIGN KEY (usuario_id) REFERENCES usuario(id)
+        ON DELETE CASCADE
+) ENGINE=InnoDB;
+
+-- Los ENUM limitan estados y categorías a valores conocidos por el formulario;
+-- el backend también valida estos valores antes de insertar.
+
 -- ============================================================
 -- TRIGGERS
 -- Se ejecutan automáticamente ante cambios en ingreso/gasto.
@@ -115,6 +145,7 @@ CREATE TABLE IF NOT EXISTS reporte (
 -- del estudiante afectado (es idempotente y no depende del orden).
 -- ============================================================
 
+-- Después de crear un ingreso, recalcula el saldo del estudiante.
 DROP TRIGGER IF EXISTS trg_ingreso_after_insert;
 DELIMITER //
 CREATE TRIGGER trg_ingreso_after_insert AFTER INSERT ON ingreso
@@ -127,6 +158,7 @@ BEGIN
 END//
 DELIMITER ;
 
+-- Después de borrar un ingreso, recalcula el saldo del estudiante.
 DROP TRIGGER IF EXISTS trg_ingreso_after_delete;
 DELIMITER //
 CREATE TRIGGER trg_ingreso_after_delete AFTER DELETE ON ingreso
@@ -139,6 +171,7 @@ BEGIN
 END//
 DELIMITER ;
 
+-- Después de crear un gasto, recalcula el saldo del estudiante.
 DROP TRIGGER IF EXISTS trg_gasto_after_insert;
 DELIMITER //
 CREATE TRIGGER trg_gasto_after_insert AFTER INSERT ON gasto
@@ -151,6 +184,7 @@ BEGIN
 END//
 DELIMITER ;
 
+-- Después de borrar un gasto, recalcula el saldo del estudiante.
 DROP TRIGGER IF EXISTS trg_gasto_after_delete;
 DELIMITER //
 CREATE TRIGGER trg_gasto_after_delete AFTER DELETE ON gasto
@@ -166,6 +200,7 @@ DELIMITER ;
 -- ============================================================
 -- STORED PROCEDURES
 -- Envuelven las operaciones de negocio con validación incluida.
+-- DELIMITER permite enviar cada bloque BEGIN...END como una unidad a MySQL.
 -- ============================================================
 
 -- Registra un movimiento (ingreso o gasto) validando tipo y monto.
@@ -285,6 +320,7 @@ DELIMITER ;
 -- balance y categorías más gastadas (SUBQUERIES en el SELECT).
 -- ============================================================
 
+-- Consulta consolidada para mostrar el estado financiero de cada estudiante.
 CREATE OR REPLACE VIEW vista_resumen_financiero AS
 SELECT
     u.id            AS usuario_id,
@@ -311,3 +347,6 @@ LEFT JOIN (
     SELECT estudiante_id, SUM(monto) AS total_gastos
     FROM gasto GROUP BY estudiante_id
 ) g ON g.estudiante_id = e.id;
+
+-- El script es repetible: las tablas usan IF NOT EXISTS y los objetos
+-- programables se reemplazan explícitamente antes de crearse.

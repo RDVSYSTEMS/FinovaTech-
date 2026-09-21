@@ -1,1 +1,1 @@
-"""Module models of the FinovaTech v9 application (usuarios + finanzas)."""
+"""Modelos de usuarios, finanzas y agendamientos de FinovaTech v9."""

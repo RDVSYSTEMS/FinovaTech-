@@ -99,6 +99,7 @@
             <div id="agenda-exito" class="agenda-mensaje exito" style="display:none">✅ ¡Sesión agendada! Te contactaremos pronto.</div>
 
             <form id="formAgenda" novalidate>
+                <input type="hidden" name="csrf_token" value="{{ csrf_token }}">
 
                 <div class="grupo-formulario">
                     <label for="fecha">Fecha</label>

@@ -26,10 +26,12 @@ from flask import redirect, request, session, url_for
 def csrf_proteger():
     """Genera el token en GET y valida el token en POST (todas las rutas)."""
     if request.method in ("GET", "HEAD"):
+        # El token se crea una vez por sesión y se reutiliza en los formularios.
         if "_csrf" not in session:
             session["_csrf"] = secrets.token_hex(32)
         return None
 
+    # El token viaja en formularios HTML; hmac evita comparaciones temporizadas.
     token_sesion = session.get("_csrf", "")
     token_formulario = request.form.get("csrf_token", "")
     if not token_sesion or not hmac.compare_digest(token_sesion, token_formulario):
@@ -42,6 +44,7 @@ def csrf_proteger():
 
 def inyectar_csrf():
     """Hace disponible {{ csrf_token }} en todas las plantillas."""
+    # El context processor evita repetir la lectura de sesión en cada template.
     return {"csrf_token": session.get("_csrf", "")}
 
 
@@ -52,6 +55,7 @@ def login_requerido(func):
 
     @wraps(func)
     def envoltura(*args, **kwargs):
+        # Se usa user_email como indicador de sesión autenticada.
         if "user_email" not in session:
             return redirect(url_for("publicas.login"))
         return func(*args, **kwargs)
@@ -87,6 +91,7 @@ def registrar_fallo(ip: str, correo: str):
     fallos = (datos[0] if datos else 0) + 1
     bloqueado_hasta = None
     if fallos >= MAX_INTENTOS_LOGIN:
+        # Cada nueva ronda multiplica por dos el tiempo de bloqueo.
         rondas = fallos // MAX_INTENTOS_LOGIN
         bloqueado_hasta = datetime.now() + timedelta(
             seconds=BLOQUEO_BASE_SEGUNDOS * (2 ** (rondas - 1))
@@ -94,6 +99,7 @@ def registrar_fallo(ip: str, correo: str):
     _intentos_login[clave] = [fallos, bloqueado_hasta, datetime.now()]
 
     if len(_intentos_login) > 5000:
+        # Limpia entradas antiguas para evitar crecimiento indefinido en memoria.
         limite = datetime.now() - timedelta(hours=1)
         for k in [k for k, v in _intentos_login.items() if v[2] < limite]:
             _intentos_login.pop(k, None)
@@ -125,6 +131,9 @@ CABECERAS_SEGURIDAD = {
 
 
 def cabeceras_seguridad(respuesta):
+    """Añade políticas defensivas comunes a todas las respuestas HTTP."""
+    # setdefault respeta una cabecera definida explícitamente por Flask o por
+    # otro middleware de la aplicación.
     for nombre, valor in CABECERAS_SEGURIDAD.items():
         respuesta.headers.setdefault(nombre, valor)
     if request.is_secure:

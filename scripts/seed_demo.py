@@ -12,6 +12,9 @@ lleno de datos reales apenas inicies sesión:
 
   3. Inserta algunos INGRESOS y GASTOS de ejemplo, y un PRESUPUESTO mensual.
 
+Este script no crea agendamientos: las citas pertenecen al flujo real del
+usuario y deben registrarse desde la pantalla de agendamiento.
+
 CÓMO SE EJECUTA (desde la carpeta del proyecto):
     python -m scripts.seed_demo
 
@@ -144,7 +147,8 @@ def crear_estudiante(usuario_id: int):
                 (500000, "Mensual", estudiante_id),
             )
 
-        conn.commit()   # Confirmamos todos los cambios en la base de datos
+        # Una sola transacción evita dejar datos demo a medias si falla un INSERT.
+        conn.commit()
     finally:
         conn.close()    # Cerramos la conexión siempre
 

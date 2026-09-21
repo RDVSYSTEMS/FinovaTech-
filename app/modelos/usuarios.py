@@ -13,6 +13,7 @@ from app.db import get_connection
 
 
 def usuario_existe(email: str, username: str) -> bool:
+    """Comprueba duplicados antes de crear una cuenta."""
     conn = get_connection()
     try:
         with conn.cursor() as cur:
@@ -34,6 +35,7 @@ def registrar_usuario(nombre: str, email: str, username: str, password: str, rol
     if usuario_existe(email, username):
         return False, "Ya existe una cuenta con ese correo o nombre de usuario"
 
+    # Solo se persiste el hash; la contraseña original nunca llega a MySQL.
     password_hash = generate_password_hash(password)
 
     try:
@@ -60,6 +62,7 @@ def registrar_usuario(nombre: str, email: str, username: str, password: str, rol
 
 def verificar_login(email: str, password: str):
     """Devuelve el usuario (dict) si las credenciales son correctas, si no None."""
+    # La contraseña se verifica contra el hash recuperado, nunca en SQL plano.
     conn = get_connection()
     try:
         with conn.cursor() as cur:

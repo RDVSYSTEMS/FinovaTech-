@@ -15,6 +15,7 @@ registros_bp = Blueprint("registros", __name__)
 @registros_bp.route("/lista")
 @login_requerido
 def lista():
+    """Muestra los movimientos y totales del estudiante autenticado."""
     registros = get_registros(session["user_id"])
     totales = get_totales(session["user_id"])
     return render_template("lista.html", registros=registros, **totales)
@@ -23,6 +24,7 @@ def lista():
 @registros_bp.route("/registro/nuevo", methods=["POST"])
 @login_requerido
 def registro_nuevo():
+    """Valida y persiste un ingreso o gasto enviado desde la lista."""
     tipo = request.form.get("tipo", "")
     descripcion = request.form.get("descripcion", "").strip()
     monto = request.form.get("monto", "").strip()
@@ -48,6 +50,7 @@ def registro_nuevo():
 @registros_bp.route("/registro/eliminar/<tipo>/<int:registro_id>", methods=["POST"])
 @login_requerido
 def registro_eliminar(tipo, registro_id):
+    """Elimina un movimiento solo si pertenece al usuario actual."""
     exito, mensaje = eliminar_registro(session["user_id"], tipo, registro_id)
     clave = "ok" if exito else "error"
     return redirect(url_for("registros.lista") + f"?{clave}=" + quote(mensaje))
