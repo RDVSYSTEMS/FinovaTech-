@@ -103,6 +103,7 @@
                            placeholder="correo@ejemplo.com"
                            autocomplete="email"
                            required>
+                    <span class="mensaje-campo" id="error-usuario"></span>
                 </div>
 
                 <div class="grupo-formulario">
@@ -118,6 +119,7 @@
                             👁️
                         </button>
                     </div>
+                    <span class="mensaje-campo" id="error-password"></span>
                 </div>
 
                 <div class="login-opciones">
@@ -166,6 +168,56 @@
                 toggleButton.textContent = type === 'password' ? '👁️' : '🙈';
             });
         }
+
+        /* ---------- Validación en vivo del login ---------- */
+        const form     = document.getElementById('loginForm');
+        const email    = document.getElementById('usuario');
+        const password = document.getElementById('password');
+
+        const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+
+        function marcar(input, valido, msgId, mensaje) {
+            const span = document.getElementById(msgId);
+            input.classList.toggle('campo-error', !valido);
+            input.classList.toggle('campo-ok', valido && input.value.trim() !== '');
+            if (span) {
+                span.textContent = valido ? '' : mensaje;
+                span.classList.toggle('visible', !valido);
+            }
+            return valido;
+        }
+
+        function validarEmail() {
+            const v = email.value.trim();
+            if (v === '') return marcar(email, false, 'error-usuario', 'Ingresa tu correo electrónico');
+            if (!emailRegex.test(v)) return marcar(email, false, 'error-usuario', 'El correo no tiene un formato válido');
+            return marcar(email, true, 'error-usuario', '');
+        }
+
+        function validarPassword() {
+            const v = password.value;
+            if (v === '') return marcar(password, false, 'error-password', 'Ingresa tu contraseña');
+            if (v.length < 8) return marcar(password, false, 'error-password', 'Mínimo 8 caracteres');
+            return marcar(password, true, 'error-password', '');
+        }
+
+        email.addEventListener('blur', validarEmail);
+        password.addEventListener('blur', validarPassword);
+        email.addEventListener('input', function () { if (email.classList.contains('campo-error')) validarEmail(); });
+        password.addEventListener('input', function () { if (password.classList.contains('campo-error')) validarPassword(); });
+
+        form.addEventListener('submit', function (e) {
+            const okEmail = validarEmail();
+            const okPass  = validarPassword();
+            if (!okEmail || !okPass) {
+                e.preventDefault();
+                const primero = !okEmail ? email : password;
+                primero.focus();
+                form.classList.remove('shake');
+                void form.offsetWidth;
+                form.classList.add('shake');
+            }
+        });
     });
 </script>
 

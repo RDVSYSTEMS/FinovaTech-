@@ -1,10 +1,10 @@
-# REQUISITOS DEL PROYECTO — FinovaTech v10.1
+# REQUISITOS DEL PROYECTO — FinovaTech v10.2
 
 **Proyecto:** Sistema de Finanzas Personales para Estudiantes de Bachillerato
 **Empresa desarrolladora:** RDV Systems
 **Entidad formadora:** SENA
-**Versión del documento:** 10.1.0
-**Estado:** Documentación consolidada de la versión v10.1 (contexto educativo)
+**Versión del documento:** 10.2.0
+**Estado:** Documentación consolidada de la versión v10.2 (contexto educativo)
 
 ---
 
@@ -74,6 +74,13 @@ en línea, y despliegue en servidores de producción externos.
 - Rota la sesión al iniciar (previene fijación de sesión).
 - Bloquea la combinación IP+correo tras 5 intentos fallidos (bloqueo que
   se duplica: 2 → 4 → 8 minutos).
+
+### RF-02.1 Validación en vivo de los formularios
+- Login y registro validan en el cliente (JavaScript) al salir de cada campo
+  y al enviar: marcan el campo en rojo/verde y muestran un mensaje por campo.
+- Si hay campos inválidos, el envío se bloquea y el formulario vibra (`shake`).
+- La validación del servidor se mantiene como fuente de verdad (campos
+  obligatorios, formato, longitud, coincidencia, rol permitido y duplicados).
 
 ### RF-03 Cierre de sesión
 - Elimina la sesión y redirige a la página principal.

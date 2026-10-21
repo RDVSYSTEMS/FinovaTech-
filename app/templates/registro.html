@@ -25,6 +25,9 @@
 </head>
 <body>
 
+<!-- Barra de progreso de lectura -->
+<div id="barra-progreso"></div>
+
 <!-- HEADER dinámico -->
 <div id="header"></div>
 
@@ -103,16 +106,19 @@
                 <div class="grupo-formulario">
                     <label for="nombres">Nombres completos</label>
                     <input id="nombres" name="full_name" type="text" placeholder="Ingrese sus nombres" required>
+                    <span class="mensaje-campo" id="error-nombres"></span>
                 </div>
 
                 <div class="grupo-formulario">
                     <label for="correo">Correo electrónico</label>
                     <input id="correo" name="email" type="email" placeholder="correo@ejemplo.com" required>
+                    <span class="mensaje-campo" id="error-correo"></span>
                 </div>
 
                 <div class="grupo-formulario">
                     <label for="usuario">Nombre de usuario</label>
                     <input id="usuario" name="username" type="text" placeholder="nombreusuario" required>
+                    <span class="mensaje-campo" id="error-usuarioR"></span>
                 </div>
 
                 <div class="grupo-formulario">
@@ -121,6 +127,7 @@
                         <input id="password" name="password" type="password" placeholder="Mínimo 8 caracteres" required>
                         <button type="button" id="togglePassword" class="btn-toggle-pass">👁️</button>
                     </div>
+                    <span class="mensaje-campo" id="error-passwordR"></span>
                 </div>
 
                 <div class="grupo-formulario">
@@ -129,6 +136,7 @@
                         <input id="confirmar" name="confirm_password" type="password" placeholder="Repite la contraseña" required>
                         <button type="button" id="toggleConfirmar" class="btn-toggle-pass">👁️</button>
                     </div>
+                    <span class="mensaje-campo" id="error-confirmar"></span>
                 </div>
 
                 <div class="grupo-formulario">
@@ -138,6 +146,7 @@
                         <option value="estudiante">Estudiante</option>
                         <option value="padre">Padre/Madre de familia</option>
                     </select>
+                    <span class="mensaje-campo" id="error-tipo"></span>
                 </div>
 
                 <div class="registro-botones">
@@ -188,6 +197,78 @@
 
         toggle(togglePassword, passwordInput);
         toggle(toggleConfirm, confirmInput);
+
+        /* ---------- Validación en vivo del registro ---------- */
+        const form      = document.getElementById('formRegistro');
+        const nombres   = document.getElementById('nombres');
+        const correo    = document.getElementById('correo');
+        const usuario   = document.getElementById('usuario');
+        const tipo      = document.getElementById('tipoUsuario');
+        const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+
+        function marcar(input, valido, msgId, mensaje) {
+            const span = document.getElementById(msgId);
+            input.classList.toggle('campo-error', !valido);
+            input.classList.toggle('campo-ok', valido && input.value.trim() !== '');
+            if (span) {
+                span.textContent = valido ? '' : mensaje;
+                span.classList.toggle('visible', !valido);
+            }
+            return valido;
+        }
+
+        function vNombres() {
+            return marcar(nombres, nombres.value.trim() !== '', 'error-nombres', 'Ingresa tus nombres');
+        }
+        function vCorreo() {
+            const v = correo.value.trim();
+            if (v === '') return marcar(correo, false, 'error-correo', 'Ingresa tu correo electrónico');
+            if (!emailRegex.test(v)) return marcar(correo, false, 'error-correo', 'El correo no tiene un formato válido');
+            return marcar(correo, true, 'error-correo', '');
+        }
+        function vUsuario() {
+            const v = usuario.value.trim();
+            if (v === '') return marcar(usuario, false, 'error-usuarioR', 'Elige un nombre de usuario');
+            if (v.length < 4) return marcar(usuario, false, 'error-usuarioR', 'Mínimo 4 caracteres');
+            return marcar(usuario, true, 'error-usuarioR', '');
+        }
+        function vPassword() {
+            const v = passwordInput.value;
+            if (v === '') return marcar(passwordInput, false, 'error-passwordR', 'Crea una contraseña');
+            if (v.length < 8) return marcar(passwordInput, false, 'error-passwordR', 'Mínimo 8 caracteres');
+            return marcar(passwordInput, true, 'error-passwordR', '');
+        }
+        function vConfirmar() {
+            if (confirmInput.value === '') return marcar(confirmInput, false, 'error-confirmar', 'Confirma tu contraseña');
+            if (confirmInput.value !== passwordInput.value) return marcar(confirmInput, false, 'error-confirmar', 'Las contraseñas no coinciden');
+            return marcar(confirmInput, true, 'error-confirmar', '');
+        }
+        function vTipo() {
+            return marcar(tipo, tipo.value !== '', 'error-tipo', 'Selecciona un tipo de usuario');
+        }
+
+        const pares = [
+            [nombres, vNombres], [correo, vCorreo], [usuario, vUsuario],
+            [passwordInput, vPassword], [confirmInput, vConfirmar], [tipo, vTipo],
+        ];
+        pares.forEach(([input, fn]) => {
+            input.addEventListener('blur', fn);
+            input.addEventListener('input', function () {
+                if (input.classList.contains('campo-error')) fn();
+            });
+        });
+
+        form.addEventListener('submit', function (e) {
+            const resultados = [vNombres(), vCorreo(), vUsuario(), vPassword(), vConfirmar(), vTipo()];
+            if (resultados.includes(false)) {
+                e.preventDefault();
+                const indice = resultados.indexOf(false);
+                pares[indice][0].focus();
+                form.classList.remove('shake');
+                void form.offsetWidth;
+                form.classList.add('shake');
+            }
+        });
     });
 </script>
 

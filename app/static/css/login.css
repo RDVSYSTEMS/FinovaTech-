@@ -251,6 +251,29 @@
     box-shadow: 0 0 0 3px rgba(220,38,38,0.15);
 }
 
+/* Estado de error por campo (validación en vivo) */
+.login-card .grupo-formulario input.campo-error {
+    border-color: #EF4444;
+    background: rgba(220,38,38,0.08);
+    box-shadow: 0 0 0 3px rgba(220,38,38,0.18);
+}
+
+.login-card .grupo-formulario input.campo-ok {
+    border-color: #22c55e;
+    box-shadow: 0 0 0 3px rgba(34,197,94,0.12);
+}
+
+.mensaje-campo {
+    display: none;
+    color: #fca5a5;
+    font-size: 0.78rem;
+    margin-top: 5px;
+}
+
+.mensaje-campo.visible { display: block; }
+
+.shake { animation: shake 0.35s ease; }
+
 /* Input password con ojo */
 .input-password {
     position: relative;

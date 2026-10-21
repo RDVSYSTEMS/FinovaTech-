@@ -1,4 +1,4 @@
-# FinovaTech v10.1
+# FinovaTech v10.2
 
 Sistema de Finanzas Personales para Estudiantes de Bachillerato.
 Aplicación web (HTML/CSS/JS + Flask + MySQL) con autenticación, control de
@@ -7,7 +7,7 @@ desarrollado por **RDV Systems**.
 
 > Nota de versionado: el historial que aparece abajo es una reconstrucción
 > retrospectiva de las etapas del proyecto. El repositorio actual conserva la
-> versión acumulada **v10.1.0**; las versiones anteriores representan hitos de
+> versión acumulada **v10.2.0**; las versiones anteriores representan hitos de
 > desarrollo y no necesariamente commits publicados por separado.
 
 ## Requisitos previos
@@ -225,7 +225,7 @@ obvias; no repiten instrucciones línea por línea.
 |---|---|---|
 | `index.html` | `/` | Presenta FinovaTech, sus beneficios, estadísticas reales (usuarios y movimientos desde la base de datos) y una llamada a la acción final. |
 | `login.html` | `/login` o `/login.html` | Recibe correo y contraseña, valida CSRF e inicia la sesión. Video de fondo, entrada escalonada y botón pulsante. |
-| `registro.html` | `/registro` o `/registro.html` | Crea cuentas, valida rol, contraseña y confirmación. |
+| `registro.html` | `/registro` o `/registro.html` | Crea cuentas, valida rol, contraseña y confirmación. Validación en vivo por campo y video de fondo. |
 | `contacto.html` | `/contacto.html` | Muestra información de contacto y créditos del proyecto. |
 | `servicios.html` | `/servicios.html` | Catálogo de servicios con video de fondo; cada tarjeta dirige a `/login`. Incluye una llamada a la acción final. |
 | `soporte.html` | `/soporte.html` | Valida localmente nombre, correo, asunto y mensaje de soporte. |
@@ -273,6 +273,24 @@ definidas en CSS, sin librerías adicionales (además de AOS):
 Todas respetan `prefers-reduced-motion`: si el usuario configura menos movimiento
 en su sistema, las animaciones se desactivan.
 
+### Validación de formularios
+
+Los formularios de login y registro validan **en dos capas**:
+
+1. **Cliente (JavaScript)**: al salir de cada campo (`blur`) y al enviar, se
+    revisa el valor y se muestra un mensaje debajo del campo, marcándolo en
+    rojo (error) o verde (correcto). Si algún campo es inválido, el envío se
+    bloquea y el formulario vibra (`shake`) como aviso visual.
+2. **Servidor (Flask + MySQL)**: es la fuente de verdad. Revalida campos
+    obligatorios, formato, longitud de contraseña, coincidencia, rol permitido
+    y duplicados; devuelve un mensaje que se muestra dentro de la tarjeta.
+
+Mensajes del cliente (login): correo vacío o con formato inválido, contraseña
+vacía o menor a 8 caracteres. Mensajes del cliente (registro): nombres,
+correo, usuario (mínimo 4), contraseña (mínimo 8), confirmación coincidente y
+tipo de usuario. Los errores del servidor (duplicados, rol no permitido,
+contraseñas distintas) se muestran en la tarjeta del formulario.
+
 ### Dependencias frontend incluidas
 
 Las bibliotecas de `app/static/vendor/` se sirven localmente para que la
@@ -319,3 +337,4 @@ actual:
 | v9.0.0 | Seguridad de la aplicación: contraseñas cifradas, CSRF y control de acceso. |
 | v10.0.0 | Consolidación de la documentación técnica del código, seguridad, páginas, assets y base de datos. |
 | v10.1.0 | Mejora visual de las páginas públicas (portada, servicios y login): video de fondo, estadísticas reales, llamadas a la acción, entrada escalonada, botones pulsantes, barra de progreso de lectura y animaciones accesibles unificadas a la marca. |
+| v10.2.0 | Validación en vivo de los formularios de login y registro: mensajes por campo, estados de error/acierto y animación de aviso, manteniendo la validación del servidor como fuente de verdad. |

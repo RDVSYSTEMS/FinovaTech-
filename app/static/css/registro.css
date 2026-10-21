@@ -8,6 +8,45 @@
    ===================================================== */
 
 /* =====================================================
+   ANIMACIONES (mismas que la portada, servicios y login)
+   ===================================================== */
+
+@keyframes entrarArriba {
+    from { opacity: 0; transform: translateY(28px); }
+    to   { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes pulsar {
+    0%, 100% { box-shadow: 0 6px 15px rgba(220,38,38,0.35); }
+    50%      { box-shadow: 0 6px 15px rgba(220,38,38,0.35), 0 0 0 12px rgba(220,38,38,0); }
+}
+
+/* Respeta la preferencia de movimiento reducido */
+@media (prefers-reduced-motion: reduce) {
+    .registro-info .sena-tag,
+    .registro-info h1,
+    .registro-info > p,
+    .beneficio-card,
+    .registro-card,
+    .registro-botones .btn-primario { animation: none !important; }
+}
+
+/* =====================================================
+   BARRA DE PROGRESO DE LECTURA
+   ===================================================== */
+
+#barra-progreso {
+    position: fixed;
+    top: 0;
+    left: 0;
+    height: 4px;
+    width: 0;
+    background: linear-gradient(90deg, #DC2626, #FACC15);
+    z-index: 9999;
+    transition: width 0.1s linear;
+}
+
+/* =====================================================
    CONTENEDOR PRINCIPAL
    ===================================================== */
 
@@ -71,11 +110,16 @@
 
 .registro-info .sena-tag {
     font-size: 0.72rem;
-    font-weight: 500;
-    color: #6ee7b7;
+    font-weight: 600;
+    color: #fca5a5;
+    background: rgba(220,38,38,0.15);
+    border: 1px solid #DC2626;
+    border-radius: 99px;
+    padding: 6px 16px;
     letter-spacing: 0.08em;
-    display: block;
-    margin-bottom: 10px;
+    display: inline-block;
+    margin-bottom: 14px;
+    animation: entrarArriba 0.6s ease-out both;
 }
 
 .registro-info h1 {
@@ -84,6 +128,8 @@
     line-height: 1.2;
     margin: 0 0 14px;
     color: white;
+    text-shadow: 0 0 24px rgba(220,38,38,0.35);
+    animation: entrarArriba 0.7s ease-out 0.1s both;
 }
 
 .registro-info > p {
@@ -92,6 +138,7 @@
     line-height: 1.7;
     max-width: 360px;
     margin-bottom: 28px;
+    animation: entrarArriba 0.7s ease-out 0.2s both;
 }
 
 /* Imagen decorativa con hover zoom */
@@ -153,7 +200,8 @@
 .beneficio-card:hover {
     transform: translateX(6px);
     background: rgba(255,255,255,0.11);
-    border-color: rgba(110,231,183,0.3);
+    border-color: rgba(220,38,38,0.45);
+    box-shadow: 0 6px 18px rgba(220,38,38,0.18);
 }
 
 .beneficio-icono {
@@ -172,9 +220,9 @@
     transform: scale(1.12);
 }
 
-.beneficio-icono.verde { background: rgba(16,185,129,0.15); color: #6ee7b7; }
-.beneficio-icono.ambar { background: rgba(251,191,36,0.15);  color: #fbbf24; }
-.beneficio-icono.azul  { background: rgba(96,165,250,0.15);  color: #60a5fa; }
+.beneficio-icono.verde { background: rgba(220,38,38,0.15); color: #fca5a5; }
+.beneficio-icono.ambar { background: rgba(250,204,21,0.15); color: #FACC15; }
+.beneficio-icono.azul  { background: rgba(250,204,21,0.15); color: #FACC15; }
 
 .beneficio-texto p    { font-size: 0.85rem; font-weight: 500; color: #cbd5e1; }
 .beneficio-texto span { font-size: 0.72rem; color: #64748b; }
@@ -189,7 +237,7 @@
 }
 
 .beneficio-card:hover .beneficio-flecha {
-    color: #6ee7b7;
+    color: #FACC15;
     transform: translateX(5px);
     animation: none;
 }
@@ -232,13 +280,14 @@
     width: 46px;
     height: 46px;
     border-radius: 50%;
-    background: #e11d48;
+    background: linear-gradient(135deg, #DC2626, #B91C1C);
     display: flex;
     align-items: center;
     justify-content: center;
     margin: 0 auto 10px;
     font-size: 1.2rem;
     color: white;
+    box-shadow: 0 4px 14px rgba(220,38,38,0.35);
     transition: transform 0.3s ease;
 }
 
@@ -302,10 +351,33 @@
 
 .registro-card .grupo-formulario input:focus,
 .registro-card .grupo-formulario select:focus {
-    border-color: #10b981;
+    border-color: #DC2626;
     background: rgba(255,255,255,0.12);
-    box-shadow: 0 0 0 3px rgba(16,185,129,0.15);
+    box-shadow: 0 0 0 3px rgba(220,38,38,0.15);
 }
+
+/* Estado de error por campo (validación en vivo) */
+.registro-card .grupo-formulario input.campo-error,
+.registro-card .grupo-formulario select.campo-error {
+    border-color: #EF4444;
+    background: rgba(220,38,38,0.08);
+    box-shadow: 0 0 0 3px rgba(220,38,38,0.18);
+}
+
+.registro-card .grupo-formulario input.campo-ok,
+.registro-card .grupo-formulario select.campo-ok {
+    border-color: #22c55e;
+    box-shadow: 0 0 0 3px rgba(34,197,94,0.12);
+}
+
+.mensaje-campo {
+    display: none;
+    color: #fca5a5;
+    font-size: 0.78rem;
+    margin-top: 5px;
+}
+
+.mensaje-campo.visible { display: block; }
 
 /* =====================================================
    INPUT DE CONTRASEÑA — Botón toggle visibilidad
@@ -337,7 +409,7 @@
 }
 
 .btn-toggle-pass:hover {
-    color: #6ee7b7;
+    color: #FACC15;
     transform: translateY(-50%) scale(1.15);
     background: transparent !important;
 }
@@ -369,12 +441,14 @@
     border: none;
     box-shadow: 0 4px 14px rgba(220,38,38,0.35);
     transition: background 0.2s, transform 0.15s, box-shadow 0.2s;
+    animation: pulsar 2.6s ease-in-out infinite;
 }
 
 .registro-botones .btn-primario:hover {
     background: linear-gradient(135deg, #EF4444, #DC2626);
     transform: translateY(-2px);
     box-shadow: 0 6px 20px rgba(220,38,38,0.5);
+    animation-play-state: paused;
 }
 
 .registro-botones .btn-primario:active {
