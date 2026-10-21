@@ -20,9 +20,23 @@
 </head>
 <body>
 
+<!-- Barra de progreso de lectura -->
+<div id="barra-progreso"></div>
+
 <div id="header"></div>
 
 <main class="servicios-main">
+
+    <!-- Video de fondo -->
+    <div class="servicios-video-bg">
+        <video autoplay muted loop playsinline>
+            <source src="/static/assets/video/institucional.mp4" type="video/mp4">
+        </video>
+        <div class="servicios-overlay"></div>
+    </div>
+
+    <!-- CONTENIDO -->
+    <div class="servicios-contenido">
 
     <!-- ENCABEZADO DE LA PÁGINA -->
     <div class="servicios-header" data-aos="fade-down">
@@ -36,49 +50,73 @@
 
     <!-- Servicio 1: Reportes financieros -->
     <article class="card-producto" data-aos="fade-up">
-        <img src="/static/assets/img/reporte financiero img.png" alt="Reportes financieros">
+        <div class="card-img">
+            <img src="/static/assets/img/reporte financiero img.png" alt="Reportes financieros">
+        </div>
         <div class="card-body">
             <span class="card-badge">📊 Análisis</span>
             <h3>Reportes Financieros</h3>
             <p>Gráficas completas con toda la información de tus ingresos y gastos en tiempo real.</p>
-            <button type="button" class="btn-card" onclick="location.href='/agendamiento'">Seleccionar →</button>
+            <a class="btn-card" href="/login" title="Inicia sesión para acceder">Seleccionar →</a>
         </div>
     </article>
 
     <!-- Servicio 2: Educación financiera -->
     <article class="card-producto" data-aos="fade-up" data-aos-delay="100">
-        <img src="/static/assets/img/educacion financiera.png" alt="Educación financiera">
+        <div class="card-img">
+            <img src="/static/assets/img/educacion financiera.png" alt="Educación financiera">
+        </div>
         <div class="card-body">
             <span class="card-badge">🎓 Educación</span>
             <h3>Educación Financiera</h3>
             <p>Clases con profesores certificados. Aprende tips para ahorrar y administrar mejor tu dinero.</p>
-            <button type="button" class="btn-card" onclick="location.href='/agendamiento'">Seleccionar →</button>
+            <a class="btn-card" href="/login" title="Inicia sesión para acceder">Seleccionar →</a>
         </div>
     </article>
 
     <!-- Servicio 3: Notificaciones y recordatorios -->
     <article class="card-producto" data-aos="fade-up" data-aos-delay="200">
-        <img src="/static/assets/img/notificaciones y recordatorios.png" alt="Notificaciones">
+        <div class="card-img">
+            <img src="/static/assets/img/notificaciones y recordatorios.png" alt="Notificaciones">
+        </div>
         <div class="card-body">
             <span class="card-badge">🔔 Alertas</span>
             <h3>Notificaciones y Recordatorios</h3>
             <p>Recibe correos y mensajes sobre gastos elevados, recordatorios de registro y mucho más.</p>
-            <button type="button" class="btn-card" onclick="location.href='/agendamiento'">Seleccionar →</button>
+            <a class="btn-card" href="/login" title="Inicia sesión para acceder">Seleccionar →</a>
         </div>
     </article>
 
     <!-- Servicio 4: Exportación de reportes -->
-        <article class="card-producto" data-aos="fade-up" data-aos-delay="300">
-        <img src="/static/assets/img/Exportacion de graficos.png" alt="Exportación">
+    <article class="card-producto" data-aos="fade-up" data-aos-delay="300">
+        <div class="card-img">
+            <img src="/static/assets/img/Exportacion de graficos.png" alt="Exportación">
+        </div>
         <div class="card-body">
             <span class="card-badge">📥 Exportar</span>
             <h3>Exportación de Reportes</h3>
             <p>Descarga tus reportes y gráficos en PDF, Excel, PNG y más formatos disponibles.</p>
-            <button type="button" class="btn-card" onclick="location.href='/agendamiento'">Seleccionar →</button>
+            <a class="btn-card" href="/login" title="Inicia sesión para acceder">Seleccionar →</a>
         </div>
     </article>
 
-   </section>   
+   </section>
+
+    <!-- CTA FINAL -->
+    <section class="servicios-cta" data-aos="fade-up">
+
+        <h2>Empieza a usar <span class="acento">todos los servicios</span></h2>
+
+        <p>Crea tu cuenta gratis en menos de un minuto y aprovecha cada herramienta.</p>
+
+        <div class="servicios-cta-botones">
+            <a href="/registro" class="btn-principal">Crear cuenta gratis</a>
+            <a href="/login" class="btn-secundario">Ya tengo cuenta</a>
+        </div>
+
+    </section>
+
+    </div>
 
 </main>
 

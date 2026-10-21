@@ -28,7 +28,14 @@ console.log(" Sistema iniciado — FinovaTech 2026");
    ===================================================== */
 
 if (typeof AOS !== "undefined") {
-    AOS.init({ duration: 800, once: true });
+    AOS.init({ duration: 800, once: true, offset: 120 });
+
+    /* El video de fondo y las fuentes cambian la altura del documento después
+       de calcular posiciones. Recalcular AOS al terminar de cargar evita que
+       los elementos de abajo se animen antes de entrar en pantalla. */
+    window.addEventListener("load", function () {
+        AOS.refresh();
+    });
 }
 
 /* =====================================================

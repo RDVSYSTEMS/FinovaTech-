@@ -1,4 +1,4 @@
-# FinovaTech v10
+# FinovaTech v10.1
 
 Sistema de Finanzas Personales para Estudiantes de Bachillerato.
 Aplicación web (HTML/CSS/JS + Flask + MySQL) con autenticación, control de
@@ -7,7 +7,7 @@ desarrollado por **RDV Systems**.
 
 > Nota de versionado: el historial que aparece abajo es una reconstrucción
 > retrospectiva de las etapas del proyecto. El repositorio actual conserva la
-> versión acumulada **v10.0.0**; las versiones anteriores representan hitos de
+> versión acumulada **v10.1.0**; las versiones anteriores representan hitos de
 > desarrollo y no necesariamente commits publicados por separado.
 
 ## Requisitos previos
@@ -223,11 +223,11 @@ obvias; no repiten instrucciones línea por línea.
 
 | Plantilla | Ruta | Funciones principales |
 |---|---|---|
-| `index.html` | `/` | Presenta FinovaTech, sus beneficios, estadísticas y acceso a los servicios. |
+| `index.html` | `/` | Presenta FinovaTech, sus beneficios, estadísticas reales (usuarios y movimientos desde la base de datos) y una llamada a la acción final. |
 | `login.html` | `/login` o `/login.html` | Recibe correo y contraseña, valida CSRF e inicia la sesión. |
 | `registro.html` | `/registro` o `/registro.html` | Crea cuentas, valida rol, contraseña y confirmación. |
 | `contacto.html` | `/contacto.html` | Muestra información de contacto y créditos del proyecto. |
-| `servicios.html` | `/servicios.html` | Presenta los servicios y dirige al usuario hacia el agendamiento. |
+| `servicios.html` | `/servicios.html` | Catálogo de servicios con video de fondo; cada tarjeta dirige a `/login`. Incluye una llamada a la acción final. |
 | `soporte.html` | `/soporte.html` | Valida localmente nombre, correo, asunto y mensaje de soporte. |
 | `terminos.html` | `/terminos.html` | Explica las condiciones de uso de la plataforma. |
 
@@ -250,8 +250,28 @@ Estas páginas requieren una sesión iniciada. Sin sesión, Flask redirige a
 - Los formularios protegidos incluyen `csrf_token`.
 - El JavaScript controla menú móvil, contraseña visible, buscador, mensajes,
     animaciones, gráficas auxiliares y envío del agendamiento.
+- El JavaScript también controla la barra de progreso de lectura y el parallax
+    del hero (desactivado si el usuario prefiere movimiento reducido).
 - `app/static/css/` contiene los estilos generales y los estilos específicos
     de cada página.
+
+### Animaciones de la interfaz
+
+Las páginas públicas (inicio y servicios) comparten un conjunto de animaciones
+definidas en CSS, sin librerías adicionales (además de AOS):
+
+- **Entrada escalonada**: el encabezado y los botones aparecen con
+    deslizamiento y desvanecido al cargar, con retardos progresivos.
+- **Aparición al hacer scroll**: gestionada por AOS mediante atributos `data-aos`.
+- **Hover en imágenes**: zoom y brillo suave al pasar el mouse.
+- **Cards con glow**: las tarjetas se elevan y muestran un brillo que las barre.
+- **Botón pulsante**: el botón principal del bloque final emite un pulso suave.
+- **Barra de progreso de lectura**: línea superior que crece según el desplazamiento.
+- **Parallax del hero**: la imagen del inicio se desplaza lentamente con el scroll.
+- **Flotación**: las tarjetas de llamada a la acción "respiran" con un vaivén suave.
+
+Todas respetan `prefers-reduced-motion`: si el usuario configura menos movimiento
+en su sistema, las animaciones se desactivan.
 
 ### Dependencias frontend incluidas
 
@@ -298,3 +318,4 @@ actual:
 | v8.0.0 | Notificaciones, páginas informativas, soporte y mejoras de navegación. |
 | v9.0.0 | Seguridad de la aplicación: contraseñas cifradas, CSRF y control de acceso. |
 | v10.0.0 | Consolidación de la documentación técnica del código, seguridad, páginas, assets y base de datos. |
+| v10.1.0 | Mejora visual de la portada y servicios: video de fondo, estadísticas reales, llamadas a la acción y animaciones accesibles (scroll, hover, paralaje) unificadas a la marca. |

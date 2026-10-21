@@ -4,12 +4,74 @@
    ===================================================== */
 
 /* =====================================================
-   FONDO GENERAL
+   FONDO GENERAL — Video de fondo
    ===================================================== */
 
 .servicios-main {
-    background: linear-gradient(135deg, #0f172a 0%, #1e293b 60%, #111827 100%);
+    position: relative;
+    background: #0f172a;
     padding: 90px 70px 100px;
+    overflow: hidden;
+}
+
+/* Video de fondo */
+.servicios-video-bg {
+    position: absolute;
+    top: 0; left: 0;
+    width: 100%; height: 100%;
+    z-index: 0;
+    overflow: hidden;
+}
+
+.servicios-video-bg video {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+/* Capa oscura sobre el video para que el texto se lea */
+.servicios-overlay {
+    position: absolute;
+    top: 0; left: 0;
+    width: 100%; height: 100%;
+    background: linear-gradient(135deg,
+        rgba(15,23,42,0.92) 0%,
+        rgba(30,41,59,0.88) 60%,
+        rgba(17,24,39,0.92) 100%);
+}
+
+/* Contenido por encima del video */
+.servicios-contenido {
+    position: relative;
+    z-index: 1;
+}
+
+/* =====================================================
+   ANIMACIONES (mismas que la portada)
+   ===================================================== */
+
+@keyframes entrarArriba {
+    from { opacity: 0; transform: translateY(28px); }
+    to   { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes flotar {
+    0%, 100% { transform: translateY(0); }
+    50%      { transform: translateY(-14px); }
+}
+
+@keyframes pulsar {
+    0%, 100% { box-shadow: 0 6px 15px rgba(220,38,38,0.35); }
+    50%      { box-shadow: 0 6px 15px rgba(220,38,38,0.35), 0 0 0 12px rgba(220,38,38,0); }
+}
+
+/* Respeta la preferencia de movimiento reducido */
+@media (prefers-reduced-motion: reduce) {
+    .servicios-header .sena-tag,
+    .servicios-header h1,
+    .servicios-header p,
+    .servicios-cta,
+    .card-producto { animation: none !important; }
 }
 
 /* =====================================================
@@ -23,13 +85,18 @@
 }
 
 .servicios-header .sena-tag {
+    display: inline-block;
+    background: rgba(220,38,38,0.15);
+    border: 1px solid #DC2626;
+    color: #fca5a5;
+    padding: 6px 16px;
+    border-radius: 99px;
     font-size: 0.72rem;
-    font-weight: 500;
-    color: #6ee7b7;
+    font-weight: 600;
     letter-spacing: 0.08em;
     text-transform: uppercase;
-    display: block;
-    margin-bottom: 10px;
+    margin-bottom: 16px;
+    animation: entrarArriba 0.6s ease-out both;
 }
 
 .servicios-header h1 {
@@ -38,6 +105,7 @@
     color: white;
     margin-bottom: 12px;
     text-shadow: 0 0 20px rgba(220,38,38,0.4);
+    animation: entrarArriba 0.7s ease-out 0.1s both;
 }
 
 .servicios-header p {
@@ -46,6 +114,7 @@
     max-width: 480px;
     margin: 0 auto;
     line-height: 1.7;
+    animation: entrarArriba 0.7s ease-out 0.2s both;
 }
 
 /* =====================================================
@@ -64,10 +133,11 @@
 
 /* =====================================================
    CARD DE PRODUCTO/SERVICIO
-   Efecto glass con hover flotante
+   Efecto glass con hover flotante y brillo
    ===================================================== */
 
 .card-producto{
+    position: relative;
     background: rgba(255,255,255,0.05);
     border: 1px solid rgba(255,255,255,0.1);
     border-radius: 16px;
@@ -75,7 +145,6 @@
     display: flex;
     flex-direction: column;
     height: 100%;
-    min-height: 430px;
     backdrop-filter: blur(10px);
     -webkit-backdrop-filter: blur(10px);
     transition: transform 0.3s ease, border-color 0.3s ease, box-shadow 0.3s ease;
@@ -83,18 +152,50 @@
 
 .card-producto:hover{
     transform: translateY(-8px);
-    border-color: rgba(110,231,183,0.35);
-    box-shadow: 0 25px 50px rgba(0,0,0,0.45);
+    border-color: rgba(220,38,38,0.5);
+    box-shadow: 0 25px 50px rgba(0,0,0,0.45), 0 0 30px rgba(220,38,38,0.15);
 }
 
-/* Imagen superior de la card */
-.card-producto img{
+/* Brillo que barre la card */
+.card-producto::before{
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -75%;
+    width: 50%;
+    height: 100%;
+    background: linear-gradient(120deg, transparent, rgba(250,204,21,0.25), transparent);
+    transform: skewX(-20deg);
+    transition: left 0.6s ease;
+    pointer-events: none;
+    z-index: 2;
+}
+
+.card-producto:hover::before{
+    left: 125%;
+}
+
+/* Contenedor de imagen superior */
+.card-img{
     display: block;
     width: 100%;
     height: 200px;
-    object-fit: cover;
+    overflow: hidden;
     flex-shrink: 0;
     border-bottom: 1px solid rgba(255,255,255,0.08);
+}
+
+.card-img img{
+    display: block;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    transition: transform 0.4s ease;
+}
+
+/* Zoom de la imagen al pasar el mouse */
+.card-producto:hover .card-img img{
+    transform: scale(1.08);
 }
 
 /* Cuerpo de la card */
@@ -106,22 +207,30 @@
 }
 
 .card-badge{
+    display: inline-block;
+    align-self: flex-start;
+    background: rgba(250,204,21,0.12);
+    border: 1px solid rgba(250,204,21,0.4);
+    color: #FACC15;
+    padding: 4px 12px;
+    border-radius: 99px;
+    font-size: 0.78rem;
     font-weight: 700;
-    letter-spacing: 0.5px;
-    margin-bottom: 8px;
+    letter-spacing: 0.3px;
+    margin-bottom: 10px;
 }
 
 .card-producto h3{
     font-size: 1.1rem;
-    margin-bottom: 5px;
+    margin-bottom: 6px;
     color: white;
 }
 
 .card-producto p{
     color: #cbd5e1;
-    min-height: 75px;
     line-height: 1.6;
     flex: 1;
+    margin-bottom: 16px;
 }
 
 /* Botón de la card — siempre al fondo */
@@ -142,7 +251,7 @@
     align-items: center;
     gap: 8px;
     box-shadow: 0 6px 15px rgba(220,38,38,0.35);
-    transition: all 0.3s ease;
+    transition: transform 0.3s ease, box-shadow 0.3s ease, background 0.3s ease;
 }
 
 .card-producto .btn-card:hover{
@@ -155,9 +264,94 @@
     transform: scale(0.97);
 }
 
-.card-producto a{
+/* =====================================================
+   CTA FINAL
+   Card flotante que cierra la página
+   ===================================================== */
+
+.servicios-cta{
+    max-width: 620px;
+    margin: 70px auto 0;
+    padding: 44px 38px;
+    text-align: center;
+    border-radius: 24px;
+    background: rgba(255,255,255,0.05);
+    border: 1px solid rgba(255,255,255,0.1);
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+    box-shadow: 0 20px 45px rgba(0,0,0,0.35);
+    animation: flotar 6s ease-in-out infinite;
+    transition: transform 0.35s ease, box-shadow 0.35s ease;
+}
+
+.servicios-cta:hover{
+    animation-play-state: paused;
+    transform: translateY(-8px);
+    box-shadow: 0 30px 60px rgba(220,38,38,0.25);
+}
+
+.servicios-cta h2{
+    font-size: clamp(1.4rem, 3vw, 1.9rem);
+    font-weight: 900;
     color: white;
+    margin-bottom: 12px;
+}
+
+.servicios-cta h2 .acento{
+    color: #FACC15;
+}
+
+.servicios-cta p{
+    color: #cbd5e1;
+    max-width: 460px;
+    margin: 0 auto 26px;
+    line-height: 1.7;
+}
+
+.servicios-cta-botones{
+    display: flex;
+    gap: 14px;
+    justify-content: center;
+    flex-wrap: wrap;
+}
+
+.btn-principal{
+    padding: 13px 28px;
+    background: linear-gradient(135deg, #DC2626, #B91C1C);
+    color: white;
+    border-radius: 10px;
+    font-weight: 700;
+    font-size: 1rem;
     text-decoration: none;
+    cursor: pointer;
+    display: inline-block;
+    transition: transform 0.3s ease, box-shadow 0.3s ease, background 0.3s ease;
+    animation: pulsar 2.6s ease-in-out infinite;
+}
+
+.btn-principal:hover{
+    background: linear-gradient(135deg, #EF4444, #DC2626);
+    transform: translateY(-3px);
+    box-shadow: 0 12px 26px rgba(220,38,38,0.45);
+}
+
+.btn-secundario{
+    padding: 13px 28px;
+    border: 2px solid #FACC15;
+    border-radius: 10px;
+    background: transparent;
+    color: #FACC15;
+    font-weight: 700;
+    font-size: 1rem;
+    text-decoration: none;
+    cursor: pointer;
+    transition: transform 0.3s ease, background 0.3s ease, color 0.3s ease;
+}
+
+.btn-secundario:hover{
+    background: #FACC15;
+    color: #111827;
+    transform: translateY(-3px);
 }
 
 /* =====================================================
@@ -175,6 +369,10 @@
         grid-template-columns: 1fr;
     }
     .servicios-main {
-        padding: 20px 20px 80px;
+        padding: 60px 20px 70px;
+    }
+    .servicios-cta{
+        padding: 34px 24px;
+        margin-top: 50px;
     }
 }

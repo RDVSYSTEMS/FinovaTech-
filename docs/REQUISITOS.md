@@ -1,10 +1,10 @@
-# REQUISITOS DEL PROYECTO — FinovaTech v10
+# REQUISITOS DEL PROYECTO — FinovaTech v10.1
 
 **Proyecto:** Sistema de Finanzas Personales para Estudiantes de Bachillerato
 **Empresa desarrolladora:** RDV Systems
 **Entidad formadora:** SENA
-**Versión del documento:** 10.0.0
-**Estado:** Documentación consolidada de la versión v10 (contexto educativo)
+**Versión del documento:** 10.1.0
+**Estado:** Documentación consolidada de la versión v10.1 (contexto educativo)
 
 ---
 
@@ -108,6 +108,10 @@ en línea, y despliegue en servidores de producción externos.
 
 ### RF-09 Páginas institucionales
 - Inicio, contacto, servicios, soporte y términos accesibles sin sesión.
+- Inicio y servicios usan el video institucional como fondo y presentan una
+  llamada a la acción final; cada tarjeta de servicio dirige a `/login`.
+- La portada muestra estadísticas reales (usuarios y movimientos) leídas de la
+  base de datos, no valores simulados.
 
 ### RF-10 Agendamiento de sesiones
 - Permite reservar una sesión indicando fecha, hora, categoría, estado y comentarios.
@@ -128,6 +132,7 @@ en línea, y despliegue en servidores de producción externos.
 | RNF-06 | Contra inyección SQL | parámetros `%s` + nombres de tabla en lista blanca |
 | RNF-07 | Sesiones y datos en español | interfaz 100% en español (formato moneda COP) |
 | RNF-08 | Portabilidad local | corre en Windows con XAMPP sin configuración extra |
+| RNF-09 | Animaciones accesibles | animaciones CSS/AOS respetan `prefers-reduced-motion` |
 
 ---
 
