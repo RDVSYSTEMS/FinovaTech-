@@ -224,7 +224,7 @@ obvias; no repiten instrucciones línea por línea.
 | Plantilla | Ruta | Funciones principales |
 |---|---|---|
 | `index.html` | `/` | Presenta FinovaTech, sus beneficios, estadísticas reales (usuarios y movimientos desde la base de datos) y una llamada a la acción final. |
-| `login.html` | `/login` o `/login.html` | Recibe correo y contraseña, valida CSRF e inicia la sesión. |
+| `login.html` | `/login` o `/login.html` | Recibe correo y contraseña, valida CSRF e inicia la sesión. Video de fondo, entrada escalonada y botón pulsante. |
 | `registro.html` | `/registro` o `/registro.html` | Crea cuentas, valida rol, contraseña y confirmación. |
 | `contacto.html` | `/contacto.html` | Muestra información de contacto y créditos del proyecto. |
 | `servicios.html` | `/servicios.html` | Catálogo de servicios con video de fondo; cada tarjeta dirige a `/login`. Incluye una llamada a la acción final. |
@@ -318,4 +318,4 @@ actual:
 | v8.0.0 | Notificaciones, páginas informativas, soporte y mejoras de navegación. |
 | v9.0.0 | Seguridad de la aplicación: contraseñas cifradas, CSRF y control de acceso. |
 | v10.0.0 | Consolidación de la documentación técnica del código, seguridad, páginas, assets y base de datos. |
-| v10.1.0 | Mejora visual de la portada y servicios: video de fondo, estadísticas reales, llamadas a la acción y animaciones accesibles (scroll, hover, paralaje) unificadas a la marca. |
+| v10.1.0 | Mejora visual de las páginas públicas (portada, servicios y login): video de fondo, estadísticas reales, llamadas a la acción, entrada escalonada, botones pulsantes, barra de progreso de lectura y animaciones accesibles unificadas a la marca. |

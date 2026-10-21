@@ -4,6 +4,30 @@
    ===================================================== */
 
 /* =====================================================
+   ANIMACIONES (mismas que la portada y servicios)
+   ===================================================== */
+
+@keyframes entrarArriba {
+    from { opacity: 0; transform: translateY(28px); }
+    to   { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes pulsar {
+    0%, 100% { box-shadow: 0 6px 15px rgba(220,38,38,0.35); }
+    50%      { box-shadow: 0 6px 15px rgba(220,38,38,0.35), 0 0 0 12px rgba(220,38,38,0); }
+}
+
+/* Respeta la preferencia de movimiento reducido */
+@media (prefers-reduced-motion: reduce) {
+    .login-info .hero-etiqueta,
+    .login-info h1,
+    .login-info > p,
+    .login-feature,
+    .login-card,
+    .btn-principal.w-full { animation: none !important; }
+}
+
+/* =====================================================
    FONDO GENERAL
    ===================================================== */
 
@@ -77,6 +101,8 @@
     line-height: 1.15;
     margin: 16px 0;
     color: white;
+    text-shadow: 0 0 24px rgba(220,38,38,0.35);
+    animation: entrarArriba 0.7s ease-out 0.1s both;
 }
 
 .hero-etiqueta {
@@ -89,6 +115,7 @@
     font-weight: 600;
     display: inline-block;
     margin-bottom: 22px;
+    animation: entrarArriba 0.6s ease-out both;
 }
 
 .login-info .highlight {
@@ -104,6 +131,7 @@
     line-height: 1.7;
     max-width: 380px;
     margin-bottom: 30px;
+    animation: entrarArriba 0.7s ease-out 0.2s both;
 }
 
 .login-features {
@@ -120,13 +148,19 @@
     border: 1px solid rgba(255,255,255,0.1);
     padding: 12px 16px;
     border-radius: 10px;
-    transition: transform 0.3s ease, background 0.3s ease, border-color 0.3s ease;
+    transition: transform 0.3s ease, background 0.3s ease, border-color 0.3s ease, box-shadow 0.3s ease;
+    animation: entrarArriba 0.7s ease-out both;
 }
+
+.login-features .login-feature:nth-child(1) { animation-delay: 0.3s; }
+.login-features .login-feature:nth-child(2) { animation-delay: 0.4s; }
+.login-features .login-feature:nth-child(3) { animation-delay: 0.5s; }
 
 .login-feature:hover {
     transform: translateX(6px);
     background: rgba(255,255,255,0.1);
-    border-color: rgba(110,231,183,0.35);
+    border-color: rgba(220,38,38,0.45);
+    box-shadow: 0 6px 18px rgba(220,38,38,0.18);
 }
 
 .login-feature span { font-size: 1.4rem; }
@@ -151,6 +185,12 @@
     width: 100%;
     max-width: 420px;
     box-shadow: 0 25px 60px rgba(0,0,0,0.4);
+    transition: border-color 0.35s ease, box-shadow 0.35s ease;
+}
+
+.login-card:hover {
+    border-color: rgba(220,38,38,0.4);
+    box-shadow: 0 25px 60px rgba(0,0,0,0.4), 0 0 40px rgba(220,38,38,0.15);
 }
 
 .login-card-header {
@@ -244,9 +284,10 @@
 /* Recordarme y olvidé contraseña */
 .login-opciones {
     display: flex;
-    justify-content: space-between;
-    align-items: center;
-    margin: 4px 0 16px;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 10px;
+    margin: 4px 0 18px;
 }
 
 .checkbox-label {
@@ -293,12 +334,14 @@
     border: none;
     box-shadow: 0 4px 14px rgba(220,38,38,0.35);
     transition: background 0.2s, transform 0.15s, box-shadow 0.2s;
+    animation: pulsar 2.6s ease-in-out infinite;
 }
 
 .btn-principal.w-full:hover {
     background: linear-gradient(135deg, #EF4444, #DC2626);
     transform: translateY(-2px);
     box-shadow: 0 6px 20px rgba(220,38,38,0.5);
+    animation-play-state: paused;
 }
 
 .btn-principal.w-full:active {
@@ -363,6 +406,21 @@
     0%, 100% { transform: translateX(0); }
     25%       { transform: translateX(-8px); }
     75%       { transform: translateX(8px); }
+}
+
+/* =====================================================
+   BARRA DE PROGRESO DE LECTURA
+   ===================================================== */
+
+#barra-progreso {
+    position: fixed;
+    top: 0;
+    left: 0;
+    height: 4px;
+    width: 0;
+    background: linear-gradient(90deg, #DC2626, #FACC15);
+    z-index: 9999;
+    transition: width 0.1s linear;
 }
 
 /* =====================================================
