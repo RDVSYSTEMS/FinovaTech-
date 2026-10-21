@@ -1,7 +1,7 @@
-# MODELO DE DATOS — FinovaTech v10.2
+# MODELO DE DATOS — FinovaTech v10.3
 
-**Versión del documento:** 10.2.0
-**Estado:** Documentación consolidada de la versión v10.2.
+**Versión del documento:** 10.3.0
+**Estado:** Documentación consolidada de la versión v10.3.
 
 Base de datos `finovatech` en MySQL/MariaDB (XAMPP). Codificación: utf8mb4.
 

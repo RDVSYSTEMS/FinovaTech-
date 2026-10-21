@@ -1,10 +1,10 @@
-# REQUISITOS DEL PROYECTO — FinovaTech v10.2
+# REQUISITOS DEL PROYECTO — FinovaTech v10.3
 
 **Proyecto:** Sistema de Finanzas Personales para Estudiantes de Bachillerato
 **Empresa desarrolladora:** RDV Systems
 **Entidad formadora:** SENA
-**Versión del documento:** 10.2.0
-**Estado:** Documentación consolidada de la versión v10.2 (contexto educativo)
+**Versión del documento:** 10.3.0
+**Estado:** Documentación consolidada de la versión v10.3 (contexto educativo)
 
 ---
 
@@ -90,6 +90,9 @@ en línea, y despliegue en servidores de producción externos.
   registros y últimos 6 movimientos.
 - Gráfica de gastos por categoría y curva de evolución (6 meses).
 - Barra de presupuesto del mes vigente (límite, gastado, disponible).
+- La interfaz incluye barra de progreso de lectura, entrada escalonada del
+  sidebar y las tarjetas, y se adapta sin desbordamiento horizontal entre
+  1025 y 1120px (las estadísticas pasan a dos columnas antes de recortar el monto).
 
 ### RF-05 Gestión de movimientos (ingresos y gastos)
 - Permite registrar un movimiento con tipo, descripción, monto,

@@ -1,5 +1,5 @@
 /* =====================================================
-   PANEL.CSS — FinovaTech v6 — SENA 2026
+   PANEL.CSS — FinovaTech — SENA 2026
    Estilos del dashboard, construidos desde cero.
 
    Secciones:
@@ -8,8 +8,10 @@
    3. Topbar (saludo y fecha)
    4. Tarjetas de estadísticas
    5. Gráficas y presupuesto
-   6. Tabla de movimientos
-   7. Responsive (tablet y móvil)
+   6. Tabla de movimientos + modal
+   7. Barra de progreso de lectura
+   8. Responsive (tablet y móvil)
+   9. Menos movimiento (prefers-reduced-motion)
    ===================================================== */
 
 /* ---------- Variables del diseño ---------- */
@@ -57,6 +59,12 @@
     top: 72px;
     height: calc(100vh - 72px);
     overflow-y: auto;
+    animation: entrarLateral 0.5s ease both;
+}
+
+@keyframes entrarLateral {
+    from { opacity: 0; transform: translateX(-16px); }
+    to   { opacity: 1; transform: translateX(0); }
 }
 
 .sidebar-logo {
@@ -355,12 +363,16 @@
     display: grid;
     grid-template-columns: 2fr 1fr;
     gap: 16px;
+    /* min-width:0 deja que las columnas del grid encojan con el canvas
+       de Chart.js en vez de forzar el ancho de toda la página. */
+    min-width: 0;
 }
 
 .columna-lateral {
     display: flex;
     flex-direction: column;
     gap: 16px;
+    min-width: 0;
 }
 
 .panel-card {
@@ -368,6 +380,7 @@
     border: 1px solid var(--borde);
     border-radius: 14px;
     padding: 20px;
+    min-width: 0;
     animation: subir 0.6s ease both;
     animation-delay: 0.3s;
 }
@@ -797,12 +810,26 @@
     filter: brightness(1.15);
 }
 
+/* ---------- Barra de progreso de lectura ---------- */
+#barra-progreso {
+    position: fixed;
+    top: 0;
+    left: 0;
+    height: 4px;
+    width: 0;
+    background: linear-gradient(90deg, var(--primario), var(--acento));
+    z-index: 9999;
+    transition: width 0.1s linear;
+}
+
 /* ---------- 7. Responsive ---------- */
 @media (max-width: 1100px) {
     .panel-graficas { grid-template-columns: 1fr; }
 }
 
-@media (max-width: 1024px) {
+/* Con 4 tarjetas anchas, por debajo de 1200px se ven apretadas:
+   pasamos a 2 columnas antes de que el monto se corte. */
+@media (max-width: 1200px) {
     .panel-stats { grid-template-columns: repeat(2, 1fr); }
 }
 
@@ -842,4 +869,30 @@
 @media (max-width: 480px) {
     .panel-stats { grid-template-columns: 1fr; }
     .panel-contenido { padding: 16px 12px; }
+}
+
+/* ---------- 8. Menos movimiento ---------- */
+/* Respeta la preferencia del sistema: quien pide reducir el
+   movimiento no ve entradas, brillos ni transiciones animadas. */
+@media (prefers-reduced-motion: reduce) {
+    .panel-sidebar,
+    .panel-topbar,
+    .stat-card,
+    .panel-card,
+    .panel-tabla,
+    .bienvenida-nombre,
+    .modal-caja {
+        animation: none !important;
+    }
+
+    .stat-card,
+    .btn-agregar,
+    .sidebar-enlace,
+    .presupuesto-lleno {
+        transition: none !important;
+    }
+
+    .stat-card:hover {
+        transform: none;
+    }
 }

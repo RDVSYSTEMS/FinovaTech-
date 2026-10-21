@@ -1,4 +1,4 @@
-# FinovaTech v10.2
+# FinovaTech v10.3
 
 Sistema de Finanzas Personales para Estudiantes de Bachillerato.
 Aplicación web (HTML/CSS/JS + Flask + MySQL) con autenticación, control de
@@ -7,7 +7,7 @@ desarrollado por **RDV Systems**.
 
 > Nota de versionado: el historial que aparece abajo es una reconstrucción
 > retrospectiva de las etapas del proyecto. El repositorio actual conserva la
-> versión acumulada **v10.2.0**; las versiones anteriores representan hitos de
+> versión acumulada **v10.3.0**; las versiones anteriores representan hitos de
 > desarrollo y no necesariamente commits publicados por separado.
 
 ## Requisitos previos
@@ -258,15 +258,19 @@ Estas páginas requieren una sesión iniciada. Sin sesión, Flask redirige a
 ### Animaciones de la interfaz
 
 Las páginas públicas (inicio y servicios) comparten un conjunto de animaciones
-definidas en CSS, sin librerías adicionales (además de AOS):
+definidas en CSS, sin librerías adicionales (además de AOS). El panel reutiliza
+el mismo lenguaje visual sin AOS, con entradas propias:
 
 - **Entrada escalonada**: el encabezado y los botones aparecen con
-    deslizamiento y desvanecido al cargar, con retardos progresivos.
+    deslizamiento y desvanecido al cargar, con retardos progresivos. En el panel
+    el sidebar entra desde la izquierda y las tarjetas de estadísticas suben una
+    tras otra.
 - **Aparición al hacer scroll**: gestionada por AOS mediante atributos `data-aos`.
 - **Hover en imágenes**: zoom y brillo suave al pasar el mouse.
 - **Cards con glow**: las tarjetas se elevan y muestran un brillo que las barre.
 - **Botón pulsante**: el botón principal del bloque final emite un pulso suave.
-- **Barra de progreso de lectura**: línea superior que crece según el desplazamiento.
+- **Barra de progreso de lectura**: línea superior que crece según el desplazamiento
+    (presente en inicio, servicios, login, registro y panel).
 - **Parallax del hero**: la imagen del inicio se desplaza lentamente con el scroll.
 - **Flotación**: las tarjetas de llamada a la acción "respiran" con un vaivén suave.
 
@@ -338,3 +342,4 @@ actual:
 | v10.0.0 | Consolidación de la documentación técnica del código, seguridad, páginas, assets y base de datos. |
 | v10.1.0 | Mejora visual de las páginas públicas (portada, servicios y login): video de fondo, estadísticas reales, llamadas a la acción, entrada escalonada, botones pulsantes, barra de progreso de lectura y animaciones accesibles unificadas a la marca. |
 | v10.2.0 | Validación en vivo de los formularios de login y registro: mensajes por campo, estados de error/acierto y animación de aviso, manteniendo la validación del servidor como fuente de verdad. |
+| v10.3.0 | Mejora del panel: barra de progreso de lectura, entrada escalonada del sidebar y las tarjetas, soporte de `prefers-reduced-motion`, y corrección del desbordamiento horizontal entre 1025 y 1120px con ajuste de las tarjetas de estadísticas a dos columnas antes de que el monto se corte. |
