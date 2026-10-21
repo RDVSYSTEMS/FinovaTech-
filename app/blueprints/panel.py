@@ -1,5 +1,5 @@
 """=============================================================
-FinovaTech v9 - Blueprint del panel (protegido)
+FinovaTech v10 - Blueprint del panel (protegido)
 =============================================================="""
 
 from flask import Blueprint, render_template, session

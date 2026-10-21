@@ -1,5 +1,5 @@
-"""=============================================================
-FinovaTech v9 - Configuración de la aplicación
+﻿"""=============================================================
+FinovaTech v10 - Configuración de la aplicación
 ==============================================================
 Centraliza los datos de conexión a MySQL (XAMPP) y la clave
 secreta de sesión, cargados desde el archivo ".env".
@@ -21,6 +21,7 @@ class Config:
     DB_USER = os.getenv("DB_USER", "root")
     DB_PASSWORD = os.getenv("DB_PASSWORD", "")
     DB_NAME = os.getenv("DB_NAME", "finovatech")
+    SESSION_COOKIE_SECURE = os.getenv("SESSION_COOKIE_SECURE", "0") == "1"
 
     SECRET_KEY = os.getenv("SECRET_KEY")
     if not SECRET_KEY:

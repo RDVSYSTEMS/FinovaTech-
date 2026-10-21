@@ -1,5 +1,5 @@
 """=============================================================
-FinovaTech v9 - Modelo de usuarios (registro y login)
+FinovaTech v10 - Modelo de usuarios (registro y login)
 ==============================================================
 Lógica de REGISTRO y LOGIN contra MySQL (tabla "usuario").
 
@@ -7,9 +7,15 @@ Las contraseñas NUNCA se guardan en texto plano: se cifran con
 werkzeug.security (generate_password_hash / check_password_hash).
 =============================================================="""
 
+import logging
+
+import pymysql
+
 from werkzeug.security import check_password_hash, generate_password_hash
 
 from app.db import get_connection
+
+logger = logging.getLogger(__name__)
 
 
 def usuario_existe(email: str, username: str) -> bool:
@@ -38,8 +44,8 @@ def registrar_usuario(nombre: str, email: str, username: str, password: str, rol
     # Solo se persiste el hash; la contraseña original nunca llega a MySQL.
     password_hash = generate_password_hash(password)
 
+    conn = get_connection()
     try:
-        conn = get_connection()
         with conn.cursor() as cur:
             cur.execute(
                 "INSERT INTO usuario (nombre, email, username, password, rol) "
@@ -54,8 +60,10 @@ def registrar_usuario(nombre: str, email: str, username: str, password: str, rol
             )
         conn.commit()
         return True, "Cuenta creada correctamente"
-    except Exception as e:
-        return False, f"Error al registrar: {e}"
+    except pymysql.MySQLError:
+        conn.rollback()
+        logger.exception("No se pudo registrar el usuario %s", email)
+        return False, "No fue posible crear la cuenta en este momento"
     finally:
         conn.close()
 

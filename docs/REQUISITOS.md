@@ -47,12 +47,13 @@ en línea, y despliegue en servidores de producción externos.
 | Rol | Descripción |
 |---|---|
 | Estudiante | Usuario principal: gestiona sus ingresos/gastos/presupuesto |
-| Empleado | Perfil de registro permitido (misma funcionalidad básica) |
 | Padre | Perfil de registro permitido (supervisión básica) |
 | Administrador | Creado solo desde la base de datos; gestiona el sistema |
 
 > Regla de seguridad: el **auto-registro público solo permite los roles**
-> estudiante, empleado y padre (lista blanca del lado del servidor).
+> estudiante y padre (lista blanca del lado del servidor). El rol administrador
+> corresponde a los programadores del sistema y no se puede crear desde el
+> formulario público.
 
 ---
 
@@ -178,7 +179,7 @@ en línea, y despliegue en servidores de producción externos.
 | GET | `/` | Página principal. |
 | GET/POST | `/login` | Inicio de sesión y validación de credenciales. |
 | GET/POST | `/registro` | Creación de cuentas y perfil de estudiante. |
-| GET | `/logout` | Cierre de sesión. |
+| POST | `/logout` | Cierre de sesión protegido por CSRF. |
 | GET | `/<pagina>.html` | Aliases de páginas públicas permitidas. |
 
 ### Rutas protegidas

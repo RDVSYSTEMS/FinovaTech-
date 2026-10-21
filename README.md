@@ -12,7 +12,7 @@ desarrollado por **RDV Systems**.
 
 ## Requisitos previos
 
-- Python 3.13
+- Python 3.14 (última estable; probado con 3.14.8)
 - XAMPP con Apache + MySQL/MariaDB (usuario `root`, sin contraseña)
 - Git
 
@@ -42,7 +42,9 @@ Doble clic en `iniciar.bat` (valida MySQL en 3306 y abre el navegador) o:
 .venv\Scripts\python run.py
 ```
 
-Servidor en http://localhost:5000
+Servidor en http://localhost:5001
+
+> El puerto se puede cambiar con la variable de entorno `PORT` (por defecto 5001).
 
 ### Cuenta de demostración
 - Correo: `adminr123@gmail.com`
@@ -95,7 +97,7 @@ antes de guardarse en MySQL. Durante el login, `check_password_hash` compara
 la contraseña recibida con el hash almacenado; la contraseña original nunca se
 guarda ni se consulta directamente en SQL.
 
-El registro público solo acepta los roles `estudiante`, `empleado` y `padre`.
+El registro público solo acepta los roles `estudiante` y `padre`.
 El rol `administrador` no se puede crear desde el formulario público. Después
 de un login correcto, la aplicación limpia la sesión anterior, genera un nuevo
 token CSRF y guarda únicamente los datos necesarios para identificar al usuario:
@@ -208,6 +210,9 @@ principales. La documentación está distribuida así:
 - `tests/test_smoke.py`: cobertura de rutas, autenticación y protección CSRF.
 - `docs/REQUISITOS.md`: requisitos, rutas y contrato del agendamiento.
 - `docs/MODELO_DATOS.md`: relaciones, persistencia y reglas de la base de datos.
+
+El cierre de sesión se realiza mediante `POST /logout` con `csrf_token`; no se
+usa un enlace GET para cambiar el estado de la sesión.
 
 Los comentarios explican responsabilidades, reglas de negocio y decisiones no
 obvias; no repiten instrucciones línea por línea.

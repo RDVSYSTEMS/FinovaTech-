@@ -52,7 +52,10 @@
                 <span class="enlace-icono">🔔</span> Notificaciones
             </a>
         </nav>
-        <a href="/logout" class="sidebar-salir">🚪 Cerrar sesión</a>
+        <form action="/logout" method="POST" class="sidebar-salir-form">
+            <input type="hidden" name="csrf_token" value="{{ csrf_token }}">
+            <button type="submit" class="sidebar-salir">🚪 Cerrar sesión</button>
+        </form>
     </aside>
 
     <!-- CONTENIDO -->

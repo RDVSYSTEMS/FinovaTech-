@@ -1,5 +1,5 @@
-"""=============================================================
-FinovaTech v9 - Acceso a la base de datos (MySQL vía XAMPP)
+﻿"""=============================================================
+FinovaTech v10 - Acceso a la base de datos (MySQL vía XAMPP)
 ==============================================================
 get_connection() abre una conexión nueva a MySQL usando PyMySQL
 y devuelve las filas como diccionarios (DictCursor).

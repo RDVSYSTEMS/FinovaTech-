@@ -71,7 +71,7 @@ document.addEventListener("DOMContentLoaded", function () {
         <nav class="menu-superior">
             <a href="/">Inicio</a>
             <a href="/servicios.html">Servicios</a>
-            <a href="/agendamiento">Agendar</a>
+            <a href="/login" title="Inicia sesión para agendar una sesión">Agendar</a>
             <a href="/login">Iniciar sesión</a>
             <a href="/registro" class="btn-nav">Registrarse</a>
         </nav>

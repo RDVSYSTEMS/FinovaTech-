@@ -7,7 +7,8 @@ import pymysql
 from app.db import get_connection
 
 CATEGORIAS_VALIDAS = {"reserva", "consultoria", "taller"}
-ESTADOS_VALIDOS = {"pendiente", "confirmado", "cancelado", "completado"}
+
+ESTADOS_CREACION = {"pendiente"}
 
 
 def crear_agendamiento(usuario_id: int, fecha: str, hora: str, categoria: str,
@@ -23,7 +24,7 @@ def crear_agendamiento(usuario_id: int, fecha: str, hora: str, categoria: str,
         return False, "La fecha no puede ser anterior a hoy"
     if categoria not in CATEGORIAS_VALIDAS:
         return False, "La categoría seleccionada no es válida"
-    if estado not in ESTADOS_VALIDOS:
+    if estado not in ESTADOS_CREACION:
         return False, "El estado seleccionado no es válido"
 
     conn = get_connection()

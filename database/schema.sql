@@ -1,5 +1,5 @@
--- ============================================================
--- FinovaTech v9 — Esquema de la base de datos
+﻿-- ============================================================
+-- FinovaTech v10 — Esquema de la base de datos
 -- ============================================================
 -- Modelo basado en el diagrama ER (FinovaTech.mwb):
 --   Administrador 1─N Usuario 1─1 Estudiante 1─N Ingreso
@@ -46,7 +46,7 @@ CREATE TABLE IF NOT EXISTS usuario (
     email          VARCHAR(120) NOT NULL UNIQUE,
     username       VARCHAR(50)  NOT NULL UNIQUE,
     password       VARCHAR(255) NOT NULL,
-    rol            ENUM('estudiante', 'empleado', 'administrador', 'padre') NOT NULL DEFAULT 'estudiante',
+    rol            ENUM('estudiante', 'administrador', 'padre') NOT NULL DEFAULT 'estudiante',
     fecha_registro TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     administrador_id INT NULL,
     CONSTRAINT fk_usuario_administrador

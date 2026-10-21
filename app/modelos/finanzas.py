@@ -1,5 +1,5 @@
 """=============================================================
-FinovaTech v9 - Modelo financiero (datos, registros, notificaciones)
+FinovaTech v10 - Modelo financiero (datos, registros, notificaciones)
 ==============================================================
 Consulta la base de datos para el panel, la lista de movimientos
 y las notificaciones de un usuario.
@@ -11,9 +11,15 @@ Formato de dinero: _fmt() convierte 440000 en "$440.000"
 (estilo colombiano, con puntos de miles).
 =============================================================="""
 
+import logging
+
+import pymysql
+
 from datetime import date, datetime as _dt_datetime
 
 from app.db import get_connection
+
+logger = logging.getLogger(__name__)
 
 MESES_ES = ["Ene", "Feb", "Mar", "Abr", "May", "Jun",
             "Jul", "Ago", "Sep", "Oct", "Nov", "Dic"]
@@ -314,9 +320,10 @@ def crear_registro(usuario_id: int, tipo: str, descripcion: str,
                 (monto, descripcion, categoria, fecha, estudiante_id),
             )
         conn.commit()
-    except Exception as e:
+    except pymysql.MySQLError:
         conn.rollback()
-        return False, f"No se pudo guardar: {e}"
+        logger.exception("No se pudo crear movimiento para usuario %s", usuario_id)
+        return False, "No fue posible guardar el movimiento"
     finally:
         conn.close()
 

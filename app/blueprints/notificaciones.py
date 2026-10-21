@@ -1,5 +1,5 @@
 """=============================================================
-FinovaTech v9 - Blueprint de notificaciones y agendamiento
+FinovaTech v10 - Blueprint de notificaciones y agendamiento
 =============================================================="""
 
 from flask import Blueprint, jsonify, render_template, request, session
@@ -29,7 +29,7 @@ def agendamiento():
             request.form.get("fecha", "").strip(),
             request.form.get("hora", "").strip(),
             request.form.get("categoria", "").strip(),
-            request.form.get("estado", "pendiente").strip(),
+            "pendiente",
             request.form.get("comentarios", "").strip(),
         )
         return jsonify(ok=exito, mensaje=mensaje), (200 if exito else 400)

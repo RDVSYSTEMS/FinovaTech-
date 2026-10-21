@@ -147,6 +147,17 @@
     transition: background 0.2s, color 0.2s;
 }
 
+.sidebar-salir-form {
+    margin-top: 8px;
+}
+
+.sidebar-salir-form .sidebar-salir {
+    width: 100%;
+    background: transparent;
+    text-align: left;
+    cursor: pointer;
+}
+
 .sidebar-salir:hover {
     background: rgba(220,38,38,0.1);
     color: #fca5a5;

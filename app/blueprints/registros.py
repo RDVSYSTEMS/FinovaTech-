@@ -1,5 +1,5 @@
 """=============================================================
-FinovaTech v9 - Blueprint de registros (lista + alta/borrado)
+FinovaTech v10 - Blueprint de registros (lista + alta/borrado)
 =============================================================="""
 
 from urllib.parse import quote
@@ -43,6 +43,7 @@ def registro_nuevo():
     exito, mensaje = crear_registro(
         session["user_id"], tipo, descripcion, monto_valor, categoria, fecha
     )
+    
     clave = "ok" if exito else "error"
     return redirect(url_for("registros.lista") + f"?{clave}=" + quote(mensaje))
 

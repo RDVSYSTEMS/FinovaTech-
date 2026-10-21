@@ -1,24 +1,40 @@
 """=============================================================
-FinovaTech v9 - Páginas públicas (inicio, login, registro, logout)
+FinovaTech v10 - Páginas públicas (inicio, login, registro, logout)
 =============================================================="""
 
 import secrets
 
 from flask import Blueprint, redirect, render_template, request, session, url_for
+from jinja2 import TemplateNotFound
 
+from app.db import get_connection
 from app.modelos.usuarios import registrar_usuario, verificar_login
 from app.seguridad import (limpiar_fallos, registrar_fallo, segundos_restantes_bloqueo, verificar_bloqueo)
 
 publicas_bp = Blueprint("publicas", __name__)
 
 # Lista blanca: el público solo puede crear cuentas con estos roles.
-ROLES_PERMITIDOS = {"estudiante", "empleado", "padre"}
+ROLES_PERMITIDOS = {"estudiante", "padre"}
+
+
+def _contar_usuarios() -> int:
+    """Cuenta las cuentas registradas para la estadística de la portada."""
+    try:
+        conn = get_connection()
+        try:
+            with conn.cursor() as cur:
+                cur.execute("SELECT COUNT(*) AS total FROM usuario")
+                return int(cur.fetchone()["total"])
+        finally:
+            conn.close()
+    except Exception:
+        return 0
 
 
 @publicas_bp.route("/")
 def index():
     """Renderiza la página pública de inicio."""
-    return render_template("index.html")
+    return render_template("index.html", total_usuarios=_contar_usuarios())
 
 
 @publicas_bp.route("/login", methods=["GET", "POST"])
@@ -98,7 +114,7 @@ def registro():
     )
 
 
-@publicas_bp.route("/logout")
+@publicas_bp.route("/logout", methods=["POST"])
 def logout():
     """Elimina toda la sesión activa y vuelve al inicio."""
     session.clear()
@@ -111,7 +127,7 @@ PAGINAS_PUBLICAS_HTML = {"contacto", "servicios", "soporte", "terminos", "login"
 
 @publicas_bp.route("/<page>.html")
 def render_html_page(page):
-    """Sirve aliases .html sin permitir plantillas arbitrarias."""
+    """Sirve para aliarse .html sin permitir plantillas arbitrarias."""
     if page in PAGINAS_PUBLICAS_HTML:
         try:
             if page == "login":
@@ -121,6 +137,6 @@ def render_html_page(page):
             if page == "index":
                 return index()
             return render_template(f"{page}.html")
-        except Exception:
+        except TemplateNotFound:
             return redirect(url_for("publicas.index"))
     return redirect(url_for("publicas.index"))

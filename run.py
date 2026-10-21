@@ -1,5 +1,5 @@
 """=============================================================
-FinovaTech v9 - Punto de entrada del servidor
+FinovaTech v10 - Punto de entrada del servidor
 ==============================================================
 Uso:  python run.py
 
@@ -15,4 +15,5 @@ app = create_app()
 
 if __name__ == "__main__":
     debug_activado = os.getenv("FLASK_DEBUG", "0") == "1"
-    app.run(debug=debug_activado, port=5000)
+    puerto = int(os.getenv("PORT", "5001"))
+    app.run(debug=debug_activado, port=puerto)

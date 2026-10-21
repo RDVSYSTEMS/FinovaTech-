@@ -1,5 +1,5 @@
-"""=============================================================================
-FinovaTech v9 — Datos de prueba (demo)
+﻿"""=============================================================================
+FinovaTech v10 — Datos de prueba (demo)
 ===============================================================================
 Este script crea TODO lo necesario para que el panel del usuario demo se vea
 lleno de datos reales apenas inicies sesión:

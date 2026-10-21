@@ -1,4 +1,4 @@
-"""Pruebas smoke del flujo principal de FinovaTech v9.
+"""Pruebas smoke del flujo principal de FinovaTech v10.
 
 Comprueba que la aplicación pueda arrancar, que las rutas públicas respondan,
 que las rutas privadas exijan autenticación y que los formularios respeten
@@ -8,6 +8,7 @@ cuenta demo, por lo que sirven como verificación rápida de integración local.
 import os
 import sys
 import uuid
+from unittest.mock import patch
 
 sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
@@ -120,10 +121,70 @@ def test_lista_y_csrf():
     print("OK  CSRF bloquea POST sin token")
 
 
+def test_agendamiento_recibe_datos_y_csrf():
+    """El endpoint recibe los campos del formulario y exige CSRF."""
+    client = app.test_client()
+    with client.session_transaction() as sesion:
+        sesion["user_id"] = 1
+        sesion["user_email"] = "demo@test.local"
+        sesion["_csrf"] = "token-prueba"
+
+    with patch("app.blueprints.notificaciones.crear_agendamiento") as guardar:
+        guardar.return_value = (True, "Sesión agendada correctamente")
+        respuesta = client.post("/agendamiento", data={
+            "csrf_token": "token-prueba",
+            "fecha": "2099-01-01",
+            "hora": "10:00",
+            "categoria": "reserva",
+            "estado": "pendiente",
+            "comentarios": "Aprender a ahorrar",
+        })
+
+    assert respuesta.status_code == 200
+    assert respuesta.json["ok"] is True
+    guardar.assert_called_once_with(
+        1, "2099-01-01", "10:00", "reserva", "pendiente", "Aprender a ahorrar"
+    )
+    print("OK  agendamiento recibe datos + CSRF")
+
+
+def test_panel_presupuesto_coherente():
+    """El presupuesto del periodo y el total de gastos deben ser coherentes."""
+    import re
+    client = app.test_client()
+    r = client.get("/login")
+    token = re.search(r'name="csrf_token" value="([^"]+)"', r.get_data(as_text=True)).group(1)
+    client.post("/login", data={
+        "email": "adminr123@gmail.com",
+        "password": "123456789",
+        "csrf_token": token,
+    }, follow_redirects=False)
+    texto = client.get("/panel").get_data(as_text=True)
+    assert "Presupuesto" in texto
+    assert "% usado" in texto, "El panel no muestra el porcentaje de presupuesto"
+    assert "$0Gastado" not in texto, "Presupuesto marca $0 gastado pese a existir gastos"
+    print("OK  presupuesto del panel coherente")
+
+
+def test_logout_requiere_post_y_csrf():
+    """Cerrar sesión no debe cambiar estado mediante GET ni sin CSRF."""
+    client = app.test_client()
+    with client.session_transaction() as sesion:
+        sesion["user_email"] = "demo@test.local"
+        sesion["_csrf"] = "token-prueba"
+
+    assert client.get("/logout").status_code == 405
+    respuesta = client.post("/logout")
+    assert respuesta.status_code == 400
+    print("OK  logout exige POST + CSRF")
+
+
 if __name__ == "__main__":
     test_publicas()
     test_protegidas_sin_sesion()
     test_registro()
     test_login_panel()
     test_lista_y_csrf()
-    print("\nTodos los smoke tests v9 pasaron.")
+    test_agendamiento_recibe_datos_y_csrf()
+    test_logout_requiere_post_y_csrf()
+    print("\nTodos los smoke tests v10 pasaron.")

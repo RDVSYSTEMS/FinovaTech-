@@ -1,5 +1,5 @@
-"""=============================================================
-FinovaTech v9 - Fábrica de la aplicación (Application Factory)
+﻿"""=============================================================
+FinovaTech v10 - Fábrica de la aplicación (Application Factory)
 ==============================================================
 La función create_app() construye la aplicación Flask, registra
 los blueprints y activa la seguridad global (CSRF + cabeceras).
@@ -31,6 +31,7 @@ def create_app():
     app.config.update(
         SESSION_COOKIE_HTTPONLY=True,
         SESSION_COOKIE_SAMESITE="Lax",
+      SESSION_COOKIE_SECURE=Config.SESSION_COOKIE_SECURE,
     )
 
     # Cada blueprint agrupa una parte del sistema y conserva sus rutas públicas.

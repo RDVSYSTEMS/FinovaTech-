@@ -1,5 +1,5 @@
 @echo off
-title FinovaTech v9 - Servidor
+title FinovaTech v10 - Servidor
 cd /d "%~dp0"
 
 rem ---- Verifica que el entorno virtual exista -------------------------
@@ -13,10 +13,10 @@ if errorlevel 1 goto sinmysql
 
 :iniciar
 echo.
-echo [FinovaTech] Arrancando servidor en:  http://localhost:5000
+echo [FinovaTech] Arrancando servidor en:  http://localhost:5001
 echo [FinovaTech] Presiona Ctrl+C para detenerlo.
 echo.
-start "" /b cmd /c "ping -n 5 127.0.0.1 >nul & start http://localhost:5000"
+start "" /b cmd /c "ping -n 5 127.0.0.1 >nul & start http://localhost:5001"
 ".venv\Scripts\python.exe" run.py
 pause
 exit /b 0

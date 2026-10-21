@@ -1,1 +1,1 @@
-"""Blueprints de la aplicación FinovaTech v9."""
+"""Blueprints de la aplicación FinovaTech v10."""

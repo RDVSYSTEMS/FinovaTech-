@@ -39,7 +39,7 @@ agendamientos.
 | email | VARCHAR(120) NOT NULL UNIQUE | |
 | username | VARCHAR(50) NOT NULL UNIQUE | |
 | password | VARCHAR(255) NOT NULL | hash (werkzeug) |
-| rol | ENUM(estudiante, empleado, administrador, padre) | default estudiante |
+| rol | ENUM(estudiante, administrador, padre) | default estudiante |
 | fecha_registro | TIMESTAMP | default CURRENT_TIMESTAMP |
 | administrador_id | INT NULL FK → administrador.id | ON DELETE SET NULL |
 

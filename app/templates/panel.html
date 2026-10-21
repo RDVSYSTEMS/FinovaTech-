@@ -64,7 +64,10 @@
                 <div class="tiempo-fecha">📅 <span id="fecha-hoy"></span></div>
             </div>
 
-            <a href="/logout" class="sidebar-salir">🚪 Cerrar sesión</a>
+            <form action="/logout" method="POST" class="sidebar-salir-form">
+                <input type="hidden" name="csrf_token" value="{{ csrf_token }}">
+                <button type="submit" class="sidebar-salir">🚪 Cerrar sesión</button>
+            </form>
         </aside>
 
         <!-- ============ CONTENIDO PRINCIPAL ============ -->
@@ -175,7 +178,7 @@
                             <div class="presupuesto-lleno" style="width: {{ presupuesto.usado }}%"></div>
                         </div>
                         <div class="presupuesto-valores">
-                            <div><span>{{ presupuesto.gastado }}</span><small>Gastado</small></div>
+                            <div><span>{{ presupuesto.gastado }}</span><small>Gastado este mes</small></div>
                             <div><span>{{ presupuesto.disponible }}</span><small>Disponible</small></div>
                             <div><span>{{ presupuesto.limite }}</span><small>Límite</small></div>
                         </div>

@@ -103,17 +103,17 @@
 
                 <div class="grupo-formulario">
                     <label for="fecha">Fecha</label>
-                    <input id="fecha" type="date" required>
+                    <input id="fecha" name="fecha" type="date" required>
                 </div>
 
                 <div class="grupo-formulario">
                     <label for="hora">Hora</label>
-                    <input id="hora" type="time" required>
+                    <input id="hora" name="hora" type="time" required>
                 </div>
 
                 <div class="grupo-formulario">
                     <label for="categoria">Categoría</label>
-                    <select id="categoria" required>
+                    <select id="categoria" name="categoria" required>
                         <option value="">Seleccione una opción</option>
                         <option value="reserva">Reserva</option>
                         <option value="consultoria">Consultoría</option>
@@ -123,17 +123,14 @@
 
                 <div class="grupo-formulario">
                     <label for="estado">Estado</label>
-                    <select id="estado">
+                    <select id="estado" name="estado">
                         <option value="pendiente">Pendiente</option>
-                        <option value="confirmado">Confirmado</option>
-                        <option value="cancelado">Cancelado</option>
-                        <option value="completado">Completado</option>
                     </select>
                 </div>
 
                 <div class="grupo-formulario">
                     <label for="comentarios">¿Qué te gustaría aprender?</label>
-                    <textarea id="comentarios" rows="3" placeholder="Cuéntanos tus metas financieras..."></textarea>
+                    <textarea id="comentarios" name="comentarios" rows="3" placeholder="Cuéntanos tus metas financieras..."></textarea>
                 </div>
 
                 <div class="agendamiento-botones">
