@@ -343,3 +343,37 @@ if (contadores.length > 0) {
 
     contadores.forEach(c => observer.observe(c));
 }
+
+/* =====================================================
+   BARRA DE PROGRESO DE LECTURA
+   Se actualiza al hacer scroll. Si la página no tiene la
+   barra (#barra-progreso), no hace nada.
+   ===================================================== */
+
+const barraProgreso = document.getElementById("barra-progreso");
+
+if (barraProgreso) {
+    window.addEventListener("scroll", function () {
+        const alto   = document.documentElement.scrollHeight - window.innerHeight;
+        const avance = alto > 0 ? (window.scrollY / alto) * 100 : 0;
+        barraProgreso.style.width = avance + "%";
+    }, { passive: true });
+}
+
+/* =====================================================
+   PARALLAX SUAVE EN EL HERO
+   La imagen se mueve un poco más lento al hacer scroll.
+   Desactivado si el usuario prefiere menos movimiento.
+   ===================================================== */
+
+const heroImagen = document.querySelector(".hero-imagen");
+const menosMovimiento = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+
+if (heroImagen && !menosMovimiento) {
+    window.addEventListener("scroll", function () {
+        const y = window.scrollY;
+        if (y < window.innerHeight) {
+            heroImagen.style.transform = "translateY(" + (y * 0.12) + "px)";
+        }
+    }, { passive: true });
+}

@@ -28,6 +28,8 @@
 </head>
 <body>
 
+<!-- Barra de progreso de lectura -->
+<div id="barra-progreso"></div>
 
 <!-- HEADER -->
 <div id="header"></div>
@@ -51,13 +53,9 @@
             </p>
 
             <div class="hero-botones">
-                <a href="registro.html">
-                    <button class="btn-principal">Crear cuenta</button>
-                </a>
+                <a href="/registro" class="btn-principal">Crear cuenta</a>
 
-                <a href="servicios.html">
-                    <button class="btn-secundario">Conocer servicios</button>
-                </a>
+                <a href="/servicios.html" class="btn-secundario">Conocer servicios</a>
             </div>
 
         </div>
@@ -77,8 +75,8 @@
         </div>
 
         <div class="stat">
-            <span class="numero" data-target="3">0</span>
-            <p>Módulos disponibles</p>
+            <span class="numero" data-target="{{ total_movimientos }}">0</span><span>+</span>
+            <p>Movimientos gestionados</p>
         </div>
 
         <div class="stat">
@@ -97,20 +95,20 @@
 
             <div class="paso">
                 <span class="paso-numero">1</span>
-                <h3>Regístrate</h3>
-                <p>Regístrate de forma rápida y segura.</p>
+                <h3>Crea tu cuenta</h3>
+                <p>Regístrate en menos de un minuto, sin costos y de forma segura.</p>
             </div>
 
             <div class="paso">
                 <span class="paso-numero">2</span>
                 <h3>Registra tus movimientos</h3>
-                <p>Registra y organiza tus movimientos financieros.</p>
+                <p>Anota tus ingresos y gastos y organízalos por categorías.</p>
             </div>
 
             <div class="paso">
                 <span class="paso-numero">3</span>
                 <h3>Alcanza tus metas</h3>
-                <p>Monitorea tus avances y alcanza tus metas de ahorro.</p>
+                <p>Consulta tu avance y toma mejores decisiones financieras.</p>
             </div>
 
         </div>
@@ -164,11 +162,52 @@
     <!-- OBJETIVO -->
     <section class="objetivo" data-aos="fade-up">
 
-        <h2>Objetivo del Proyecto</h2>
+        <div class="objetivo-contenido">
 
-        <p>
-            Fortalecer las competencias financieras de los estudiantes mediante una plataforma digital que facilite la gestión responsable de los ingresos, gastos y metas de ahorro.
-        </p>
+            <span class="objetivo-etiqueta">🎯 Nuestro propósito</span>
+
+            <h2>Objetivo del Proyecto</h2>
+
+            <p>
+                Fortalecer las competencias financieras de los estudiantes mediante una plataforma digital que facilite la gestión responsable de los ingresos, gastos y metas de ahorro.
+            </p>
+
+            <div class="objetivo-pilares">
+                <div class="pilar">
+                    <span class="pilar-icono">📚</span>
+                    <h3>Aprender</h3>
+                </div>
+                <div class="pilar">
+                    <span class="pilar-icono">💡</span>
+                    <h3>Decidir mejor</h3>
+                </div>
+                <div class="pilar">
+                    <span class="pilar-icono">🌱</span>
+                    <h3>Crecer</h3>
+                </div>
+            </div>
+
+        </div>
+
+    </section>
+
+    <!-- LLAMADA A LA ACCIÓN -->
+    <section class="cta" data-aos="fade-up">
+
+        <div class="cta-card">
+
+            <h2>¿Listo para tomar el control de <span class="acento">tus finanzas</span>?</h2>
+
+            <p>
+                Crea tu cuenta gratis y empieza a registrar tus ingresos, gastos y metas de ahorro hoy mismo.
+            </p>
+
+            <div class="cta-botones">
+                <a href="/registro" class="btn-principal">Crear cuenta gratis</a>
+                <a href="/login" class="btn-secundario">Ya tengo cuenta</a>
+            </div>
+
+        </div>
 
     </section>
 

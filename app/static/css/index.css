@@ -4,6 +4,52 @@
    ===================================================== */
 
 /* =====================================================
+   ANIMACIONES DE ENTRADA (al cargar la página)
+   El contenido aparece con deslizamiento + fade
+   ===================================================== */
+
+@keyframes entrarArriba {
+    from { opacity: 0; transform: translateY(28px); }
+    to   { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes entrarDerecha {
+    from { opacity: 0; transform: translateX(-32px); }
+    to   { opacity: 1; transform: translateX(0); }
+}
+
+@keyframes entrarIzquierda {
+    from { opacity: 0; transform: translateX(32px); }
+    to   { opacity: 1; transform: translateX(0); }
+}
+
+@keyframes flotar {
+    0%, 100% { transform: translateY(0); }
+    50%      { transform: translateY(-14px); }
+}
+
+@keyframes pulsar {
+    0%, 100% { box-shadow: 0 0 0 0 rgba(255, 255, 255, 0.5); }
+    50%      { box-shadow: 0 0 0 12px rgba(255, 255, 255, 0); }
+}
+
+/* La entrada escalonada se aplica cuando AOS no está activo todavía */
+.hero-etiqueta { animation: entrarArriba 0.6s ease-out both; }
+.hero h1        { animation: entrarArriba 0.7s ease-out 0.1s both; }
+.hero-texto p   { animation: entrarArriba 0.7s ease-out 0.2s both; }
+.hero-botones   { animation: entrarArriba 0.7s ease-out 0.3s both; }
+.hero-imagen img { animation: flotar 6s ease-in-out infinite; }
+
+.hero-botones a:nth-child(1) { animation: entrarArriba 0.5s ease-out 0.35s both; }
+.hero-botones a:nth-child(2) { animation: entrarArriba 0.5s ease-out 0.45s both; }
+
+/* Respeta la preferencia de movimiento reducido */
+@media (prefers-reduced-motion: reduce) {
+    .hero-etiqueta, .hero h1, .hero-texto p, .hero-botones,
+    .hero-imagen img, .hero-botones a { animation: none; }
+}
+
+/* =====================================================
    HERO
    Sección principal con gradiente oscuro
    Texto a la izquierda, imagen a la derecha
@@ -101,6 +147,13 @@
     width: 100%;
     border-radius: 20px;
     filter: drop-shadow(0 20px 40px rgba(0,0,0,0.5));
+    transition: transform 0.4s ease, filter 0.4s ease;
+}
+
+/* Hover: la imagen crece y brilla */
+.hero-imagen img:hover{
+    transform: scale(1.04) translateY(-6px);
+    filter: drop-shadow(0 25px 50px rgba(220,38,38,0.45)) brightness(1.05);
 }
 
 /* =====================================================
@@ -166,6 +219,13 @@
     background: #DC2626;
     margin: 10px auto 0;
     border-radius: 99px;
+    transition: width 0.4s ease;
+}
+
+.como-funciona:hover h2::after,
+.objetivo:hover h2::after,
+.preview:hover h2::after {
+    width: 120px;
 }
 
 .pasos {
@@ -182,6 +242,28 @@
     width: 220px;
     box-shadow: 0 10px 20px rgba(0,0,0,0.07);
     transition: all 0.3s ease;
+    position: relative;
+    overflow: hidden;
+}
+
+/* Brillo que barre la tarjeta al pasar el mouse */
+.paso::before,
+.card::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -75%;
+    width: 50%;
+    height: 100%;
+    background: linear-gradient(120deg, transparent, rgba(250,204,21,0.35), transparent);
+    transform: skewX(-20deg);
+    transition: left 0.6s ease;
+    pointer-events: none;
+}
+
+.paso:hover::before,
+.card:hover::before {
+    left: 125%;
 }
 
 .paso:hover {
@@ -246,6 +328,13 @@
     border-radius: 16px;
     box-shadow: 0 25px 60px rgba(0,0,0,0.5);
     border: 2px solid rgba(255,255,255,0.1);
+    transition: transform 0.4s ease, box-shadow 0.4s ease, border-color 0.4s ease;
+}
+
+.preview-imagen img:hover {
+    transform: scale(1.02);
+    border-color: rgba(220,38,38,0.5);
+    box-shadow: 0 30px 70px rgba(220,38,38,0.35);
 }
 
 /* =====================================================
@@ -269,19 +358,27 @@
     border-radius:15px;
     box-shadow:0 10px 20px rgba(0,0,0,0.08);
     border-top:5px solid #DC2626;
-    transition: all 0.3s ease;
+    transition: transform 0.3s ease, box-shadow 0.3s ease, border-color 0.3s ease;
     text-align: center;
+    position: relative;
+    overflow: hidden;
 }
 
 .card:hover{
-    transform:translateY(-6px);
-    box-shadow:0 20px 40px rgba(0,0,0,0.12);
+    transform:translateY(-8px);
+    border-top-color: #FACC15;
+    box-shadow:0 24px 48px rgba(220,38,38,0.18);
+}
+
+.card:hover .card-icono{
+    transform: scale(1.15) rotate(-6deg);
 }
 
 .card-icono{
     font-size: 2.8rem;
     margin-bottom: 14px;
     display: block;
+    transition: transform 0.3s ease;
 }
 
 .card h3{
@@ -299,39 +396,228 @@
 
 /* =====================================================
    OBJETIVO
-   Sección final con el propósito del proyecto
+   Sección de impacto con el propósito del proyecto.
+   Fondo oscuro premium y pilares con hover.
    ===================================================== */
 
 .objetivo{
-    background: white;
-    padding: 60px;
+    position: relative;
+    background: linear-gradient(135deg, #0f172a 0%, #1e293b 60%, #111827 100%);
+    padding: 100px 40px;
     text-align: center;
+    overflow: hidden;
+}
+
+/* Resplandor amarillo difuso de fondo */
+.objetivo::before{
+    content: '';
+    position: absolute;
+    top: -30%;
+    left: 50%;
+    width: 700px;
+    height: 700px;
+    transform: translateX(-50%);
+    background: radial-gradient(circle, rgba(250,204,21,0.12) 0%, transparent 65%);
+    pointer-events: none;
+}
+
+.objetivo-contenido{
+    position: relative;
+    max-width: 780px;
+    margin: 0 auto;
+}
+
+.objetivo-etiqueta{
+    display: inline-block;
+    background: rgba(250,204,21,0.12);
+    border: 1px solid #FACC15;
+    color: #FACC15;
+    padding: 6px 18px;
+    border-radius: 99px;
+    font-size: 13px;
+    font-weight: 600;
+    margin-bottom: 22px;
 }
 
 .objetivo h2{
-    font-size: 1.8rem;
-    font-weight: 800;
-    color: #111827;
-    margin-bottom: 16px;
+    font-size: clamp(1.8rem, 4vw, 2.6rem);
+    font-weight: 900;
+    color: white;
+    margin-bottom: 20px;
 }
 
-/* Línea decorativa roja */
+/* Línea decorativa amarilla */
 .objetivo h2::after{
     content: '';
     display: block;
     width: 60px;
     height: 4px;
-    background: #DC2626;
-    margin: 10px auto 0;
+    background: #FACC15;
+    margin: 16px auto 0;
     border-radius: 99px;
+    transition: width 0.4s ease;
+}
+
+.objetivo:hover h2::after{
+    width: 120px;
 }
 
 .objetivo p{
-    color: #6b7280;
-    font-size: 1.05rem;
-    max-width: 600px;
+    color: #cbd5e1;
+    font-size: 1.15rem;
+    max-width: 640px;
     margin: 0 auto;
     line-height: 1.8;
+}
+
+/* Pilares del objetivo */
+.objetivo-pilares{
+    display: flex;
+    justify-content: center;
+    gap: 26px;
+    flex-wrap: wrap;
+    margin-top: 44px;
+}
+
+.pilar{
+    background: rgba(255,255,255,0.05);
+    border: 1px solid rgba(255,255,255,0.1);
+    border-radius: 16px;
+    padding: 22px 30px;
+    min-width: 150px;
+    transition: transform 0.3s ease, border-color 0.3s ease, background 0.3s ease;
+}
+
+.pilar:hover{
+    transform: translateY(-6px);
+    border-color: rgba(250,204,21,0.5);
+    background: rgba(250,204,21,0.08);
+}
+
+.pilar-icono{
+    font-size: 2rem;
+    display: block;
+    margin-bottom: 8px;
+}
+
+.pilar h3{
+    color: white;
+    font-size: 1rem;
+    font-weight: 700;
+}
+
+/* =====================================================
+   BARRA DE PROGRESO DE LECTURA
+   Línea superior que crece según el scroll
+   ===================================================== */
+
+#barra-progreso{
+    position: fixed;
+    top: 0;
+    left: 0;
+    height: 4px;
+    width: 0;
+    background: linear-gradient(90deg, #DC2626, #FACC15);
+    z-index: 9999;
+    transition: width 0.1s linear;
+}
+
+/* =====================================================
+   CTA
+   Llamada a la acción final — una card flotante que
+   se mueve suavemente, sobre fondo blanco.
+   ===================================================== */
+
+.cta{
+    position: relative;
+    padding: 70px 40px;
+    text-align: center;
+    background: #ffffff;
+}
+
+/* Card flotante */
+.cta-card{
+    position: relative;
+    max-width: 600px;
+    margin: 0 auto;
+    padding: 44px 38px;
+    border-radius: 24px;
+    background: #ffffff;
+    border: 1px solid #e5e7eb;
+    box-shadow: 0 20px 45px rgba(220,38,38,0.12);
+    animation: flotar 6s ease-in-out infinite;
+    transition: transform 0.35s ease, box-shadow 0.35s ease;
+}
+
+/* Borde degradado (rojo → amarillo) alrededor de la card */
+.cta-card::before{
+    content: '';
+    position: absolute;
+    inset: 0;
+    border-radius: 24px;
+    padding: 1.5px;
+    background: linear-gradient(135deg, #DC2626, #FACC15);
+    -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+    -webkit-mask-composite: xor;
+    mask-composite: exclude;
+    pointer-events: none;
+}
+
+/* Al pasar el mouse, la card se levanta y deja de flotar */
+.cta-card:hover{
+    animation-play-state: paused;
+    transform: translateY(-8px);
+    box-shadow: 0 30px 60px rgba(220,38,38,0.22);
+}
+
+.cta h2{
+    font-size: clamp(1.4rem, 3vw, 1.8rem);
+    font-weight: 800;
+    margin-bottom: 12px;
+    color: #111827;
+    line-height: 1.25;
+}
+
+.cta h2 .acento{
+    color: #DC2626;
+}
+
+.cta p{
+    font-size: 1rem;
+    max-width: 460px;
+    margin: 0 auto 26px;
+    color: #4b5563;
+    line-height: 1.7;
+}
+
+.cta-botones{
+    display: flex;
+    gap: 14px;
+    justify-content: center;
+    flex-wrap: wrap;
+}
+
+.cta .btn-principal{
+    background: linear-gradient(135deg, #DC2626, #B91C1C);
+    color: white;
+    animation: pulsar 2.6s ease-in-out infinite;
+}
+
+.cta .btn-principal:hover{
+    background: linear-gradient(135deg, #ef4444, #DC2626);
+    transform: translateY(-3px) scale(1.02);
+    box-shadow: 0 14px 30px rgba(220,38,38,0.5);
+}
+
+.cta .btn-secundario{
+    border: 2px solid #DC2626;
+    color: #DC2626;
+}
+
+.cta .btn-secundario:hover{
+    background: #DC2626;
+    color: white;
+    transform: translateY(-3px);
 }
 
 /* =====================================================
@@ -364,7 +650,11 @@
         padding: 30px 20px;
     }
 
-    .objetivo { padding: 40px 20px; }
+    .objetivo { padding: 60px 20px; }
+    .objetivo-pilares { gap: 14px; }
+    .pilar { padding: 18px 22px; min-width: 120px; flex: 1; }
+    .cta { padding: 50px 20px; }
+    .cta-card { padding: 34px 24px; }
 }
 
 @media(max-width: 480px) {

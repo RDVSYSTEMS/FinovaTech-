@@ -31,10 +31,30 @@ def _contar_usuarios() -> int:
         return 0
 
 
+def _contar_movimientos() -> int:
+    """Cuenta ingresos y gastos totales para la estadística de la portada."""
+    try:
+        conn = get_connection()
+        try:
+            with conn.cursor() as cur:
+                cur.execute(
+                    "SELECT (SELECT COUNT(*) FROM ingreso) + (SELECT COUNT(*) FROM gasto) AS total"
+                )
+                return int(cur.fetchone()["total"])
+        finally:
+            conn.close()
+    except Exception:
+        return 0
+
+
 @publicas_bp.route("/")
 def index():
     """Renderiza la página pública de inicio."""
-    return render_template("index.html", total_usuarios=_contar_usuarios())
+    return render_template(
+        "index.html",
+        total_usuarios=_contar_usuarios(),
+        total_movimientos=_contar_movimientos(),
+    )
 
 
 @publicas_bp.route("/login", methods=["GET", "POST"])
