@@ -56,8 +56,12 @@
     flex-direction: column;
     padding: 24px 16px;
     position: sticky;
-    top: 72px;
-    height: calc(100vh - 72px);
+    /* El header global no queda fijo (se va con el scroll), así que el
+       sidebar se ancla arriba del todo. Con top:72px quedaba un hueco
+       vacío arriba al bajar; con top:0 el sidebar sube pegado y sigue
+       la línea del contenido. */
+    top: 0;
+    height: 100vh;
     overflow-y: auto;
     animation: entrarLateral 0.5s ease both;
 }
@@ -487,9 +491,36 @@
 
 .presupuesto-lleno {
     height: 100%;
-    background: linear-gradient(90deg, var(--verde), var(--acento));
+    background: linear-gradient(90deg, #059669, var(--verde));
     border-radius: 20px;
     transition: width 1s ease;
+}
+
+/* El relleno cambia de color según el porcentaje usado, con los mismos
+   umbrales que las notificaciones: >=80% avisa y >=100% alerta. */
+.presupuesto-barra.estado-normal  .presupuesto-lleno {
+    background: linear-gradient(90deg, #059669, var(--verde));
+}
+
+.presupuesto-barra.estado-alerta  .presupuesto-lleno {
+    background: linear-gradient(90deg, var(--ambar), var(--acento));
+}
+
+.presupuesto-barra.estado-excedido .presupuesto-lleno {
+    background: linear-gradient(90deg, #b91c1c, var(--primario));
+}
+
+/* El texto del porcentaje acompaña al estado de la barra. */
+.presupuesto-cabecera:has(+ .presupuesto-barra.estado-normal) .presupuesto-porcentaje {
+    color: var(--texto-suave);
+}
+
+.presupuesto-cabecera:has(+ .presupuesto-barra.estado-alerta) .presupuesto-porcentaje {
+    color: var(--acento);
+}
+
+.presupuesto-cabecera:has(+ .presupuesto-barra.estado-excedido) .presupuesto-porcentaje {
+    color: #fca5a5;
 }
 
 .presupuesto-valores {
@@ -834,11 +865,12 @@
 }
 
 @media (max-width: 900px) {
-    /* El header global baja a 60px: ajustamos sidebar y wrapper */
+    /* En este rango el header global mide 60px y tampoco queda fijo;
+       el sidebar sigue anclándose arriba del todo para no dejar hueco. */
     .panel { min-height: calc(100vh - 60px); }
     .panel-sidebar {
-        top: 60px;
-        height: calc(100vh - 60px);
+        top: 0;
+        height: 100vh;
     }
 }
 
@@ -852,10 +884,10 @@
     .panel-sidebar {
         display: none;
         position: fixed;
-        top: 60px;
+        top: 0;
         left: 0;
         z-index: 998;
-        height: calc(100vh - 60px);
+        height: 100vh;
         box-shadow: 4px 0 20px rgba(0,0,0,0.5);
     }
 

@@ -177,7 +177,7 @@
                             <span class="presupuesto-periodo">{{ presupuesto.periodo }}</span>
                             <span class="presupuesto-porcentaje">{{ presupuesto.usado }}% usado</span>
                         </div>
-                        <div class="presupuesto-barra">
+                        <div class="presupuesto-barra estado-{{ 'excedido' if presupuesto.usado >= 100 else ('alerta' if presupuesto.usado >= 80 else 'normal') }}">
                             <div class="presupuesto-lleno" style="width: {{ presupuesto.usado }}%"></div>
                         </div>
                         <div class="presupuesto-valores">
