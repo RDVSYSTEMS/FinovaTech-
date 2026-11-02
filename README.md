@@ -53,7 +53,7 @@ Servidor en http://localhost:5001
 ## Estructura del proyecto
 
 ```
-FinovaTech v9/
+FinovaTech v10/
 ├── run.py                  # Punto de entrada (create_app + run)
 ├── iniciar.bat             # Lanzador (verifica MySQL 3306)
 ├── requirements.txt

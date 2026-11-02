@@ -91,7 +91,7 @@ document.addEventListener("DOMContentLoaded", function () {
         <header class="header-glass">
             <div class="logo">
                 <div class="logo-img-wrap">
-                    <img src="/static/assets/img/RDV_systems logo 200x200px.png" alt="Logo">
+                    <img src="/static/assets/img/logo 200x200px.png" alt="Logo">
                 </div>
                 <div class="logo-text">
                     <h2>Finanzas</h2>
