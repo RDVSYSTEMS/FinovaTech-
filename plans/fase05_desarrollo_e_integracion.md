@@ -18,8 +18,8 @@ Fuentes de verdad (no duplicar aquí):
   porque el servicio `MySQL80` de Windows ocupa el 3306.
 - D3: El puerto de MySQL se configura en `.env` (`DB_PORT`) y `iniciar.bat`
   lo lee de ahí; no se codifica en scripts.
-- D4: Las fases 01–04 quedan documentadas en `README.md` y `docs/`; no se
-  generan planes retroactivos para evitar documentación duplicada.
+- D4: Los planes 01–04 son retrospectivos y referencian `README.md` y `docs/`
+  para no duplicar su contenido.
 
 ## Alcance
 
@@ -55,3 +55,8 @@ Fuentes de verdad (no duplicar aquí):
 - MariaDB 10.4.32 (XAMPP) en 3307 con `finovatech` y sus 8 tablas.
 - `GET /` → HTTP 200 con el servidor en 5001.
 - Cuenta demo validada: `adminr123@gmail.com` / `123456789`.
+- Funcionalidades del alcance presentes en rutas y plantillas: login/registro,
+  panel, lista, notificaciones y agendamiento.
+- Suite de regresión en verde (detalle en `fase06_verificacion_validacion.md`).
+
+Estado: **cerrada** (2026-11-03).

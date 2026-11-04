@@ -82,7 +82,8 @@ FinovaTech v10/
 │   └── fase06_verificacion_validacion.md
 └── docs/
     ├── REQUISITOS.md       # Documento SRS v10 (RF, RNF, criterios)
-    └── MODELO_DATOS.md     # ER v10, tablas, triggers, procedures, vista
+    ├── MODELO_DATOS.md     # ER v10, tablas, triggers, procedures, vista
+    └── GUION_PRESENTACION.md  # Guion de demo para la presentación
 ```
 
 ## Seguridad
@@ -217,6 +218,8 @@ principales. La documentación está distribuida así:
 - `tests/test_smoke.py`: cobertura de rutas, autenticación y protección CSRF.
 - `docs/REQUISITOS.md`: requisitos, rutas y contrato del agendamiento.
 - `docs/MODELO_DATOS.md`: relaciones, persistencia y reglas de la base de datos.
+- `docs/GUION_PRESENTACION.md`: recorrido de demo y checklist previo.
+- `plans/`: planes de fase MIDEGS (perfil Estándar).
 
 El cierre de sesión se realiza mediante `POST /logout` con `csrf_token`; no se
 usa un enlace GET para cambiar el estado de la sesión.
