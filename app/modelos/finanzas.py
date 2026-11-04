@@ -15,7 +15,7 @@ import logging
 
 import pymysql
 
-from datetime import date, datetime as _dt_datetime
+from datetime import date, datetime as _dt_datetime, timedelta
 
 from app.db import get_connection
 
@@ -23,6 +23,10 @@ logger = logging.getLogger(__name__)
 
 MESES_ES = ["Ene", "Feb", "Mar", "Abr", "May", "Jun",
             "Jul", "Ago", "Sep", "Oct", "Nov", "Dic"]
+
+MESES_LARGOS = ["Enero", "Febrero", "Marzo", "Abril", "Mayo", "Junio",
+                "Julio", "Agosto", "Septiembre", "Octubre", "Noviembre",
+                "Diciembre"]
 
 
 def _fmt(valor) -> str:
@@ -211,6 +215,90 @@ def get_datos_panel(usuario_id: int) -> dict:
     ]
 
     return datos
+
+
+# --- Presupuesto -------------------------------------------------------------
+
+def get_presupuesto(usuario_id: int):
+    """Presupuesto del mes vigente del estudiante (o None si no existe)."""
+    estudiante_id = get_estudiante_id(usuario_id)
+    if estudiante_id is None:
+        return None
+
+    inicio = date.today().replace(day=1)
+    conn = get_connection()
+    try:
+        with conn.cursor() as cur:
+            cur.execute(
+                "SELECT id, monto_limite, periodo, fecha_inicio, fecha_fin "
+                "FROM presupuesto WHERE estudiante_id=%s AND fecha_inicio=%s "
+                "ORDER BY id DESC LIMIT 1",
+                (estudiante_id, inicio),
+            )
+            return cur.fetchone()
+    finally:
+        conn.close()
+
+
+def guardar_presupuesto(usuario_id: int, monto) -> tuple:
+    """Crea o actualiza el límite del mes vigente.
+
+    RETORNA:
+        (True, mensaje) o (False, mensaje).
+    """
+    try:
+        valor = float(monto)
+    except (TypeError, ValueError):
+        return False, "Monto inválido."
+
+    if valor <= 0:
+        return False, "El monto debe ser mayor a cero."
+    if valor > 9999999999.99:
+        return False, "El monto excede el límite permitido."
+
+    estudiante_id = get_estudiante_id(usuario_id)
+    if estudiante_id is None:
+        return False, "Tu cuenta aún no tiene perfil de estudiante."
+
+    hoy = date.today()
+    inicio = hoy.replace(day=1)
+    siguiente = date(hoy.year + (hoy.month == 12), (hoy.month % 12) + 1, 1)
+    fin = siguiente - timedelta(days=1)
+    periodo = f"{MESES_LARGOS[hoy.month - 1]} {hoy.year}"
+
+    conn = get_connection()
+    try:
+        with conn.cursor() as cur:
+            cur.execute(
+                "SELECT id FROM presupuesto WHERE estudiante_id=%s AND fecha_inicio=%s "
+                "ORDER BY id DESC LIMIT 1",
+                (estudiante_id, inicio),
+            )
+            fila = cur.fetchone()
+            if fila:
+                cur.execute(
+                    "UPDATE presupuesto SET monto_limite=%s, periodo=%s, fecha_fin=%s "
+                    "WHERE id=%s",
+                    (valor, periodo, fin, fila["id"]),
+                )
+                accion = "actualizado"
+            else:
+                cur.execute(
+                    "INSERT INTO presupuesto "
+                    "(monto_limite, periodo, fecha_inicio, fecha_fin, estudiante_id) "
+                    "VALUES (%s, %s, %s, %s, %s)",
+                    (valor, periodo, inicio, fin, estudiante_id),
+                )
+                accion = "definido"
+        conn.commit()
+    except pymysql.MySQLError:
+        conn.rollback()
+        logger.exception("No se pudo guardar el presupuesto del usuario %s", usuario_id)
+        return False, "No fue posible guardar el presupuesto"
+    finally:
+        conn.close()
+
+    return True, f"Presupuesto {accion} correctamente: {_fmt(valor)}."
 
 
 # --- Registros (lista) -------------------------------------------------------

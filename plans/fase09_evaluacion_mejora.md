@@ -30,11 +30,13 @@ Referencias:
 
 ## Indicadores
 
-- Suite de regresión: 21/21 comprobaciones OK.
+- Suite de regresión: 23/23 comprobaciones OK.
 - Arranque reproducible siguiendo solo el `README.md`.
 - Documentación de fases 01–08 completa.
 
 ## Mejoras candidatas
+
+Detalle, prioridades y criterios de aceptación en `docs/PENDIENTES.md`.
 
 1. Ampliar la suite a flujos de escritura (crear y eliminar movimientos).
 2. Restauración de respaldos probada y documentada.

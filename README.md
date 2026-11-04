@@ -196,6 +196,7 @@ La suite smoke valida rápidamente la integración local:
 - Acceso autenticado a la lista de movimientos.
 - Rechazo de operaciones POST sin token CSRF.
 - Coherencia del presupuesto mostrado en el panel.
+- Definición y actualización del presupuesto mensual desde `/presupuesto`.
 - Render del centro de notificaciones con sesión.
 - Validación de fecha, hora y categoría del agendamiento, y exigencia de sesión.
 - Cierre de sesión solo mediante POST con token.
@@ -223,6 +224,8 @@ principales. La documentación está distribuida así:
 - `docs/REQUISITOS.md`: requisitos, rutas y contrato del agendamiento.
 - `docs/MODELO_DATOS.md`: relaciones, persistencia y reglas de la base de datos.
 - `docs/GUION_PRESENTACION.md`: recorrido de demo y checklist previo.
+- `docs/CHANGELOG.md`: historial de cambios por versión.
+- `docs/PENDIENTES.md`: backlog priorizado para las siguientes iteraciones.
 - `plans/`: planes de fase MIDEGS (perfil Estándar).
 
 El cierre de sesión se realiza mediante `POST /logout` con `csrf_token`; no se
@@ -254,6 +257,7 @@ Estas páginas requieren una sesión iniciada. Sin sesión, Flask redirige a
 |---|---|---|
 | `panel.html` | `/panel` | Muestra ingresos, gastos, balance, registros, gráficas, presupuesto y movimientos recientes. |
 | `lista.html` | `/lista` | Lista movimientos, permite buscar y filtrar, crear registros y eliminar los propios. |
+| `presupuesto.html` | `/presupuesto` | Define o actualiza el límite de gasto del mes y muestra el avance del periodo. |
 | `notificacion.html` | `/notificacion` | Presenta alertas de presupuesto, gastos elevados y comportamiento mensual. |
 | `agendamiento.html` | `/agendamiento` | Permite seleccionar fecha, hora, categoría, estado y comentarios de una sesión. |
 
@@ -359,3 +363,4 @@ actual:
 | v10.3.0 | Mejora del panel: barra de progreso de lectura, entrada escalonada del sidebar y las tarjetas, soporte de `prefers-reduced-motion`, y corrección del desbordamiento horizontal entre 1025 y 1120px con ajuste de las tarjetas de estadísticas a dos columnas antes de que el monto se corte. |
 | v10.3.1 | Documentación MIDEGS de las fases 01–08, planes de fase y guion de presentación. |
 | v10.3.2 | Suite ampliada a presupuesto, notificaciones y validación del agendamiento; planes de las fases 09 y 10. |
+| v10.3.3 | Presupuesto editable desde la app, tabla `agendamiento` restaurada y suite de 23 comprobaciones. |

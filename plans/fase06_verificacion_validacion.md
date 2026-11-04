@@ -49,10 +49,11 @@ Referencias:
 Fecha de verificación: 2026-11-03. Entorno: Python 3.14.8, MariaDB 10.4.32
 (XAMPP) en el puerto 3307, servidor Flask en 5001.
 
-- Suite `python -m tests.test_smoke`: **21 comprobaciones OK**, sin fallos.
+- Suite `python -m tests.test_smoke`: **23 comprobaciones OK**, sin fallos.
   Cubre rutas públicas y aliases, redirección de rutas protegidas, registro de
   usuario, login demo con `/panel` 200, `/lista` autenticada, rechazo de POST
-  sin CSRF, presupuesto del panel, notificaciones autenticadas, validación de
+  sin CSRF, presupuesto del panel y su edición desde `/presupuesto`,
+  notificaciones autenticadas, validación de
   fecha/hora/categoría del agendamiento, agendamiento con y sin sesión, y
   logout solo por POST.
 - Salida final: `Todos los smoke tests v10 pasaron.`

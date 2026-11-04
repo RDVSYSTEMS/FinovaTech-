@@ -3,7 +3,7 @@
 **Proyecto:** Sistema de Finanzas Personales para Estudiantes de Bachillerato
 **Empresa desarrolladora:** RDV Systems
 **Entidad formadora:** SENA
-**Versión del documento:** 10.3.0
+**Versión del documento:** 10.3.3
 **Estado:** Documentación consolidada de la versión v10.3 (contexto educativo)
 
 ---
@@ -15,8 +15,8 @@
 | Nombre del sistema | FinovaTech |
 | Tipo | Aplicación web |
 | Frontend | HTML5, CSS3, JavaScript (vanilla) |
-| Backend | Python 3.13 + Flask |
-| Base de datos | MySQL 5.x / MariaDB 10.4 (XAMPP) |
+| Backend | Python 3.14 + Flask |
+| Base de datos | MySQL 5.x / MariaDB 10.4 (XAMPP, puerto configurable con `DB_PORT`) |
 | Control de versiones | Git + GitHub (RDVSYSTEMS/FinovaTech-) |
 | Usuarios destino | Estudiantes de bachillerato |
 
@@ -102,7 +102,9 @@ en línea, y despliegue en servidores de producción externos.
 - Mantiene al día `saldo_actual` del estudiante mediante triggers.
 
 ### RF-06 Presupuesto
-- Permite definir un monto límite por periodo (mensual).
+- Permite definir un monto límite por periodo (mensual) desde `/presupuesto`.
+- El formulario crea el presupuesto del mes vigente o actualiza el existente,
+  con validación de monto positivo y máximo permitido.
 - Advierte al alcanzar el 80% y al superar el 100%.
 
 ### RF-07 Notificaciones
@@ -176,9 +178,11 @@ en línea, y despliegue en servidores de producción externos.
 
 ## 8. Verificación
 
-- `tests/test_smoke.py` cubre: públicas 200, protegidas → login,
-  aliases `.html`, registro de usuario, login demo + panel, acceso a lista
-  y rechazo de POST sin token CSRF.
+- `tests/test_smoke.py` cubre 23 comprobaciones: públicas 200, protegidas →
+  login, aliases `.html`, registro de usuario, login demo + panel, acceso a
+  lista, rechazo de POST sin token CSRF, presupuesto coherente y editable,
+  notificaciones, validación del agendamiento (fecha, hora, categoría y
+  sesión) y logout solo por POST.
 - La suite smoke requiere MySQL/MariaDB encendido, el esquema aplicado y la
   cuenta demo disponible; no sustituye pruebas unitarias o de navegador.
 - Script `scripts/seed_demo.py` genera datos de demostración repetibles.
@@ -203,6 +207,7 @@ en línea, y despliegue en servidores de producción externos.
 |---|---|---|
 | GET | `/panel` | Resumen financiero y gráficas. |
 | GET | `/lista` | Historial de ingresos y gastos. |
+| GET/POST | `/presupuesto` | Consulta, creación y actualización del presupuesto mensual. |
 | POST | `/registro/nuevo` | Creación de un ingreso o gasto. |
 | POST | `/registro/eliminar/<tipo>/<id>` | Eliminación autorizada de un movimiento. |
 | GET | `/notificacion` | Notificaciones calculadas del usuario. |

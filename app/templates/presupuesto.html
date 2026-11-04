@@ -1,0 +1,160 @@
+<!DOCTYPE html>
+<!-- ============================================================================
+     FinovaTech — presupuesto.html
+     Descripción: Definición y seguimiento del presupuesto mensual del usuario.
+     ----------------------------------------------------------------------------
+     Proyecto SENA 2026 — Técnico en Programación de Software
+     Sistema: Gestión de finanzas personales para estudiantes de bachillerato
+     ============================================================================ -->
+
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <link rel="icon" type="image/svg+xml" href="/static/assets/img/favicon.svg">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Presupuesto - FinovaTech</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;900&display=swap" rel="stylesheet">
+    <link href="/static/vendor/aos.css" rel="stylesheet">
+    <link rel="stylesheet" href="/static/css/header_footer.css">
+    <link rel="stylesheet" href="/static/css/panel.css">
+    <link rel="stylesheet" href="/static/css/presupuesto.css">
+</head>
+<body>
+
+<div id="header"></div>
+
+<div class="panel">
+
+    <!-- Botón menú móvil -->
+    <button id="sidebar-toggle" class="sidebar-toggle" aria-label="Abrir menú">☰</button>
+
+    <!-- SIDEBAR -->
+    <aside class="panel-sidebar">
+        <div class="sidebar-logo">
+            <div class="sidebar-logo-icono">💰</div>
+            <div class="sidebar-logo-texto">
+                <strong>Finanzas</strong>
+                <span>FinovaTech</span>
+            </div>
+        </div>
+        <nav class="sidebar-nav">
+            <span class="sidebar-seccion">Menú</span>
+            <a href="/panel" class="sidebar-enlace">
+                <span class="enlace-icono">📊</span> Dashboard
+            </a>
+            <a href="/lista" class="sidebar-enlace">
+                <span class="enlace-icono">📋</span> Lista
+            </a>
+            <a href="/presupuesto" class="sidebar-enlace activo">
+                <span class="enlace-icono">🎯</span> Presupuesto
+            </a>
+            <a href="/agendamiento" class="sidebar-enlace">
+                <span class="enlace-icono">📅</span> Agendar
+            </a>
+            <a href="/notificacion" class="sidebar-enlace">
+                <span class="enlace-icono">🔔</span> Notificaciones
+            </a>
+        </nav>
+        <form action="/logout" method="POST" class="sidebar-salir-form">
+            <input type="hidden" name="csrf_token" value="{{ csrf_token }}">
+            <button type="submit" class="sidebar-salir">🚪 Cerrar sesión</button>
+        </form>
+    </aside>
+
+    <!-- CONTENIDO -->
+    <main class="panel-contenido">
+
+        <section class="panel-topbar">
+            <div class="topbar-saludo">
+                <h1>🎯 Presupuesto</h1>
+                <p class="topbar-bienvenida">Define tu límite de gasto y controla el avance del mes</p>
+            </div>
+        </section>
+
+        <div id="alertaCaja"></div>
+
+        <section class="presupuesto-layout">
+
+            <article class="panel-card presupuesto-form-card" data-aos="fade-up">
+                <div class="card-cabecera">
+                    <h3>Límite del periodo</h3>
+                </div>
+
+                {% if presupuesto %}
+                <div class="presupuesto-cabecera">
+                    <span class="presupuesto-periodo">{{ presupuesto.periodo }}</span>
+                    <span class="presupuesto-porcentaje">{{ presupuesto.usado }}% usado</span>
+                </div>
+                <div class="presupuesto-barra estado-{{ 'excedido' if presupuesto.usado >= 100 else ('alerta' if presupuesto.usado >= 80 else 'normal') }}">
+                    <div class="presupuesto-lleno" style="width: {{ presupuesto.usado }}%"></div>
+                </div>
+                <div class="presupuesto-valores">
+                    <div><span>{{ presupuesto.gastado }}</span><small>Gastado este mes</small></div>
+                    <div><span>{{ presupuesto.disponible }}</span><small>Disponible</small></div>
+                    <div><span>{{ presupuesto.limite }}</span><small>Límite</small></div>
+                </div>
+                {% else %}
+                <p class="card-vacio">Sin presupuesto configurado aún.</p>
+                {% endif %}
+
+                <form method="POST" action="/presupuesto" class="presupuesto-form">
+                    <input type="hidden" name="csrf_token" value="{{ csrf_token }}">
+                    <label class="presupuesto-campo">
+                        <span>Monto límite mensual (COP)</span>
+                        <input type="text" name="monto" inputmode="numeric"
+                               placeholder="$0" value="{{ limite_actual }}" required>
+                    </label>
+                    <p class="presupuesto-ayuda">
+                        Se aplica al periodo {{ presupuesto.periodo if presupuesto else 'del mes actual' }}.
+                        Puedes cambiarlo cuando quieras.
+                    </p>
+                    <button type="submit" class="btn-guardar">Guardar presupuesto</button>
+                </form>
+            </article>
+
+            <article class="panel-card presupuesto-info-card" data-aos="fade-up" data-aos-delay="80">
+                <div class="card-cabecera">
+                    <h3>Cómo funciona</h3>
+                </div>
+                <ul class="presupuesto-lista">
+                    <li>El límite cubre el mes en curso y se reinicia cada periodo.</li>
+                    <li>Al llegar al <strong>80%</strong> recibes una advertencia.</li>
+                    <li>Al superar el <strong>100%</strong> la alerta cambia a excedido.</li>
+                    <li>Los avisos aparecen en <a href="/notificacion">Notificaciones</a>.</li>
+                </ul>
+            </article>
+
+        </section>
+
+    </main>
+</div>
+
+<div id="footer"></div>
+<button id="btn-arriba" onclick="window.scrollTo({top:0, behavior:'smooth'})">↑</button>
+<script src="/static/vendor/aos.js"></script>
+<script src="/static/js/global.js"></script>
+<script>
+    // Alerta de éxito/error (?ok=... o ?error=...), insertada con textContent.
+    (function mostrarAlerta() {
+        var q = new URLSearchParams(window.location.search);
+        var mensaje = q.get("ok") || q.get("error");
+        if (!mensaje) return;
+        var ok = Boolean(q.get("ok"));
+        var div = document.getElementById("alertaCaja");
+        var caja = document.createElement("div");
+        caja.className = "alerta " + (ok ? "alerta-ok" : "alerta-error");
+        var texto = document.createElement("span");
+        texto.textContent = mensaje;
+        var cerrar = document.createElement("button");
+        cerrar.type = "button";
+        cerrar.setAttribute("aria-label", "Cerrar aviso");
+        cerrar.textContent = "×";
+        cerrar.addEventListener("click", function () { caja.remove(); });
+        caja.appendChild(texto);
+        caja.appendChild(cerrar);
+        div.appendChild(caja);
+    })();
+</script>
+
+</body>
+</html>

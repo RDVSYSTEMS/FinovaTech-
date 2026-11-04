@@ -24,5 +24,7 @@ correspondiente. Los planes 01–10 son breves y referencian `README.md` y
 ## Fuente de verdad
 
 - Requisitos: `docs/REQUISITOS.md`.
+- Pendientes y siguiente iteración: `docs/PENDIENTES.md`.
+- Historial de versiones: `docs/CHANGELOG.md`.
 - Modelo de datos: `docs/MODELO_DATOS.md`.
 - Ejecución, seguridad y estructura: `README.md`.

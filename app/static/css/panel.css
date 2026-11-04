@@ -404,6 +404,17 @@
     color: white;
 }
 
+.card-enlace {
+    color: var(--acento);
+    font-size: 0.78rem;
+    font-weight: 600;
+    text-decoration: none;
+}
+
+.card-enlace:hover {
+    text-decoration: underline;
+}
+
 .card-subtitulo {
     color: var(--texto-apagado);
     font-size: 0.75rem;

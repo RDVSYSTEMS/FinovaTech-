@@ -23,6 +23,7 @@ funcionales y no funcionales verificables.
 ### Incluye
 
 - Autenticación, movimientos, presupuesto, notificaciones y agendamiento.
+- Presupuesto editable desde la app (RF-06), no solo de lectura.
 - Requisitos de seguridad: CSRF, contraseñas cifradas, control de acceso.
 
 ### No incluye

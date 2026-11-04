@@ -51,7 +51,7 @@ def test_publicas():
 def test_protegidas_sin_sesion():
     """Las rutas privadas deben redirigir al login cuando no hay sesión."""
     client = app.test_client()
-    for url in ("/panel", "/lista", "/notificacion", "/agendamiento"):
+    for url in ("/panel", "/lista", "/presupuesto", "/notificacion", "/agendamiento"):
         r = client.get(url)
         assert r.status_code == 302, f"GET {url} sin sesión -> {r.status_code}"
         assert "/login" in r.headers["Location"], f"{url} no redirige a login"
@@ -180,6 +180,30 @@ def test_panel_presupuesto_coherente():
     print("OK  presupuesto del panel coherente")
 
 
+def test_presupuesto_actualiza():
+    """El usuario puede definir el presupuesto y el panel lo refleja."""
+    import re
+    client = login_demo(app.test_client())
+
+    r = client.get("/presupuesto")
+    assert r.status_code == 200, f"/presupuesto -> {r.status_code}"
+    token = re.search(r'name="csrf_token" value="([^"]+)"', r.get_data(as_text=True)).group(1)
+
+    r = client.post("/presupuesto", data={"monto": "350000", "csrf_token": token},
+                    follow_redirects=False)
+    assert r.status_code == 302, f"POST /presupuesto -> {r.status_code}"
+    assert "ok=" in r.headers["Location"], "No confirmó el guardado"
+
+    panel = client.get("/panel").get_data(as_text=True)
+    assert "$350.000" in panel, "El panel no refleja el presupuesto guardado"
+
+    r = client.post("/presupuesto", data={"monto": "0", "csrf_token": token},
+                    follow_redirects=False)
+    assert r.status_code == 302, f"POST /presupuesto inválido -> {r.status_code}"
+    assert "error=" in r.headers["Location"], "No rechazó un monto inválido"
+    print("OK  presupuesto se define y valida")
+
+
 def test_logout_requiere_post_y_csrf():
     """Cerrar sesión no debe cambiar estado mediante GET ni sin CSRF."""
     client = app.test_client()
@@ -257,6 +281,7 @@ if __name__ == "__main__":
     test_lista_y_csrf()
     test_agendamiento_recibe_datos_y_csrf()
     test_panel_presupuesto_coherente()
+    test_presupuesto_actualiza()
     test_notificaciones_autenticado()
     test_agendamiento_validacion()
     test_agendamiento_sin_sesion()
