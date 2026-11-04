@@ -3,17 +3,17 @@
 Perfil aprobado: **Estándar** (2026-11-03).
 
 Regla vigente: no se escribe código de implementación sin el plan de la fase
-correspondiente. Las fases 01–04 se documentan en `README.md` y `docs/`; no se
-crean planes retroactivos para evitar duplicar información.
+correspondiente. Los planes 01–06 son breves y referencian `README.md` y
+`docs/` en lugar de duplicar su contenido; 01–04 son retrospectivos.
 
 ## Índice de fases
 
 | Fase | Estado | Documento |
 |---|---|---|
-| 01 Dirección estratégica y viabilidad | Documentada en `README.md` | — |
-| 02 Descubrimiento y requisitos | Documentada en `docs/REQUISITOS.md` | — |
-| 03 Arquitectura y diseño | Documentada en `docs/MODELO_DATOS.md` | — |
-| 04 Planificación y preparación | Documentada en `README.md` | — |
+| 01 Dirección estratégica y viabilidad | Cerrada | `fase01_direccion_estrategica.md` |
+| 02 Descubrimiento y requisitos | Cerrada | `fase02_descubrimiento_requisitos.md` |
+| 03 Arquitectura y diseño | Cerrada | `fase03_arquitectura_diseno.md` |
+| 04 Planificación y preparación | Cerrada | `fase04_planificacion_preparacion.md` |
 | 05 Desarrollo e integración | En curso | `fase05_desarrollo_e_integracion.md` |
 | 06 Verificación y validación | Cerrada (2026-11-03) | `fase06_verificacion_validacion.md` |
 | 07–10 | No iniciadas | — |
