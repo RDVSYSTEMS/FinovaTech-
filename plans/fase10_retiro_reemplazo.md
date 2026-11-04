@@ -51,5 +51,5 @@ Referencias:
 ## Evidencia
 
 - Respaldo disponible: `data/backups/finovatech_2026-11-03.sql`.
-- Repositorio versionado con etiquetas `v10.3.0` y `v10.3.1`.
+- Repositorio versionado con etiquetas `v10.3.0`, `v10.3.1` y `v10.3.2`.
 - Documentación de fases 01–10 en `plans/`.

@@ -30,13 +30,13 @@ Referencias:
 
 ## Indicadores
 
-- Suite de regresión: 15/15 comprobaciones OK.
+- Suite de regresión: 21/21 comprobaciones OK.
 - Arranque reproducible siguiendo solo el `README.md`.
 - Documentación de fases 01–08 completa.
 
 ## Mejoras candidatas
 
-1. Pruebas automatizadas de presupuesto, notificaciones y agendamiento.
+1. Ampliar la suite a flujos de escritura (crear y eliminar movimientos).
 2. Restauración de respaldos probada y documentada.
 3. Contraseña de MySQL distinta de la de por defecto.
 4. Pruebas de navegador automatizadas.

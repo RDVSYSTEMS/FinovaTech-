@@ -195,6 +195,10 @@ La suite smoke valida rápidamente la integración local:
 - Login de la cuenta demo y acceso al panel.
 - Acceso autenticado a la lista de movimientos.
 - Rechazo de operaciones POST sin token CSRF.
+- Coherencia del presupuesto mostrado en el panel.
+- Render del centro de notificaciones con sesión.
+- Validación de fecha, hora y categoría del agendamiento, y exigencia de sesión.
+- Cierre de sesión solo mediante POST con token.
 
 Requiere MySQL/MariaDB encendido, el esquema aplicado y la cuenta demo
 disponible. No reemplaza pruebas unitarias ni pruebas completas del navegador.
@@ -353,3 +357,5 @@ actual:
 | v10.1.0 | Mejora visual de las páginas públicas (portada, servicios y login): video de fondo, estadísticas reales, llamadas a la acción, entrada escalonada, botones pulsantes, barra de progreso de lectura y animaciones accesibles unificadas a la marca. |
 | v10.2.0 | Validación en vivo de los formularios de login y registro: mensajes por campo, estados de error/acierto y animación de aviso, manteniendo la validación del servidor como fuente de verdad. |
 | v10.3.0 | Mejora del panel: barra de progreso de lectura, entrada escalonada del sidebar y las tarjetas, soporte de `prefers-reduced-motion`, y corrección del desbordamiento horizontal entre 1025 y 1120px con ajuste de las tarjetas de estadísticas a dos columnas antes de que el monto se corte. |
+| v10.3.1 | Documentación MIDEGS de las fases 01–08, planes de fase y guion de presentación. |
+| v10.3.2 | Suite ampliada a presupuesto, notificaciones y validación del agendamiento; planes de las fases 09 y 10. |

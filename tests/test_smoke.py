@@ -25,6 +25,20 @@ def obtener_csrf(client, url="/login"):
     return r, None
 
 
+def login_demo(client):
+    """Inicia sesión con la cuenta demo y deja el cliente autenticado."""
+    import re
+    r = client.get("/login")
+    token = re.search(r'name="csrf_token" value="([^"]+)"', r.get_data(as_text=True)).group(1)
+    r = client.post("/login", data={
+        "email": "adminr123@gmail.com",
+        "password": "123456789",
+        "csrf_token": token,
+    }, follow_redirects=False)
+    assert r.status_code == 302, f"login demo -> {r.status_code}"
+    return client
+
+
 def test_publicas():
     """Las páginas públicas deben responder sin sesión con HTTP 200."""
     client = app.test_client()
@@ -179,12 +193,72 @@ def test_logout_requiere_post_y_csrf():
     print("OK  logout exige POST + CSRF")
 
 
+def test_notificaciones_autenticado():
+    """El centro de notificaciones se renderiza para la cuenta demo."""
+    client = login_demo(app.test_client())
+    r = client.get("/notificacion")
+    assert r.status_code == 200, f"/notificacion logueado -> {r.status_code}"
+    texto = r.get_data(as_text=True)
+    assert "Notificaciones" in texto, "La página no muestra el título de notificaciones"
+    assert "Iniciar Sesión" not in texto, "Se renderizó el login en lugar de notificaciones"
+    assert "Sin notificaciones por ahora" in texto or "notif-card" in texto, \
+        "No se muestra ni el estado vacío ni las tarjetas de notificación"
+    print("OK  /notificacion autenticado")
+
+
+def test_agendamiento_validacion():
+    """El agendamiento rechaza fecha, hora y categoría inválidas."""
+    client = app.test_client()
+    with client.session_transaction() as sesion:
+        sesion["user_id"] = 1
+        sesion["user_email"] = "demo@test.local"
+        sesion["_csrf"] = "token-prueba"
+
+    base = {
+        "csrf_token": "token-prueba",
+        "fecha": "2099-01-01",
+        "hora": "10:00",
+        "categoria": "reserva",
+        "comentarios": "",
+    }
+    casos = (
+        ({"categoria": "otra"}, "categoría"),
+        ({"fecha": "2000-01-01"}, "anterior a hoy"),
+        ({"hora": "99:99"}, "formato"),
+        ({"fecha": "01/01/2099"}, "formato"),
+    )
+    for cambios, esperado in casos:
+        datos = {**base, **cambios}
+        r = client.post("/agendamiento", data=datos)
+        assert r.status_code == 400, f"{cambios} -> {r.status_code}"
+        assert r.json["ok"] is False, f"{cambios} no devolvió ok=False"
+        assert esperado in r.json["mensaje"], f"{cambios} -> {r.json['mensaje']}"
+    print("OK  agendamiento valida fecha, hora y categoría")
+
+
+def test_agendamiento_sin_sesion():
+    """El agendamiento no se puede usar sin sesión iniciada."""
+    import re
+    client = app.test_client()
+    r = client.get("/login")
+    token = re.search(r'name="csrf_token" value="([^"]+)"', r.get_data(as_text=True)).group(1)
+    r = client.post("/agendamiento", data={"csrf_token": token, "fecha": "2099-01-01"})
+    assert r.status_code == 302, f"POST /agendamiento sin sesión -> {r.status_code}"
+    assert "/login" in r.headers["Location"], "No redirige a login"
+    print("OK  agendamiento exige sesión")
+
+
 if __name__ == "__main__":
     test_publicas()
     test_protegidas_sin_sesion()
+    test_aliases_login_registro_html()
     test_registro()
     test_login_panel()
     test_lista_y_csrf()
     test_agendamiento_recibe_datos_y_csrf()
+    test_panel_presupuesto_coherente()
+    test_notificaciones_autenticado()
+    test_agendamiento_validacion()
+    test_agendamiento_sin_sesion()
     test_logout_requiere_post_y_csrf()
     print("\nTodos los smoke tests v10 pasaron.")
