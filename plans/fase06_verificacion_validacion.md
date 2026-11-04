@@ -46,5 +46,19 @@ Referencias:
 
 ## Evidencia
 
-- Pendiente de ejecutar en esta fase: resultados de la suite y de la revisión
-  manual se anexan aquí al cierre.
+Fecha de verificación: 2026-11-03. Entorno: Python 3.14.8, MariaDB 10.4.32
+(XAMPP) en el puerto 3307, servidor Flask en 5001.
+
+- Suite `python -m tests.test_smoke`: **15 comprobaciones OK**, sin fallos.
+  Cubre rutas públicas, redirección de rutas protegidas, registro de usuario,
+  login demo con `/panel` 200, `/lista` autenticada, rechazo de POST sin CSRF,
+  agendamiento con CSRF y logout solo por POST.
+- Salida final: `Todos los smoke tests v10 pasaron.`
+- `GET /` con el servidor activo: HTTP 200.
+- Cuenta demo validada contra el hash almacenado:
+  `adminr123@gmail.com` / `123456789` (rol administrador).
+- Prueba manual en Opera de los flujos principales (registro, login, panel,
+  lista, notificaciones y agendamiento): confirmada por el usuario.
+
+Estado: criterios de aceptación cumplidos. Fase 06 cerrada.
+

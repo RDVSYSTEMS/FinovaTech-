@@ -26,7 +26,7 @@ py -m venv .venv
 # 2. Configuración
 copy .env.example .env     # completa SECRET_KEY (o genera una: python -c "import secrets; print(secrets.token_hex(32))")
 
-# 3. Base de datos (con MySQL de XAMPP encendido, puerto 3306)
+# 3. Base de datos (con MySQL de XAMPP encendido; el puerto se define en .env)
 $sql = Get-Content -Raw -LiteralPath "database\schema.sql"
 $sql | C:\xampp\mysql\bin\mysql.exe -u root --default-character-set=utf8mb4
 
@@ -36,7 +36,7 @@ $sql | C:\xampp\mysql\bin\mysql.exe -u root --default-character-set=utf8mb4
 
 ## Ejecutar
 
-Doble clic en `iniciar.bat` (valida MySQL en 3306 y abre el navegador) o:
+Doble clic en `iniciar.bat` (valida el puerto de MySQL de `.env` y abre el navegador) o:
 
 ```powershell
 .venv\Scripts\python run.py
@@ -45,6 +45,10 @@ Doble clic en `iniciar.bat` (valida MySQL en 3306 y abre el navegador) o:
 Servidor en http://localhost:5001
 
 > El puerto se puede cambiar con la variable de entorno `PORT` (por defecto 5001).
+>
+> El puerto de MySQL se toma de `DB_PORT` en `.env` (por defecto 3306), y
+> `iniciar.bat` comprueba ese mismo puerto. Si otro servicio ocupa el 3306,
+> inicia MySQL de XAMPP en otro puerto y ajusta `DB_PORT`.
 
 ### Cuenta de demostración
 - Correo: `adminr123@gmail.com`
@@ -55,7 +59,7 @@ Servidor en http://localhost:5001
 ```
 FinovaTech v10/
 ├── run.py                  # Punto de entrada (create_app + run)
-├── iniciar.bat             # Lanzador (verifica MySQL 3306)
+├── iniciar.bat             # Lanzador (verifica el puerto de MySQL de .env)
 ├── requirements.txt
 ├── .env / .env.example     # Configuración (NO subir .env a Git)
 ├── app/                    # Paquete de la aplicación
@@ -73,6 +77,9 @@ FinovaTech v10/
 │   └── seed_demo.py        # Datos de demostración repetibles
 ├── tests/
 │   └── test_smoke.py       # Smoke tests (públicas, login, CSRF)
+├── plans/                  # Planes de fase MIDEGS
+│   ├── fase05_desarrollo_e_integracion.md
+│   └── fase06_verificacion_validacion.md
 └── docs/
     ├── REQUISITOS.md       # Documento SRS v10 (RF, RNF, criterios)
     └── MODELO_DATOS.md     # ER v10, tablas, triggers, procedures, vista
