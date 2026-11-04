@@ -3,7 +3,7 @@
 Perfil aprobado: **Estándar** (2026-11-03).
 
 Regla vigente: no se escribe código de implementación sin el plan de la fase
-correspondiente. Los planes 01–08 son breves y referencian `README.md` y
+correspondiente. Los planes 01–10 son breves y referencian `README.md` y
 `docs/` en lugar de duplicar su contenido; 01–04 son retrospectivos.
 
 ## Índice de fases
@@ -18,7 +18,8 @@ correspondiente. Los planes 01–08 son breves y referencian `README.md` y
 | 06 Verificación y validación | Cerrada (2026-11-03) | `fase06_verificacion_validacion.md` |
 | 07 Liberación y despliegue | Cerrada (2026-11-03) | `fase07_liberacion_despliegue.md` |
 | 08 Operación y mantenimiento | Documentada | `fase08_operacion_mantenimiento.md` |
-| 09–10 | No iniciadas | — |
+| 09 Evaluación y mejora | Documentada | `fase09_evaluacion_mejora.md` |
+| 10 Retiro o reemplazo | Documentada (no se ejecuta) | `fase10_retiro_reemplazo.md` |
 
 ## Fuente de verdad
 
