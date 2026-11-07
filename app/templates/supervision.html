@@ -1,0 +1,201 @@
+<!DOCTYPE html>
+<!-- ============================================================================
+     FinovaTech - supervision.html
+     Descripción: Vista de solo lectura para el rol padre. Muestra los
+     estudiantes vinculados mediante su código de autorización.
+     ============================================================================ -->
+
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <link rel="icon" type="image/svg+xml" href="/static/assets/img/favicon.svg">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Supervisión - FinovaTech</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;900&display=swap" rel="stylesheet">
+    <link href="/static/vendor/aos.css" rel="stylesheet">
+    <link rel="stylesheet" href="/static/css/header_footer.css">
+    <link rel="stylesheet" href="/static/css/panel.css">
+    <link rel="stylesheet" href="/static/css/lista.css">
+    <link rel="stylesheet" href="/static/css/supervision.css">
+</head>
+<body>
+
+<div id="header"></div>
+
+<div class="panel">
+
+    <button id="sidebar-toggle" class="sidebar-toggle" aria-label="Abrir menú">&#9776;</button>
+
+    <aside class="panel-sidebar">
+        <div class="sidebar-logo">
+            <div class="sidebar-logo-icono">F</div>
+            <div class="sidebar-logo-texto">
+                <strong>Finanzas</strong>
+                <span>FinovaTech</span>
+            </div>
+        </div>
+        <nav class="sidebar-nav">
+            <span class="sidebar-seccion">Menú</span>
+            <a href="/supervision" class="sidebar-enlace activo">
+                <span class="enlace-icono">&#9679;</span> Supervisión
+            </a>
+            <a href="/perfil" class="sidebar-enlace">
+                <span class="enlace-icono">&#9679;</span> Perfil
+            </a>
+        </nav>
+        <form action="/logout" method="POST" class="sidebar-salir-form">
+            <input type="hidden" name="csrf_token" value="{{ csrf_token }}">
+            <button type="submit" class="sidebar-salir">Cerrar sesión</button>
+        </form>
+    </aside>
+
+    <main class="panel-contenido">
+
+        <section class="panel-topbar">
+            <div class="topbar-saludo">
+                <h1>Supervisión</h1>
+                <p class="topbar-bienvenida">Consulta el resumen financiero de tus estudiantes vinculados</p>
+            </div>
+        </section>
+
+        <div id="alertaCaja"></div>
+
+        <section class="panel-card supervision-vincular" data-aos="fade-up">
+            <div class="card-cabecera">
+                <h3>Vincular un estudiante</h3>
+            </div>
+            <p class="supervision-ayuda">
+                Pide al estudiante su código de vinculación en <strong>Mi perfil</strong>.
+                El código autoriza únicamente la consulta de solo lectura.
+            </p>
+            <form method="POST" action="/supervision/vincular" class="supervision-form">
+                <input type="hidden" name="csrf_token" value="{{ csrf_token }}">
+                <input type="text" name="codigo" maxlength="12" required
+                       placeholder="Código de 8 caracteres" autocomplete="off">
+                <button type="submit" class="btn-filtrar">Vincular</button>
+            </form>
+        </section>
+
+        {% if estudiantes %}
+        <section class="supervision-lista">
+            {% for alumno in estudiantes %}
+            <article class="panel-card supervision-card" data-aos="fade-up">
+                <div class="supervision-cabecera">
+                    <div>
+                        <h3>{{ alumno.nombre }}</h3>
+                        <p>{{ alumno.email }} · {{ alumno.username }}</p>
+                    </div>
+                    <span class="supervision-badge">Solo lectura</span>
+                </div>
+
+                <div class="supervision-stats">
+                    <div>
+                        <span class="supervision-etiqueta">Ingresos</span>
+                        <strong class="monto-ingreso">{{ alumno.datos.total_ingresos }}</strong>
+                    </div>
+                    <div>
+                        <span class="supervision-etiqueta">Gastos</span>
+                        <strong class="monto-gasto">{{ alumno.datos.total_gastos }}</strong>
+                    </div>
+                    <div>
+                        <span class="supervision-etiqueta">Balance</span>
+                        <strong>{{ alumno.datos.balance }}</strong>
+                    </div>
+                    <div>
+                        <span class="supervision-etiqueta">Movimientos</span>
+                        <strong>{{ alumno.datos.total_registros }}</strong>
+                    </div>
+                </div>
+
+                {% if alumno.datos.presupuesto %}
+                <div class="supervision-presupuesto">
+                    <div class="supervision-presupuesto-texto">
+                        <span>Presupuesto {{ alumno.datos.presupuesto.periodo }}</span>
+                        <strong>{{ alumno.datos.presupuesto.gastado }} de {{ alumno.datos.presupuesto.limite }}</strong>
+                    </div>
+                    <div class="supervision-barra">
+                        <span style="width: {{ [alumno.datos.presupuesto.usado, 100] | min }}%"></span>
+                    </div>
+                </div>
+                {% endif %}
+
+                {% if alumno.datos.hay_movimientos %}
+                <div class="lista-tabla supervision-tabla">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Concepto</th>
+                                <th>Monto</th>
+                                <th>Fecha</th>
+                                <th>Tipo</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for movimiento in alumno.datos.movimientos %}
+                            <tr>
+                                <td>{{ movimiento.descripcion }}</td>
+                                <td class="{{ 'monto-ingreso' if movimiento.tipo == 'Ingreso' else 'monto-gasto' }}">
+                                    {{ movimiento.monto }}
+                                </td>
+                                <td>{{ movimiento.fecha }}</td>
+                                <td>
+                                    <span class="{{ 'badge-ingreso' if movimiento.tipo == 'Ingreso' else 'badge-gasto' }}">
+                                        {{ movimiento.tipo }}
+                                    </span>
+                                </td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+                {% else %}
+                <p class="supervision-vacio">Este estudiante aún no tiene movimientos registrados.</p>
+                {% endif %}
+
+                <form method="POST" action="/supervision/desvincular/{{ alumno.id }}"
+                      class="supervision-desvincular"
+                      onsubmit="return confirm('¿Quitar el acceso de supervisión a este estudiante?');">
+                    <input type="hidden" name="csrf_token" value="{{ csrf_token }}">
+                    <button type="submit" class="btn-limpiar">Desvincular</button>
+                </form>
+            </article>
+            {% endfor %}
+        </section>
+        {% else %}
+        <section class="panel-card supervision-vacio" data-aos="fade-up">
+            <h3>Aún no tienes estudiantes vinculados</h3>
+            <p>Cuando un estudiante te comparta su código, ingrésalo arriba para comenzar.</p>
+        </section>
+        {% endif %}
+
+    </main>
+</div>
+
+<div id="footer"></div>
+<button id="btn-arriba" onclick="window.scrollTo({top:0, behavior:'smooth'})">&#8593;</button>
+<script src="/static/vendor/aos.js"></script>
+<script src="/static/js/global.js"></script>
+<script>
+    (function mostrarAlerta() {
+        var q = new URLSearchParams(window.location.search);
+        var mensaje = q.get("ok") || q.get("error");
+        if (!mensaje) return;
+        var ok = Boolean(q.get("ok"));
+        var div = document.getElementById("alertaCaja");
+        var caja = document.createElement("div");
+        caja.className = "alerta " + (ok ? "alerta-ok" : "alerta-error");
+        var texto = document.createElement("span");
+        texto.textContent = mensaje;
+        var cerrar = document.createElement("button");
+        cerrar.type = "button";
+        cerrar.setAttribute("aria-label", "Cerrar aviso");
+        cerrar.textContent = "x";
+        cerrar.addEventListener("click", function () { caja.remove(); });
+        caja.appendChild(texto);
+        caja.appendChild(cerrar);
+        div.appendChild(caja);
+    })();
+</script>
+
+</body>
+</html>

@@ -24,6 +24,7 @@ funcionales y no funcionales verificables.
 
 - Autenticación, movimientos, presupuesto, notificaciones y agendamiento.
 - Presupuesto editable desde la app (RF-06), no solo de lectura.
+- Perfil de usuario editable (RF-13): nombre, usuario y contraseña.
 - Requisitos de seguridad: CSRF, contraseñas cifradas, control de acceso.
 
 ### No incluye

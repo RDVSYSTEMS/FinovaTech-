@@ -67,6 +67,11 @@ CREATE TABLE IF NOT EXISTS estudiante (
     CONSTRAINT uq_estudiante_usuario UNIQUE (usuario_id)
 ) ENGINE=InnoDB;
 
+-- Código que el estudiante comparte con su padre para autorizar supervisión.
+-- Se genera bajo demanda desde la aplicación; nunca se muestra a terceros.
+ALTER TABLE estudiante
+    ADD COLUMN IF NOT EXISTS codigo_vinculacion VARCHAR(12) NULL UNIQUE;
+
 -- Dinero recibido por el estudiante, clasificado por categoría.
 CREATE TABLE IF NOT EXISTS ingreso (
     id           INT AUTO_INCREMENT PRIMARY KEY,
@@ -133,6 +138,51 @@ CREATE TABLE IF NOT EXISTS agendamiento (
     CONSTRAINT fk_agendamiento_usuario
         FOREIGN KEY (usuario_id) REFERENCES usuario(id)
         ON DELETE CASCADE
+) ENGINE=InnoDB;
+
+-- Vínculo de solo lectura entre una cuenta padre y una cuenta estudiante.
+CREATE TABLE IF NOT EXISTS padre_estudiante (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    padre_id INT NOT NULL,
+    estudiante_usuario_id INT NOT NULL,
+    creado_en TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    CONSTRAINT fk_padre_estudiante_padre
+        FOREIGN KEY (padre_id) REFERENCES usuario(id)
+        ON DELETE CASCADE,
+    CONSTRAINT fk_padre_estudiante_usuario
+        FOREIGN KEY (estudiante_usuario_id) REFERENCES usuario(id)
+        ON DELETE CASCADE,
+    CONSTRAINT uq_padre_estudiante UNIQUE (padre_id, estudiante_usuario_id)
+) ENGINE=InnoDB;
+
+-- Eventos de autenticación para auditoría básica del sistema.
+CREATE TABLE IF NOT EXISTS bitacora_acceso (
+    id BIGINT AUTO_INCREMENT PRIMARY KEY,
+    usuario_id INT NULL,
+    email VARCHAR(120) NOT NULL DEFAULT '',
+    evento VARCHAR(30) NOT NULL,
+    ip VARCHAR(45) NOT NULL DEFAULT '',
+    detalle VARCHAR(255) NOT NULL DEFAULT '',
+    creado_en TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    CONSTRAINT fk_bitacora_usuario
+        FOREIGN KEY (usuario_id) REFERENCES usuario(id)
+        ON DELETE SET NULL,
+    INDEX idx_bitacora_fecha (creado_en)
+) ENGINE=InnoDB;
+
+-- Tokens de recuperación de contraseña (solo se guarda el hash SHA-256).
+CREATE TABLE IF NOT EXISTS recuperacion_password (
+    id BIGINT AUTO_INCREMENT PRIMARY KEY,
+    usuario_id INT NOT NULL,
+    token_hash CHAR(64) NOT NULL UNIQUE,
+    expira_en DATETIME NOT NULL,
+    usado_en DATETIME NULL,
+    ip_solicitud VARCHAR(45) NOT NULL DEFAULT '',
+    creado_en TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    CONSTRAINT fk_recuperacion_usuario
+        FOREIGN KEY (usuario_id) REFERENCES usuario(id)
+        ON DELETE CASCADE,
+    INDEX idx_recuperacion_usuario (usuario_id, expira_en)
 ) ENGINE=InnoDB;
 
 -- Los ENUM limitan estados y categorías a valores conocidos por el formulario;

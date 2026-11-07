@@ -1,0 +1,207 @@
+<!DOCTYPE html>
+<!-- ============================================================================
+     FinovaTech — perfil.html
+     Descripción: Consulta y edición de los datos de la cuenta del usuario.
+     ============================================================================ -->
+
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <link rel="icon" type="image/svg+xml" href="/static/assets/img/favicon.svg">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mi perfil - FinovaTech</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;900&display=swap" rel="stylesheet">
+    <link href="/static/vendor/aos.css" rel="stylesheet">
+    <link rel="stylesheet" href="/static/css/header_footer.css">
+    <link rel="stylesheet" href="/static/css/panel.css">
+    <link rel="stylesheet" href="/static/css/perfil.css">
+</head>
+<body>
+
+<div id="header"></div>
+
+<div class="panel">
+
+    <button id="sidebar-toggle" class="sidebar-toggle" aria-label="Abrir menú">☰</button>
+
+    <aside class="panel-sidebar">
+        <div class="sidebar-logo">
+            <div class="sidebar-logo-icono">💰</div>
+            <div class="sidebar-logo-texto">
+                <strong>Finanzas</strong>
+                <span>FinovaTech</span>
+            </div>
+        </div>
+        <nav class="sidebar-nav">
+            <span class="sidebar-seccion">Menú</span>
+            <a href="/panel" class="sidebar-enlace">
+                <span class="enlace-icono">📊</span> Dashboard
+            </a>
+            <a href="/lista" class="sidebar-enlace">
+                <span class="enlace-icono">📋</span> Lista
+            </a>
+            <a href="/presupuesto" class="sidebar-enlace">
+                <span class="enlace-icono">🎯</span> Presupuesto
+            </a>
+            <a href="/agendamiento" class="sidebar-enlace">
+                <span class="enlace-icono">📅</span> Agendar
+            </a>
+            <a href="/notificacion" class="sidebar-enlace">
+                <span class="enlace-icono">🔔</span> Notificaciones
+            </a>
+            <a href="/perfil" class="sidebar-enlace activo">
+                <span class="enlace-icono">👤</span> Perfil
+            </a>
+            {% if session.get('user_type') == 'padre' %}
+            <a href="/supervision" class="sidebar-enlace">
+                <span class="enlace-icono">&#9679;</span> Supervisión
+            </a>
+            {% elif session.get('user_type') == 'administrador' %}
+            <a href="/bitacora" class="sidebar-enlace">
+                <span class="enlace-icono">&#9679;</span> Bitácora
+            </a>
+            {% endif %}
+        </nav>
+        <form action="/logout" method="POST" class="sidebar-salir-form">
+            <input type="hidden" name="csrf_token" value="{{ csrf_token }}">
+            <button type="submit" class="sidebar-salir">🚪 Cerrar sesión</button>
+        </form>
+    </aside>
+
+    <main class="panel-contenido">
+
+        <section class="panel-topbar">
+            <div class="topbar-saludo">
+                <h1>👤 Mi perfil</h1>
+                <p class="topbar-bienvenida">Consulta y actualiza los datos de tu cuenta</p>
+            </div>
+        </section>
+
+        <div id="alertaCaja"></div>
+
+        <section class="perfil-layout">
+
+            <article class="panel-card perfil-card" data-aos="fade-up">
+                <div class="card-cabecera">
+                    <h3>Datos de la cuenta</h3>
+                </div>
+
+                <p class="perfil-meta">
+                    Correo: <strong>{{ perfil.email }}</strong> ·
+                    Rol: <strong>{{ perfil.rol }}</strong> ·
+                    Miembro desde: <strong>{{ perfil.fecha_registro.strftime('%Y-%m-%d') if perfil.fecha_registro else '—' }}</strong>
+                </p>
+
+                <form method="POST" action="/perfil" class="perfil-form">
+                    <input type="hidden" name="csrf_token" value="{{ csrf_token }}">
+
+                    <label class="perfil-campo">
+                        <span>Nombre completo</span>
+                        <input type="text" name="nombre" value="{{ perfil.nombre }}"
+                               maxlength="100" autocomplete="name" required>
+                    </label>
+
+                    <label class="perfil-campo">
+                        <span>Nombre de usuario</span>
+                        <input type="text" name="username" value="{{ perfil.username }}"
+                               minlength="4" maxlength="50" autocomplete="username" required>
+                    </label>
+
+                    <label class="perfil-campo">
+                        <span>Correo (no editable)</span>
+                        <input type="email" value="{{ perfil.email }}" disabled>
+                    </label>
+
+                    <label class="perfil-campo">
+                        <span>Rol (no editable)</span>
+                        <input type="text" value="{{ perfil.rol }}" disabled>
+                    </label>
+
+                    <button type="submit" class="btn-guardar">Guardar datos</button>
+                </form>
+            </article>
+
+            {% if codigo_vinculacion %}
+            <article class="panel-card perfil-card perfil-codigo-card" data-aos="fade-up" data-aos-delay="40">
+                <div class="card-cabecera">
+                    <h3>Código de vinculación</h3>
+                </div>
+                <p class="perfil-meta">
+                    Comparte este código con tu padre o madre para autorizar la
+                    supervisión de solo lectura de tus finanzas.
+                </p>
+                <div class="perfil-codigo">{{ codigo_vinculacion }}</div>
+                <p class="perfil-ayuda">
+                    El código no permite modificar tus movimientos. Puedes cambiarlo
+                    solicitando apoyo al administrador del sistema.
+                </p>
+            </article>
+            {% endif %}
+
+            <article class="panel-card perfil-card" data-aos="fade-up" data-aos-delay="80">
+                <div class="card-cabecera">
+                    <h3>Cambiar contraseña</h3>
+                </div>
+
+                <form method="POST" action="/perfil/password" class="perfil-form">
+                    <input type="hidden" name="csrf_token" value="{{ csrf_token }}">
+
+                    <label class="perfil-campo">
+                        <span>Contraseña actual</span>
+                        <input type="password" name="actual" autocomplete="current-password" required>
+                    </label>
+
+                    <label class="perfil-campo">
+                        <span>Nueva contraseña</span>
+                        <input type="password" name="nueva" minlength="8"
+                               autocomplete="new-password" required>
+                    </label>
+
+                    <label class="perfil-campo">
+                        <span>Confirmar nueva contraseña</span>
+                        <input type="password" name="confirmar" minlength="8"
+                               autocomplete="new-password" required>
+                    </label>
+
+                    <button type="submit" class="btn-guardar">Cambiar contraseña</button>
+                </form>
+
+                <p class="perfil-ayuda">
+                    La nueva contraseña debe tener mínimo 8 caracteres. Tu correo y rol
+                    solo pueden cambiarse desde la administración del sistema.
+                </p>
+            </article>
+
+        </section>
+
+    </main>
+</div>
+
+<div id="footer"></div>
+<button id="btn-arriba" onclick="window.scrollTo({top:0, behavior:'smooth'})">↑</button>
+<script src="/static/vendor/aos.js"></script>
+<script src="/static/js/global.js"></script>
+<script>
+    (function mostrarAlerta() {
+        var q = new URLSearchParams(window.location.search);
+        var mensaje = q.get("ok") || q.get("error");
+        if (!mensaje) return;
+        var ok = Boolean(q.get("ok"));
+        var div = document.getElementById("alertaCaja");
+        var caja = document.createElement("div");
+        caja.className = "alerta " + (ok ? "alerta-ok" : "alerta-error");
+        var texto = document.createElement("span");
+        texto.textContent = mensaje;
+        var cerrar = document.createElement("button");
+        cerrar.type = "button";
+        cerrar.setAttribute("aria-label", "Cerrar aviso");
+        cerrar.textContent = "×";
+        cerrar.addEventListener("click", function () { caja.remove(); });
+        caja.appendChild(texto);
+        caja.appendChild(cerrar);
+        div.appendChild(caja);
+    })();
+</script>
+
+</body>
+</html>

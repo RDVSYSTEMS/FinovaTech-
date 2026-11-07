@@ -54,6 +54,18 @@
             <a href="/notificacion" class="sidebar-enlace">
                 <span class="enlace-icono">🔔</span> Notificaciones
             </a>
+            <a href="/perfil" class="sidebar-enlace">
+                <span class="enlace-icono">👤</span> Perfil
+            </a>
+            {% if session.get('user_type') == 'padre' %}
+            <a href="/supervision" class="sidebar-enlace">
+                <span class="enlace-icono">&#9679;</span> Supervisión
+            </a>
+            {% elif session.get('user_type') == 'administrador' %}
+            <a href="/bitacora" class="sidebar-enlace">
+                <span class="enlace-icono">&#9679;</span> Bitácora
+            </a>
+            {% endif %}
         </nav>
         <form action="/logout" method="POST" class="sidebar-salir-form">
             <input type="hidden" name="csrf_token" value="{{ csrf_token }}">
@@ -86,7 +98,7 @@
                     <span class="presupuesto-porcentaje">{{ presupuesto.usado }}% usado</span>
                 </div>
                 <div class="presupuesto-barra estado-{{ 'excedido' if presupuesto.usado >= 100 else ('alerta' if presupuesto.usado >= 80 else 'normal') }}">
-                    <div class="presupuesto-lleno" style="width: {{ presupuesto.usado }}%"></div>
+                    <div class="presupuesto-lleno" style="width: {{ [presupuesto.usado, 100] | min }}%"></div>
                 </div>
                 <div class="presupuesto-valores">
                     <div><span>{{ presupuesto.gastado }}</span><small>Gastado este mes</small></div>

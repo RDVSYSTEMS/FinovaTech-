@@ -195,7 +195,7 @@ def get_datos_panel(usuario_id: int) -> dict:
             "limite": _fmt(limite),
             "gastado": _fmt(gastado_mes),
             "disponible": _fmt(max(limite - gastado_mes, 0)),
-            "usado": min(usado, 100),
+            "usado": usado,
         }
 
     evolucion = []
@@ -303,29 +303,79 @@ def guardar_presupuesto(usuario_id: int, monto) -> tuple:
 
 # --- Registros (lista) -------------------------------------------------------
 
-def get_registros(usuario_id: int) -> list:
-    """Todos los movimientos del estudiante, del más reciente al más antiguo."""
+def get_registros_paginados(usuario_id: int, tipo: str = "", q: str = "",
+                            pagina: int = 1, por_pagina: int = 10) -> dict:
+    """Movimientos filtrados y paginados en MySQL.
+
+    ``tipo`` debe ser "", "Ingreso" o "Gasto"; cualquier otro valor se ignora.
+    ``q`` busca coincidencias en la descripción.
+    """
+    vacio = {
+        "registros": [], "total": 0, "pagina": 1,
+        "total_paginas": 1, "por_pagina": por_pagina,
+    }
     estudiante_id = get_estudiante_id(usuario_id)
     if estudiante_id is None:
-        return []
+        return vacio
+
+    tipo = tipo if tipo in ("Ingreso", "Gasto") else ""
+    q = (q or "").strip()[:60]
+    pagina = max(1, int(pagina or 1))
+    por_pagina = max(1, min(int(por_pagina or 10), 100))
+    offset = (pagina - 1) * por_pagina
+
+    base = (
+        "SELECT 'Ingreso' AS tipo, id, descripcion, monto, fecha "
+        "FROM ingreso WHERE estudiante_id=%s "
+        "UNION ALL "
+        "SELECT 'Gasto' AS tipo, id, descripcion, monto, fecha "
+        "FROM gasto WHERE estudiante_id=%s"
+    )
+    condiciones = []
+    parametros = [estudiante_id, estudiante_id]
+    if tipo:
+        condiciones.append("t.tipo=%s")
+        parametros.append(tipo)
+    if q:
+        condiciones.append("t.descripcion LIKE %s")
+        parametros.append(f"%{q}%")
+    where = (" WHERE " + " AND ".join(condiciones)) if condiciones else ""
 
     conn = get_connection()
     try:
         with conn.cursor() as cur:
             cur.execute(
-                "SELECT 'Ingreso' AS tipo, id, descripcion, monto, fecha "
-                "FROM ingreso WHERE estudiante_id=%s "
-                "UNION ALL "
-                "SELECT 'Gasto' AS tipo, id, descripcion, monto, fecha "
-                "FROM gasto WHERE estudiante_id=%s "
-                "ORDER BY fecha DESC, id DESC",
-                (estudiante_id, estudiante_id),
+                f"SELECT COUNT(*) AS total FROM ({base}) t{where}",
+                tuple(parametros),
+            )
+            total = int(cur.fetchone()["total"])
+
+            total_paginas = max(1, (total + por_pagina - 1) // por_pagina)
+            if pagina > total_paginas:
+                pagina = total_paginas
+                offset = (pagina - 1) * por_pagina
+
+            cur.execute(
+                f"SELECT * FROM ({base}) t{where} "
+                "ORDER BY t.fecha DESC, t.id DESC LIMIT %s OFFSET %s",
+                tuple(parametros + [por_pagina, offset]),
             )
             filas = cur.fetchall()
     finally:
         conn.close()
 
-    return [_formatear_movimiento(f) for f in filas]
+    return {
+        "registros": [_formatear_movimiento(f) for f in filas],
+        "total": total,
+        "pagina": pagina,
+        "total_paginas": total_paginas,
+        "por_pagina": por_pagina,
+    }
+
+
+def get_registros(usuario_id: int) -> list:
+    """Compatibilidad: todos los movimientos del estudiante."""
+    return get_registros_paginados(usuario_id, por_pagina=1000)["registros"]
 
 
 def get_totales(usuario_id: int) -> dict:

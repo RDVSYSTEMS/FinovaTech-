@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<!-- ============================================================================
+     FinovaTech - bitacora.html
+     Descripción: Eventos de acceso recientes para el rol administrador.
+     ============================================================================ -->
+
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <link rel="icon" type="image/svg+xml" href="/static/assets/img/favicon.svg">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Bitácora de accesos - FinovaTech</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;900&display=swap" rel="stylesheet">
+    <link href="/static/vendor/aos.css" rel="stylesheet">
+    <link rel="stylesheet" href="/static/css/header_footer.css">
+    <link rel="stylesheet" href="/static/css/panel.css">
+    <link rel="stylesheet" href="/static/css/lista.css">
+    <link rel="stylesheet" href="/static/css/bitacora.css">
+</head>
+<body>
+
+<div id="header"></div>
+
+<div class="panel">
+
+    <button id="sidebar-toggle" class="sidebar-toggle" aria-label="Abrir menú">&#9776;</button>
+
+    <aside class="panel-sidebar">
+        <div class="sidebar-logo">
+            <div class="sidebar-logo-icono">F</div>
+            <div class="sidebar-logo-texto">
+                <strong>Finanzas</strong>
+                <span>FinovaTech</span>
+            </div>
+        </div>
+        <nav class="sidebar-nav">
+            <span class="sidebar-seccion">Administración</span>
+            <a href="/panel" class="sidebar-enlace">
+                <span class="enlace-icono">&#9679;</span> Dashboard
+            </a>
+            <a href="/lista" class="sidebar-enlace">
+                <span class="enlace-icono">&#9679;</span> Lista
+            </a>
+            <a href="/bitacora" class="sidebar-enlace activo">
+                <span class="enlace-icono">&#9679;</span> Bitácora
+            </a>
+            <a href="/perfil" class="sidebar-enlace">
+                <span class="enlace-icono">&#9679;</span> Perfil
+            </a>
+        </nav>
+        <form action="/logout" method="POST" class="sidebar-salir-form">
+            <input type="hidden" name="csrf_token" value="{{ csrf_token }}">
+            <button type="submit" class="sidebar-salir">Cerrar sesión</button>
+        </form>
+    </aside>
+
+    <main class="panel-contenido">
+
+        <section class="panel-topbar">
+            <div class="topbar-saludo">
+                <h1>Bitácora de accesos</h1>
+                <p class="topbar-bienvenida">Últimos 100 eventos de autenticación registrados</p>
+            </div>
+        </section>
+
+        <div class="lista-tabla" data-aos="fade-up">
+            <table>
+                <thead>
+                    <tr>
+                        <th>Fecha</th>
+                        <th>Evento</th>
+                        <th>Correo</th>
+                        <th>IP</th>
+                        <th>Detalle</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for acceso in accesos %}
+                    <tr>
+                        <td>{{ acceso.creado_en.strftime('%Y-%m-%d %H:%M:%S') if acceso.creado_en else '-' }}</td>
+                        <td>
+                            <span class="bitacora-evento bitacora-{{ acceso.evento }}">
+                                {{ acceso.evento_texto }}
+                            </span>
+                        </td>
+                        <td>{{ acceso.email or '-' }}</td>
+                        <td>{{ acceso.ip or '-' }}</td>
+                        <td>{{ acceso.detalle or '-' }}</td>
+                    </tr>
+                    {% else %}
+                    <tr>
+                        <td colspan="5" class="lista-vacio">No hay eventos de acceso registrados.</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+
+    </main>
+</div>
+
+<div id="footer"></div>
+<button id="btn-arriba" onclick="window.scrollTo({top:0, behavior:'smooth'})">&#8593;</button>
+<script src="/static/vendor/aos.js"></script>
+<script src="/static/js/global.js"></script>
+
+</body>
+</html>

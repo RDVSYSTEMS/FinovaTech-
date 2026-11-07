@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<!-- ============================================================================
+     FinovaTech - recuperar.html
+     Descripción: solicitud de enlace para restablecer la contraseña.
+     ============================================================================ -->
+
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <link rel="icon" type="image/svg+xml" href="/static/assets/img/favicon.svg">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Recuperar contraseña - FinovaTech</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;900&display=swap" rel="stylesheet">
+    <link href="/static/vendor/aos.css" rel="stylesheet">
+    <link rel="stylesheet" href="/static/css/header_footer.css">
+    <link rel="stylesheet" href="/static/css/login.css">
+</head>
+<body>
+
+<div id="barra-progreso"></div>
+<div id="header"></div>
+
+<main class="login-main">
+    <div class="login-contenido">
+
+        <div class="login-info" data-aos="fade-right">
+            <span class="hero-etiqueta">Recuperación de acceso</span>
+            <h1>Recupera tu<br><span class="highlight">cuenta</span></h1>
+            <p>Escribe el correo con el que te registraste y te enviaremos un enlace para crear una nueva contraseña.</p>
+        </div>
+
+        <div class="login-card" data-aos="fade-left">
+            <div class="login-card-header">
+                <img src="/static/assets/img/RDV_systems logo 200x200px.png" alt="Logo" width="55">
+                <h2>Recuperar contraseña</h2>
+                <p>Te enviaremos un enlace de un solo uso</p>
+            </div>
+
+            {% if mensaje %}
+            <div class="login-mensaje" role="status">{{ mensaje }}</div>
+            {% endif %}
+
+            <form method="post" action="/recuperar" novalidate>
+                <input type="hidden" name="csrf_token" value="{{ csrf_token }}">
+
+                <div class="grupo-formulario">
+                    <label for="email">Correo electrónico</label>
+                    <input id="email" name="email" type="email"
+                           placeholder="correo@ejemplo.com" autocomplete="email" required>
+                </div>
+
+                <button type="submit" class="btn-principal w-full">
+                    Enviar enlace
+                </button>
+            </form>
+
+            <p class="login-registro">
+                <a href="/login">Volver a iniciar sesión</a>
+            </p>
+        </div>
+
+    </div>
+</main>
+
+<div id="footer"></div>
+
+<script src="/static/vendor/aos.js"></script>
+<script src="/static/js/global.js"></script>
+
+</body>
+</html>

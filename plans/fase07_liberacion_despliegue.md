@@ -12,7 +12,7 @@ Referencias:
 ## Decisiones
 
 - D1: La liberación es local (XAMPP + Flask), no un despliegue en servidor.
-- D2: La versión se marca con la etiqueta Git `v10.3.0`.
+- D2: La versión se marca con la etiqueta Git `v10.3.6`.
 - D3: La entrega incluye código, `plans/`, `docs/` y datos demo; excluye
   `.env` y `.venv`.
 - D4: El respaldo de la base se hace con `mysqldump` antes de la presentación.
@@ -32,9 +32,10 @@ Referencias:
 
 ## Criterios de aceptación
 
-- `git tag` muestra `v10.3.0` sobre el commit de cierre.
+- `git tag` muestra `v10.3.6` sobre el commit de cierre.
 - El proyecto arranca siguiendo solo el `README.md`.
-- La demo funciona con la cuenta `adminr123@gmail.com`.
+- La demo funciona con las cuentas `adminr123@gmail.com` y
+  `padredemo@gmail.com`.
 - Existe respaldo de la base antes de la presentación.
 
 ## Riesgos
@@ -45,8 +46,10 @@ Referencias:
 
 ## Evidencia
 
-- Etiqueta Git `v10.3.0` creada sobre el commit de cierre.
-- Respaldo de la base: `data/backups/finovatech_2026-11-03.sql` (mysqldump con
-  rutinas y triggers; 7 tablas y la vista).
-- Arranque final verificado: `GET /` → HTTP 200 y cuenta demo operativa.
+- Etiqueta Git `v10.3.6` creada sobre el commit de cierre.
+- Respaldo histórico: `data/backups/finovatech_2026-11-03.sql` (mysqldump con
+  rutinas y triggers; 7 tablas y la vista). Ese respaldo es anterior a las
+  tablas de supervisión, bitácora y recuperación; regenerarlo antes de la
+  presentación con el esquema actual.
+- Arranque final verificado: `GET /` → HTTP 200 y cuentas demo operativas.
 - Guion de presentación disponible en `docs/GUION_PRESENTACION.md`.

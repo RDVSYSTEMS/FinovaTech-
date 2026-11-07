@@ -1,0 +1,43 @@
+/* ============================================================================
+   FinovaTech - bitacora.css
+   Estilos de la tabla de eventos de acceso.
+   ============================================================================ */
+
+.bitacora-evento {
+    display: inline-block;
+    padding: 3px 10px;
+    border-radius: 20px;
+    font-size: 0.75rem;
+    font-weight: 700;
+    white-space: nowrap;
+}
+
+.bitacora-login_ok {
+    background: rgba(16,185,129,0.14);
+    border: 1px solid rgba(16,185,129,0.24);
+    color: #6ee7b7;
+}
+
+.bitacora-login_fallido,
+.bitacora-bloqueo {
+    background: rgba(220,38,38,0.14);
+    border: 1px solid rgba(220,38,38,0.24);
+    color: #fca5a5;
+}
+
+.bitacora-logout {
+    background: rgba(148,163,184,0.14);
+    border: 1px solid rgba(148,163,184,0.24);
+    color: #cbd5e1;
+}
+
+.bitacora-recuperacion_solicitada,
+.bitacora-recuperacion_completada {
+    background: rgba(96,165,250,0.14);
+    border: 1px solid rgba(96,165,250,0.24);
+    color: #bfdbfe;
+}
+
+@media (max-width: 900px) {
+    .lista-tabla table { min-width: 760px; }
+}

@@ -48,6 +48,62 @@
 
 .lista-filtro option { background: #1e293b; }
 
+.btn-filtrar,
+.btn-limpiar {
+    height: 42px;
+    padding: 0 16px;
+    border-radius: 10px;
+    border: 1px solid rgba(255,255,255,0.08);
+    background: rgba(96,165,250,0.16);
+    color: #bfdbfe;
+    font-size: 0.85rem;
+    font-weight: 600;
+    cursor: pointer;
+    text-decoration: none;
+    display: inline-flex;
+    align-items: center;
+}
+
+.btn-limpiar {
+    background: rgba(255,255,255,0.04);
+    color: #94a3b8;
+}
+
+.btn-filtrar:hover { background: rgba(96,165,250,0.26); }
+.btn-limpiar:hover { background: rgba(255,255,255,0.08); }
+
+.lista-resumen {
+    color: #64748b;
+    font-size: 0.82rem;
+    margin: 12px 2px 0;
+}
+
+.lista-paginacion {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 14px;
+    margin-top: 16px;
+}
+
+.pagina-enlace {
+    padding: 8px 14px;
+    border-radius: 10px;
+    border: 1px solid rgba(255,255,255,0.08);
+    background: rgba(255,255,255,0.04);
+    color: #cbd5e1;
+    font-size: 0.85rem;
+    text-decoration: none;
+}
+
+.pagina-enlace:hover { background: rgba(96,165,250,0.16); }
+.pagina-actual { color: #94a3b8; font-size: 0.85rem; }
+
+@media (max-width: 640px) {
+    .lista-toolbar { flex-wrap: wrap; }
+    .lista-search { flex-basis: 100%; }
+}
+
 /* Tabla */
 .lista-tabla {
     background: rgba(255,255,255,0.03);

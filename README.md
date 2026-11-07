@@ -1,4 +1,4 @@
-# FinovaTech v10.3
+# FinovaTech v10.3.6
 
 Sistema de Finanzas Personales para Estudiantes de Bachillerato.
 Aplicación web (HTML/CSS/JS + Flask + MySQL) con autenticación, control de
@@ -7,7 +7,7 @@ desarrollado por **RDV Systems**.
 
 > Nota de versionado: el historial que aparece abajo es una reconstrucción
 > retrospectiva de las etapas del proyecto. El repositorio actual conserva la
-> versión acumulada **v10.3.0**; las versiones anteriores representan hitos de
+> versión acumulada **v10.3.6**; las versiones anteriores representan hitos de
 > desarrollo y no necesariamente commits publicados por separado.
 
 ## Requisitos previos
@@ -28,7 +28,7 @@ copy .env.example .env     # completa SECRET_KEY (o genera una: python -c "impor
 
 # 3. Base de datos (con MySQL de XAMPP encendido; el puerto se define en .env)
 $sql = Get-Content -Raw -LiteralPath "database\schema.sql"
-$sql | C:\xampp\mysql\bin\mysql.exe -u root --default-character-set=utf8mb4
+$sql | & "C:\xampp\mysql\bin\mysql.exe" -u root --default-character-set=utf8mb4
 
 # 4. Datos de demostración
 .venv\Scripts\python -m scripts.seed_demo
@@ -50,9 +50,14 @@ Servidor en http://localhost:5001
 > `iniciar.bat` comprueba ese mismo puerto. Si otro servicio ocupa el 3306,
 > inicia MySQL de XAMPP en otro puerto y ajusta `DB_PORT`.
 
-### Cuenta de demostración
-- Correo: `adminr123@gmail.com`
-- Contraseña: `123456789`
+### Cuentas de demostración
+- Administrador/estudiante: `adminr123@gmail.com` / `123456789`
+- Padre vinculado al estudiante demo: `padredemo@gmail.com` / `123456789`
+
+El seed carga 6 meses de movimientos (15 ingresos y 40 gastos), 12 categorías,
+un presupuesto de `$600.000` con `$700.000` gastados (117 %) y notificaciones
+de presupuesto, gasto elevado y mes en negativo. También vincula la cuenta de
+padre con el estudiante demo para mostrar `/supervision` sin pasos manuales.
 
 ## Estructura del proyecto
 
@@ -67,22 +72,26 @@ FinovaTech v10/
 │   ├── config.py           # Config (variables de entorno)
 │   ├── db.py               # Conexión MySQL (PyMySQL)
 │   ├── seguridad.py        # CSRF, cabeceras, login_requerido, anti fuerza bruta
-│   ├── blueprints/         # publicas, panel, registros, notificaciones
-│   ├── modelos/            # usuarios.py, finanzas.py, agendamientos.py
+│   ├── blueprints/         # públicas, panel, registros, notificaciones, perfil,
+│   │                       # supervisión, bitácora y recuperación
+│   ├── modelos/            # usuarios, finanzas, agendamientos, supervisión,
+│   │                       # bitácora y recuperación
 │   ├── templates/          # Plantillas HTML
 │   └── static/             # CSS, JS, imágenes, vendor
 ├── database/
-│   └── schema.sql          # 8 tablas + triggers + procedures + vista
+│   └── schema.sql          # 11 tablas + triggers + procedures + vista
 ├── scripts/
 │   └── seed_demo.py        # Datos de demostración repetibles
 ├── tests/
-│   └── test_smoke.py       # Smoke tests (públicas, login, CSRF)
+│   └── test_smoke.py       # 34 comprobaciones de integración local
 ├── plans/                  # Planes de fase MIDEGS
 │   ├── fase05_desarrollo_e_integracion.md
 │   └── fase06_verificacion_validacion.md
 └── docs/
     ├── REQUISITOS.md       # Documento SRS v10 (RF, RNF, criterios)
     ├── MODELO_DATOS.md     # ER v10, tablas, triggers, procedures, vista
+    ├── CHANGELOG.md        # Historial de cambios por versión
+    ├── PENDIENTES.md       # Backlog priorizado
     └── GUION_PRESENTACION.md  # Guion de demo para la presentación
 ```
 
@@ -95,6 +104,10 @@ FinovaTech v10/
   Permissions-Policy).
 - Bloqueo anti fuerza bruta (5 fallos → 2 min, duplicado progresivo).
 - SQL con parámetros `%s` y nombres de tabla en lista blanca.
+- Bitácora de accesos (login correcto/fallido, bloqueo, logout y recuperación)
+  visible solo para administradores.
+- Recuperación de contraseña con token de un solo uso, hash SHA-256 y caducidad
+  de 30 minutos; SMTP por variables de entorno.
 
 ### Funcionamiento de la seguridad
 
@@ -199,10 +212,21 @@ La suite smoke valida rápidamente la integración local:
 - Definición y actualización del presupuesto mensual desde `/presupuesto`.
 - Render del centro de notificaciones con sesión.
 - Validación de fecha, hora y categoría del agendamiento, y exigencia de sesión.
+- Perfil: actualización de datos, rechazo de usuario duplicado y cambio de
+  contraseña con verificación de la actual.
+- Movimientos: alta real, persistencia en `/lista` y eliminación.
+- Login: bloqueo tras cinco intentos fallidos.
 - Cierre de sesión solo mediante POST con token.
+- RF-15: filtros `q`/`tipo` y paginación de 10 en 10 resueltos en MySQL.
+- RF-16: vinculación padre–estudiante por código y desvinculación.
+- RF-17: bitácora de accesos visible para administrador y restringida a otros roles.
+- RF-18: recuperación de contraseña con token de un solo uso.
 
-Requiere MySQL/MariaDB encendido, el esquema aplicado y la cuenta demo
-disponible. No reemplaza pruebas unitarias ni pruebas completas del navegador.
+La suite suma **34 comprobaciones** y requiere MySQL/MariaDB encendido, el
+esquema aplicado y la cuenta demo disponible. No reemplaza pruebas unitarias ni
+pruebas completas del navegador. Los tests crean cuentas `rnf10_*@test.local` y
+modifican el presupuesto demo; tras ejecutarla conviene restaurar los datos con
+`python -m scripts.seed_demo`.
 
 ## Documentación técnica del código
 
@@ -240,9 +264,11 @@ obvias; no repiten instrucciones línea por línea.
 
 | Plantilla | Ruta | Funciones principales |
 |---|---|---|
-| `index.html` | `/` | Presenta FinovaTech, sus beneficios, estadísticas reales (usuarios y movimientos desde la base de datos) y una llamada a la acción final. |
+| `index.html` | `/` | Presenta FinovaTech, sus beneficios, estadísticas reales (usuarios, movimientos y categorías de gasto desde la base de datos) y una llamada a la acción final. |
 | `login.html` | `/login` o `/login.html` | Recibe correo y contraseña, valida CSRF e inicia la sesión. Video de fondo, entrada escalonada y botón pulsante. |
 | `registro.html` | `/registro` o `/registro.html` | Crea cuentas, valida rol, contraseña y confirmación. Validación en vivo por campo y video de fondo. |
+| `recuperar.html` | `/recuperar` | Solicita un enlace de recuperación sin revelar si el correo existe. |
+| `restablecer.html` | `/restablecer/<token>` | Cambia la contraseña con un token válido de un solo uso. |
 | `contacto.html` | `/contacto.html` | Muestra información de contacto y créditos del proyecto. |
 | `servicios.html` | `/servicios.html` | Catálogo de servicios con video de fondo; cada tarjeta dirige a `/login`. Incluye una llamada a la acción final. |
 | `soporte.html` | `/soporte.html` | Valida localmente nombre, correo, asunto y mensaje de soporte. |
@@ -260,6 +286,9 @@ Estas páginas requieren una sesión iniciada. Sin sesión, Flask redirige a
 | `presupuesto.html` | `/presupuesto` | Define o actualiza el límite de gasto del mes y muestra el avance del periodo. |
 | `notificacion.html` | `/notificacion` | Presenta alertas de presupuesto, gastos elevados y comportamiento mensual. |
 | `agendamiento.html` | `/agendamiento` | Permite seleccionar fecha, hora, categoría, estado y comentarios de una sesión. |
+| `perfil.html` | `/perfil` | Consulta los datos de la cuenta, muestra el código de vinculación del estudiante y permite actualizar nombre, usuario y contraseña. |
+| `supervision.html` | `/supervision` | Rol padre: vincula estudiantes por código y consulta sus totales, presupuesto y movimientos en solo lectura. |
+| `bitacora.html` | `/bitacora` | Rol administrador: últimos 100 eventos de acceso y recuperación. |
 
 ### Funciones compartidas
 
@@ -364,3 +393,6 @@ actual:
 | v10.3.1 | Documentación MIDEGS de las fases 01–08, planes de fase y guion de presentación. |
 | v10.3.2 | Suite ampliada a presupuesto, notificaciones y validación del agendamiento; planes de las fases 09 y 10. |
 | v10.3.3 | Presupuesto editable desde la app, tabla `agendamiento` restaurada y suite de 23 comprobaciones. |
+| v10.3.4 | Perfil de usuario (`/perfil` y cambio de contraseña), navegación actualizada y suite de 25 comprobaciones. |
+| v10.3.5 | RNF-10: alta/baja real de movimientos y bloqueo de login tras 5 intentos; suite de 27 comprobaciones. |
+| v10.3.6 | RF-15 a RF-18: filtros/paginación en servidor, supervisión del rol padre por código, bitácora de accesos y recuperación de contraseña con token de un uso; seed demo enriquecido, cuentas demo de padre/estudiante y suite de 34 comprobaciones. |

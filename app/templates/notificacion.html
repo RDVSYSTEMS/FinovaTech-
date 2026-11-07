@@ -54,6 +54,18 @@
             <a href="/notificacion" class="sidebar-enlace activo">
                 <span class="enlace-icono">🔔</span> Notificaciones
             </a>
+            <a href="/perfil" class="sidebar-enlace">
+                <span class="enlace-icono">👤</span> Perfil
+            </a>
+            {% if session.get('user_type') == 'padre' %}
+            <a href="/supervision" class="sidebar-enlace">
+                <span class="enlace-icono">&#9679;</span> Supervisión
+            </a>
+            {% elif session.get('user_type') == 'administrador' %}
+            <a href="/bitacora" class="sidebar-enlace">
+                <span class="enlace-icono">&#9679;</span> Bitácora
+            </a>
+            {% endif %}
         </nav>
         <form action="/logout" method="POST" class="sidebar-salir-form">
             <input type="hidden" name="csrf_token" value="{{ csrf_token }}">

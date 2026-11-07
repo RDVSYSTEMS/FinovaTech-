@@ -6,7 +6,12 @@ from urllib.parse import quote
 
 from flask import Blueprint, redirect, render_template, request, session, url_for
 
-from app.modelos.finanzas import (crear_registro, eliminar_registro, get_registros, get_totales)
+from app.modelos.finanzas import (
+    crear_registro,
+    eliminar_registro,
+    get_registros_paginados,
+    get_totales,
+)
 from app.seguridad import login_requerido
 
 registros_bp = Blueprint("registros", __name__)
@@ -15,10 +20,26 @@ registros_bp = Blueprint("registros", __name__)
 @registros_bp.route("/lista")
 @login_requerido
 def lista():
-    """Muestra los movimientos y totales del estudiante autenticado."""
-    registros = get_registros(session["user_id"])
+    """Muestra los movimientos filtrados y paginados del usuario."""
+    tipo = request.args.get("tipo", "").strip()
+    if tipo not in ("", "Ingreso", "Gasto"):
+        tipo = ""
+    q = request.args.get("q", "").strip()[:60]
+    try:
+        pagina = int(request.args.get("page", "1"))
+    except ValueError:
+        pagina = 1
+
+    resultado = get_registros_paginados(
+        session["user_id"], tipo=tipo, q=q, pagina=pagina
+    )
     totales = get_totales(session["user_id"])
-    return render_template("lista.html", registros=registros, **totales)
+    return render_template(
+        "lista.html",
+        filtros={"q": q, "tipo": tipo},
+        **resultado,
+        **totales,
+    )
 
 
 @registros_bp.route("/registro/nuevo", methods=["POST"])

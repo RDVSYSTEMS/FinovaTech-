@@ -64,7 +64,7 @@ document.addEventListener("DOMContentLoaded", function () {
 
     // ── Menú según sesión ──────────────────────
     const pagina = window.location.pathname;
-    const rutasLogueadas = ['/panel', '/lista', '/notificacion', '/agendamiento'];
+    const rutasLogueadas = ['/panel', '/lista', '/presupuesto', '/notificacion', '/agendamiento', '/perfil', '/supervision', '/bitacora'];
     const estaLogueado = rutasLogueadas.some(r => pagina.includes(r));
 
     const menuHTML = estaLogueado ? `
@@ -73,12 +73,12 @@ document.addEventListener("DOMContentLoaded", function () {
             <a href="/lista">Lista</a>
             <a href="/agendamiento">Agendar</a>
             <a href="/notificacion">Notificaciones</a>
+            <a href="/perfil">Perfil</a>
         </nav>
     ` : `
         <nav class="menu-superior">
             <a href="/">Inicio</a>
             <a href="/servicios.html">Servicios</a>
-            <a href="/login" title="Inicia sesión para agendar una sesión">Agendar</a>
             <a href="/login">Iniciar sesión</a>
             <a href="/registro" class="btn-nav">Registrarse</a>
         </nav>
@@ -109,7 +109,7 @@ document.addEventListener("DOMContentLoaded", function () {
         footerDiv.innerHTML = `
         <footer>
             <p>© 2026 FinovaTech. Todos los derechos reservados.</p>
-            <p>Proyecto desarrollado para el SENA - Técnico en Programación de Software.</p>
+            <p>Desarrollado por RDV Systems para el SENA - Técnico en Programación de Software.</p>
             <div class="footer-links">
                 <a href="/contacto.html">Contacto y Créditos</a>
                 <a href="/soporte.html">Soporte</a>

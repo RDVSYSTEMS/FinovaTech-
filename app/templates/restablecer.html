@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<!-- ============================================================================
+     FinovaTech - restablecer.html
+     Descripción: cambio de contraseña mediante un token de un solo uso.
+     ============================================================================ -->
+
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <link rel="icon" type="image/svg+xml" href="/static/assets/img/favicon.svg">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Restablecer contraseña - FinovaTech</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;900&display=swap" rel="stylesheet">
+    <link href="/static/vendor/aos.css" rel="stylesheet">
+    <link rel="stylesheet" href="/static/css/header_footer.css">
+    <link rel="stylesheet" href="/static/css/login.css">
+</head>
+<body>
+
+<div id="barra-progreso"></div>
+<div id="header"></div>
+
+<main class="login-main">
+    <div class="login-contenido">
+
+        <div class="login-info" data-aos="fade-right">
+            <span class="hero-etiqueta">Seguridad de la cuenta</span>
+            <h1>Nueva<br><span class="highlight">contraseña</span></h1>
+            <p>Crea una contraseña de mínimo 8 caracteres. El enlace deja de funcionar después de usarlo una vez.</p>
+        </div>
+
+        <div class="login-card" data-aos="fade-left">
+            <div class="login-card-header">
+                <img src="/static/assets/img/RDV_systems logo 200x200px.png" alt="Logo" width="55">
+                <h2>Restablecer contraseña</h2>
+                {% if usuario %}<p>{{ usuario.email }}</p>{% endif %}
+            </div>
+
+            {% if error %}
+            <div class="login-mensaje error" role="alert">{{ error }}</div>
+            {% endif %}
+
+            {% if exito %}
+            <div class="login-mensaje" role="status">{{ exito }}</div>
+            <p class="login-registro">
+                <a href="/login">Iniciar sesión con la nueva contraseña</a>
+            </p>
+            {% elif usuario %}
+            <form method="post" action="/restablecer/{{ token }}" novalidate>
+                <input type="hidden" name="csrf_token" value="{{ csrf_token }}">
+
+                <div class="grupo-formulario">
+                    <label for="nueva">Nueva contraseña</label>
+                    <input id="nueva" name="nueva" type="password" minlength="8"
+                           autocomplete="new-password" required>
+                </div>
+
+                <div class="grupo-formulario">
+                    <label for="confirmar">Confirmar contraseña</label>
+                    <input id="confirmar" name="confirmar" type="password" minlength="8"
+                           autocomplete="new-password" required>
+                </div>
+
+                <button type="submit" class="btn-principal w-full">
+                    Guardar contraseña
+                </button>
+            </form>
+            {% else %}
+            <p class="login-registro">
+                <a href="/recuperar">Solicitar un enlace nuevo</a>
+            </p>
+            {% endif %}
+        </div>
+
+    </div>
+</main>
+
+<div id="footer"></div>
+
+<script src="/static/vendor/aos.js"></script>
+<script src="/static/js/global.js"></script>
+
+</body>
+</html>

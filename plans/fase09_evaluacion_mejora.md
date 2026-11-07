@@ -30,7 +30,7 @@ Referencias:
 
 ## Indicadores
 
-- Suite de regresión: 23/23 comprobaciones OK.
+- Suite de regresión: 34/34 comprobaciones OK.
 - Arranque reproducible siguiendo solo el `README.md`.
 - Documentación de fases 01–08 completa.
 
@@ -38,10 +38,12 @@ Referencias:
 
 Detalle, prioridades y criterios de aceptación en `docs/PENDIENTES.md`.
 
-1. Ampliar la suite a flujos de escritura (crear y eliminar movimientos).
-2. Restauración de respaldos probada y documentada.
-3. Contraseña de MySQL distinta de la de por defecto.
-4. Pruebas de navegador automatizadas.
+1. Completada en v10.3.5: flujos de escritura y bloqueo de login (RNF-10).
+2. Completada en v10.3.6: filtros/paginación, supervisión del padre, bitácora y
+   recuperación de contraseña (RF-15 a RF-18).
+3. Restauración de respaldos probada y documentada.
+4. Contraseña de MySQL distinta de la de por defecto.
+5. Pruebas de navegador automatizadas.
 
 ## Riesgos
 

@@ -14,6 +14,12 @@ RUTAS (URLs) principales:
   /registro/nuevo  POST    -> Guarda un ingreso o gasto (protegida)
   /registro/eliminar/<tipo>/<id> POST -> Borra un movimiento (protegida)
   /notificacion            -> Centro de notificaciones (protegida)
+  /perfil       GET/POST   -> Datos de la cuenta (protegida)
+  /perfil/password  POST   -> Cambio de contraseña (protegida)
+  /supervision             -> Supervisión del rol padre (protegida)
+  /bitacora                -> Bitácora de accesos (admin)
+  /recuperar   GET/POST    -> Solicitud de recuperación de contraseña
+  /restablecer/<token>     -> Cambio de contraseña con token
   /<pagina>.html           -> Resto de páginas (contacto, soporte...)
 =============================================================="""
 
@@ -39,11 +45,19 @@ def create_app():
     from app.blueprints.panel import panel_bp
     from app.blueprints.registros import registros_bp
     from app.blueprints.notificaciones import notificaciones_bp
+    from app.blueprints.perfil import perfil_bp
+    from app.blueprints.supervision import supervision_bp
+    from app.blueprints.bitacora import bitacora_bp
+    from app.blueprints.recuperacion import recuperacion_bp
 
     app.register_blueprint(publicas_bp)
     app.register_blueprint(panel_bp)
     app.register_blueprint(registros_bp)
     app.register_blueprint(notificaciones_bp)
+    app.register_blueprint(perfil_bp)
+    app.register_blueprint(supervision_bp)
+    app.register_blueprint(bitacora_bp)
+    app.register_blueprint(recuperacion_bp)
 
     # Seguridad global
     from app import seguridad

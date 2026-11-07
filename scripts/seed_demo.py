@@ -1,42 +1,29 @@
 ﻿"""=============================================================================
-FinovaTech v10 — Datos de prueba (demo)
+FinovaTech v10 - Datos de prueba (demo)
 ===============================================================================
-Este script crea TODO lo necesario para que el panel del usuario demo se vea
-lleno de datos reales apenas inicies sesión:
+Crea una cuenta demo con informacion suficiente para la sustentacion:
 
-  1. Crea (si no existe) la cuenta de prueba:
-       Correo:    adminr123@gmail.com
-       Contraseña: 123456789
+  1. Cuenta:  adminr123@gmail.com / 123456789 (rol administrador)
+  2. Perfil de estudiante con grado e institucion.
+  3. Movimientos de los ultimos 6 meses en 12 categorias distintas.
+  4. Presupuesto del mes vigente disenado para disparar avisos variados.
+  5. El mes actual queda en negativo, supera el presupuesto y tiene un gasto
+     elevado, de modo que /notificacion muestre los seis avisos posibles.
+  6. Cuenta de padre vinculada al estudiante demo para mostrar /supervision.
 
-  2. Crea el perfil de ESTUDIANTE de esa cuenta.
+El script es REPETIBLE: al ejecutarlo de nuevo borra los movimientos y el
+presupuesto del estudiante demo y los vuelve a crear (no duplica datos).
 
-  3. Inserta algunos INGRESOS y GASTOS de ejemplo, y un PRESUPUESTO mensual.
-
-Este script no crea agendamientos: las citas pertenecen al flujo real del
-usuario y deben registrarse desde la pantalla de agendamiento.
-
-CÓMO SE EJECUTA (desde la carpeta del proyecto):
+EJECUCION (desde la raiz del proyecto):
     python -m scripts.seed_demo
-
-NOTA: el script es REPETIBLE. Si lo vuelves a ejecutar, limpia los datos de
-ejemplo antiguos y los vuelve a crear, sin duplicarlos.
 ============================================================================="""
 
-# ---------------------------------------------------------------------------
-# IMPORTACIONES
-#   - get_connection: para abrir conexiones a MySQL y hacer operaciones SQL.
-#   - registrar_usuario: para crear la cuenta demo con contraseña cifrada.
-# ---------------------------------------------------------------------------
+import calendar
+from datetime import date
+
 from app.db import get_connection
 from app.modelos.usuarios import registrar_usuario
 
-# ---------------------------------------------------------------------------
-# DATOS DEMO
-#   Credenciales del usuario de demostración (coinciden con el README) y los
-#   movimientos de ejemplo que se insertarán en las tablas ingreso y gasto.
-# ---------------------------------------------------------------------------
-
-# Cuenta de demostración
 DEMO = {
     "nombre": "Administrador Demo",
     "email": "adminr123@gmail.com",
@@ -45,148 +32,208 @@ DEMO = {
     "rol": "administrador",
 }
 
-# Ingresos de ejemplo: (meses_antes, descripción, monto en pesos)
-#   meses_antes = 0  -> el mes actual
-#   meses_antes = 5  -> hace 5 meses
-# Con datos repartidos en los últimos 6 meses la gráfica de "Evolución
-# financiera" del panel se ve con una curva realista y creciente.
+PADRE_DEMO = {
+    "nombre": "Padre Demo",
+    "email": "padredemo@gmail.com",
+    "username": "padredemo",
+    "password": "123456789",
+    "rol": "padre",
+}
+
+# (meses_antes, dia_del_mes, descripcion, monto)
 INGRESOS = [
-    (5, "Mesada", 230000),
-    (4, "Mesada", 240000),
-    (3, "Mesada", 250000),
-    (3, "Premio académico", 35000),
-    (2, "Mesada", 260000),
-    (2, "Premio académico", 40000),
-    (1, "Mesada", 270000),
-    (1, "Trabajo fin de semana", 60000),
-    (0, "Mesada", 280000),
-    (0, "Premio académico", 40000),
-    (0, "Trabajo fin de semana", 120000),
+    (5, 5, "Mesada", 230000),
+    (5, 16, "Premio académico", 35000),
+    (4, 4, "Mesada", 240000),
+    (4, 18, "Trabajo fin de semana", 50000),
+    (3, 3, "Mesada", 250000),
+    (3, 12, "Premio académico", 40000),
+    (3, 22, "Venta de libros", 30000),
+    (2, 5, "Mesada", 260000),
+    (2, 16, "Beca de transporte", 45000),
+    (1, 2, "Mesada", 270000),
+    (1, 10, "Trabajo fin de semana", 60000),
+    (1, 20, "Premio académico", 40000),
+    (0, 1, "Mesada", 280000),
+    (0, 2, "Premio académico", 40000),
+    (0, 3, "Trabajo fin de semana", 120000),
 ]
 
-# Gastos de ejemplo: (meses_antes, descripción, categoría, monto en pesos)
+# (meses_antes, dia_del_mes, descripcion, categoria, monto)
 GASTOS = [
-    (5, "Útiles escolares", "Educación", 30000),
-    (5, "Transporte", "Transporte", 35000),
-    (4, "Comidas", "Alimentación", 40000),
-    (4, "Entretenimiento", "Ocio", 25000),
-    (3, "Transporte", "Transporte", 40000),
-    (3, "Comidas", "Alimentación", 45000),
-    (2, "Ahorro personal", "Ahorro", 30000),
-    (2, "Comidas", "Alimentación", 50000),
-    (2, "Útiles escolares", "Educación", 25000),
-    (1, "Entretenimiento", "Ocio", 30000),
-    (1, "Transporte", "Transporte", 40000),
-    (1, "Comidas", "Alimentación", 55000),
-    (1, "Ahorro personal", "Ahorro", 45000),
-    (0, "Útiles escolares", "Educación", 35000),
-    (0, "Transporte", "Transporte", 45000),
-    (0, "Comidas", "Alimentación", 60000),
-    (0, "Entretenimiento", "Ocio", 30000),
-    (0, "Ahorro personal", "Ahorro", 40000),
+    (5, 8, "Útiles escolares", "Educación", 30000),
+    (5, 14, "Transporte", "Transporte", 35000),
+    (5, 19, "Comidas", "Alimentación", 40000),
+    (5, 25, "Cine", "Ocio", 25000),
+    (5, 27, "Aseo del hogar", "Hogar", 20000),
+    (4, 6, "Comidas", "Alimentación", 45000),
+    (4, 11, "Transporte", "Transporte", 40000),
+    (4, 15, "Farmacia", "Salud", 18000),
+    (4, 21, "Accesorios tecnológicos", "Tecnología", 60000),
+    (4, 26, "Ropa", "Ropa", 25000),
+    (3, 5, "Transporte", "Transporte", 45000),
+    (3, 9, "Comidas", "Alimentación", 50000),
+    (3, 14, "Ahorro personal", "Ahorro", 30000),
+    (3, 20, "Útiles escolares", "Educación", 25000),
+    (3, 26, "Alimento para mascota", "Mascotas", 12000),
+    (2, 4, "Comidas", "Alimentación", 55000),
+    (2, 10, "Entretenimiento", "Ocio", 35000),
+    (2, 16, "Transporte", "Transporte", 42000),
+    (2, 22, "Regalo cumpleaños", "Regalos", 18000),
+    (2, 27, "Suscripción streaming", "Suscripciones", 12000),
+    (1, 3, "Comidas", "Alimentación", 60000),
+    (1, 8, "Transporte", "Transporte", 45000),
+    (1, 13, "Ahorro personal", "Ahorro", 50000),
+    (1, 19, "Farmacia", "Salud", 22000),
+    (1, 25, "Aseo del hogar", "Hogar", 30000),
+    (0, 1, "Mercado semanal", "Alimentación", 70000),
+    (0, 1, "Pasajes del mes", "Transporte", 40000),
+    (0, 2, "Útiles escolares", "Educación", 30000),
+    (0, 2, "Comidas fuera de casa", "Alimentación", 50000),
+    (0, 3, "Cine con amigos", "Ocio", 25000),
+    (0, 3, "Farmacia", "Salud", 20000),
+    (0, 4, "Aseo del hogar", "Hogar", 35000),
+    (0, 4, "Zapatos", "Ropa", 30000),
+    (0, 5, "Suscripción streaming", "Suscripciones", 15000),
+    (0, 5, "Ahorro personal", "Ahorro", 25000),
+    (0, 5, "Alimento para mascota", "Mascotas", 15000),
+    (0, 6, "Regalo para mamá", "Regalos", 20000),
+    (0, 6, "Audífonos inalámbricos", "Tecnología", 280000),
+    (0, 6, "Comida con amigos", "Alimentación", 30000),
+    (0, 6, "Pasajes adicionales", "Transporte", 15000),
 ]
+
+MESES_ES = [
+    "Enero", "Febrero", "Marzo", "Abril", "Mayo", "Junio",
+    "Julio", "Agosto", "Septiembre", "Octubre", "Noviembre", "Diciembre",
+]
+
+PRESUPUESTO_MENSUAL = 600000
+
+
+def _fecha(meses_antes: int, dia: int) -> date:
+    """Devuelve una fecha real dentro del mes indicado, sin fechas futuras."""
+    hoy = date.today()
+    indice = (hoy.year * 12 + hoy.month - 1) - meses_antes
+    anio, mes = divmod(indice, 12)
+    mes += 1
+    ultimo_dia = calendar.monthrange(anio, mes)[1]
+    dia = min(dia, ultimo_dia)
+    if meses_antes == 0:
+        dia = min(dia, hoy.day)
+    return date(anio, mes, dia)
 
 
 def crear_estudiante(usuario_id: int):
-    """
-    Inserta el perfil de estudiante y sus datos de ejemplo.
-
-    PARÁMETROS:
-        usuario_id -> id de la cuenta demo en la tabla "usuario".
-
-    COMPORTAMIENTO:
-        - Si el estudiante ya existe, primero BORRA sus ingresos, gastos y
-          presupuestos antiguos, y después los vuelve a insertar. Así el
-          script se puede ejecutar muchas veces sin duplicar datos.
-        - Si no existe, crea la fila en "estudiante" con el grado e
-          institución de ejemplo.
-    """
+    """Crea o reinicia el perfil de estudiante con sus datos demo."""
     conn = get_connection()
     try:
         with conn.cursor() as cur:
-
-            # 1) Buscamos si el estudiante ya existe para esta cuenta
             cur.execute("SELECT id FROM estudiante WHERE usuario_id=%s", (usuario_id,))
-            row = cur.fetchone()
+            fila = cur.fetchone()
 
-            if row:
-                # Ya existe: guardamos su id y borramos sus datos de ejemplo
-                estudiante_id = row["id"]
+            if fila:
+                estudiante_id = fila["id"]
                 for tabla in ("ingreso", "gasto", "presupuesto"):
-                    cur.execute(f"DELETE FROM {tabla} WHERE estudiante_id=%s", (estudiante_id,))
+                    cur.execute(
+                        f"DELETE FROM {tabla} WHERE estudiante_id=%s",
+                        (estudiante_id,),
+                    )
             else:
-                # No existe: creamos el perfil de estudiante por primera vez
                 cur.execute(
                     "INSERT INTO estudiante (grado, institucion, saldo_actual, usuario_id) "
                     "VALUES (%s, %s, %s, %s)",
                     ("11°", "Institución Educativa Demo", 0.00, usuario_id),
                 )
-                estudiante_id = cur.lastrowid  # id que MySQL acaba de asignar
+                estudiante_id = cur.lastrowid
 
-            # 2) Insertamos los ingresos de ejemplo (repartidos en 6 meses)
-            for meses_antes, descripcion, monto in INGRESOS:
+            for meses_antes, dia, descripcion, monto in INGRESOS:
                 cur.execute(
                     "INSERT INTO ingreso (monto, descripcion, categoria, fecha, estudiante_id) "
-                    "VALUES (%s, %s, %s, CURRENT_DATE - INTERVAL %s MONTH, %s)",
-                    (monto, descripcion, "Ingreso", meses_antes, estudiante_id),
+                    "VALUES (%s, %s, %s, %s, %s)",
+                    (monto, descripcion, "Ingreso", _fecha(meses_antes, dia), estudiante_id),
                 )
 
-            # 3) Insertamos los gastos de ejemplo (cada uno con su categoría)
-            for meses_antes, descripcion, categoria, monto in GASTOS:
+            for meses_antes, dia, descripcion, categoria, monto in GASTOS:
                 cur.execute(
                     "INSERT INTO gasto (monto, descripcion, categoria, fecha, estudiante_id) "
-                    "VALUES (%s, %s, %s, CURRENT_DATE - INTERVAL %s MONTH, %s)",
-                    (monto, descripcion, categoria, meses_antes, estudiante_id),
+                    "VALUES (%s, %s, %s, %s, %s)",
+                    (monto, descripcion, categoria, _fecha(meses_antes, dia), estudiante_id),
                 )
 
-            # 4) Creamos un presupuesto mensual de $500.000 desde hoy hasta
-            #    el mismo día del próximo mes
+            inicio = date.today().replace(day=1)
+            if inicio.month == 12:
+                siguiente = date(inicio.year + 1, 1, 1)
+            else:
+                siguiente = date(inicio.year, inicio.month + 1, 1)
+            fin = date.fromordinal(siguiente.toordinal() - 1)
+
             cur.execute(
                 "INSERT INTO presupuesto (monto_limite, periodo, fecha_inicio, fecha_fin, estudiante_id) "
-                "VALUES (%s, %s, CURRENT_DATE, CURRENT_DATE + INTERVAL 1 MONTH, %s)",
-                (500000, "Mensual", estudiante_id),
+                "VALUES (%s, %s, %s, %s, %s)",
+                (
+                    PRESUPUESTO_MENSUAL,
+                    f"{MESES_ES[inicio.month - 1]} {inicio.year}",
+                    inicio,
+                    fin,
+                    estudiante_id,
+                ),
             )
-
-        # Una sola transacción evita dejar datos demo a medias si falla un INSERT.
         conn.commit()
     finally:
-        conn.close()    # Cerramos la conexión siempre
+        conn.close()
+
+
+def crear_padre_vinculado(estudiante_usuario_id: int):
+    """Crea la cuenta de padre demo y la vincula al estudiante demo."""
+    registrar_usuario(**PADRE_DEMO)
+
+    conn = get_connection()
+    try:
+        with conn.cursor() as cur:
+            cur.execute("SELECT id FROM usuario WHERE email=%s", (PADRE_DEMO["email"],))
+            fila = cur.fetchone()
+            if not fila:
+                return None
+            padre_id = fila["id"]
+            cur.execute(
+                "INSERT IGNORE INTO padre_estudiante "
+                "(padre_id, estudiante_usuario_id) VALUES (%s, %s)",
+                (padre_id, estudiante_usuario_id),
+            )
+        conn.commit()
+        return padre_id
+    finally:
+        conn.close()
 
 
 def main():
-    """Función principal: crea la cuenta demo y, si existe, le agrega datos."""
+    """Crea la cuenta demo y reemplaza sus datos de ejemplo."""
     print("Creando usuario de prueba...")
-
-    # 1) Crea la cuenta (si ya existe, registrar_usuario avisa y no duplica)
-    exito, mensaje = registrar_usuario(**DEMO)
+    _, mensaje = registrar_usuario(**DEMO)
     print(mensaje)
 
-    # 2) Buscamos el id de la cuenta demo en la tabla "usuario"
     conn = get_connection()
     try:
         with conn.cursor() as cur:
             cur.execute("SELECT id FROM usuario WHERE email=%s", (DEMO["email"],))
-            row = cur.fetchone()
-        usuario_id = row["id"] if row else None
+            fila = cur.fetchone()
+        usuario_id = fila["id"] if fila else None
     finally:
         conn.close()
 
-    # 3) Si la cuenta existe, le creamos el perfil de estudiante + datos demo
     if usuario_id:
         crear_estudiante(usuario_id)
-        print("Perfil de estudiante y datos de ejemplo creados.")
+        padre_id = crear_padre_vinculado(usuario_id)
+        print(f"Datos demo cargados: {len(INGRESOS)} ingresos y {len(GASTOS)} gastos.")
+        if padre_id:
+            print("Cuenta de padre vinculada al estudiante demo.")
 
-    # 4) Si la cuenta se creó ahora, mostramos cómo iniciar sesión
-    if exito:
-        print()
-        print("Ahora puedes iniciar sesión con:")
-        print(f"  Correo:    {DEMO['email']}")
-        print(f"  Contraseña: {DEMO['password']}")
+    print()
+    print("Cuentas de demostracion:")
+    print(f"  Administrador/estudiante -> {DEMO['email']} / {DEMO['password']}")
+    print(f"  Padre vinculado          -> {PADRE_DEMO['email']} / {PADRE_DEMO['password']}")
 
 
-# ---------------------------------------------------------------------------
-# PUNTO DE ENTRADA: se ejecuta solo si corremos este archivo directamente
-#   python -m scripts.seed_demo
-# ---------------------------------------------------------------------------
 if __name__ == "__main__":
     main()

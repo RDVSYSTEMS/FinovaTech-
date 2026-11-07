@@ -63,6 +63,26 @@ def login_requerido(func):
     return envoltura
 
 
+def rol_requerido(*roles):
+    """Exige sesión activa y uno de los roles indicados."""
+
+    def decorador(func):
+        @wraps(func)
+        def envoltura(*args, **kwargs):
+            if "user_email" not in session:
+                return redirect(url_for("publicas.login"))
+            if session.get("user_type") not in roles:
+                # El padre vuelve a su vista natural; el resto, al panel.
+                if session.get("user_type") == "padre":
+                    return redirect(url_for("supervision.supervision"))
+                return redirect(url_for("panel.panel"))
+            return func(*args, **kwargs)
+
+        return envoltura
+
+    return decorador
+
+
 # --- Límite de intentos de login (anti fuerza bruta) ------------------------
 
 MAX_INTENTOS_LOGIN = 5

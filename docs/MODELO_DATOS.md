@@ -1,6 +1,6 @@
 # MODELO DE DATOS — FinovaTech v10.3
 
-**Versión del documento:** 10.3.0
+**Versión del documento:** 10.3.6
 **Estado:** Documentación consolidada de la versión v10.3.
 
 Base de datos `finovatech` en MySQL/MariaDB (XAMPP). Codificación: utf8mb4.
@@ -17,13 +17,18 @@ administrador 1─N usuario 1─1 estudiante 1─N ingreso
                                         ├──N presupuesto
                                         └──N reporte
 usuario 1─N agendamiento
+usuario 1─N padre_estudiante (como padre)
+usuario 1─N padre_estudiante (como estudiante supervisado)
+usuario 1─N bitacora_acceso
+usuario 1─N recuperacion_password
 ```
 
 ## 2. Tablas
 
-El esquema contiene ocho tablas: una de administración, una de usuarios, una
-de perfiles de estudiante, cuatro relacionadas con finanzas y una para
-agendamientos.
+El esquema contiene once tablas: dos de identidad y administración, una de
+perfiles de estudiante, cuatro relacionadas con finanzas, una para
+agendamientos, una de vínculos padre–estudiante y dos de seguridad
+(bitácora y tokens de recuperación).
 
 ### administrador
 | Columna | Tipo | Notas |
@@ -51,6 +56,7 @@ agendamientos.
 | institucion | VARCHAR(100) NOT NULL | |
 | saldo_actual | DECIMAL(12,2) default 0 | mantenido por TRIGGERS |
 | usuario_id | INT NOT NULL UNIQUE FK → usuario.id | ON DELETE CASCADE, 1 a 1 |
+| codigo_vinculacion | VARCHAR(12) NULL UNIQUE | código compartido con el padre; se genera bajo demanda |
 
 ### ingreso
 | Columna | Tipo | Notas |
@@ -72,6 +78,37 @@ agendamientos.
 | categoria | ENUM(reserva, consultoria, taller) | Tipo de sesión |
 | estado | ENUM(pendiente, confirmado, cancelado, completado) | default pendiente |
 | comentarios | VARCHAR(1000) NOT NULL | Metas o notas del estudiante |
+| creado_en | TIMESTAMP | default CURRENT_TIMESTAMP |
+
+### padre_estudiante
+| Columna | Tipo | Notas |
+|---|---|---|
+| id | INT PK AI | |
+| padre_id | INT NOT NULL FK → usuario.id | ON DELETE CASCADE |
+| estudiante_usuario_id | INT NOT NULL FK → usuario.id | ON DELETE CASCADE |
+| creado_en | TIMESTAMP | default CURRENT_TIMESTAMP |
+| — | UNIQUE (padre_id, estudiante_usuario_id) | evita vínculos duplicados |
+
+### bitacora_acceso
+| Columna | Tipo | Notas |
+|---|---|---|
+| id | BIGINT PK AI | |
+| usuario_id | INT NULL FK → usuario.id | ON DELETE SET NULL |
+| email | VARCHAR(120) NOT NULL | correo usado en el intento |
+| evento | VARCHAR(30) NOT NULL | login_ok, login_fallido, bloqueo, logout, recuperación |
+| ip | VARCHAR(45) NOT NULL | IPv4 o IPv6 |
+| detalle | VARCHAR(255) NOT NULL | contexto legible del evento |
+| creado_en | TIMESTAMP | default CURRENT_TIMESTAMP, indexado |
+
+### recuperacion_password
+| Columna | Tipo | Notas |
+|---|---|---|
+| id | BIGINT PK AI | |
+| usuario_id | INT NOT NULL FK → usuario.id | ON DELETE CASCADE |
+| token_hash | CHAR(64) NOT NULL UNIQUE | SHA-256; nunca se guarda el token en claro |
+| expira_en | DATETIME NOT NULL | 30 minutos desde la solicitud |
+| usado_en | DATETIME NULL | marca el token como consumido |
+| ip_solicitud | VARCHAR(45) NOT NULL | IP que solicitó el enlace |
 | creado_en | TIMESTAMP | default CURRENT_TIMESTAMP |
 
 ### gasto
@@ -104,6 +141,13 @@ del presupuesto del estudiante y usa `categoria` para clasificar el gasto.
 - Un `estudiante` puede tener muchos ingresos, gastos, presupuestos y reportes.
 - Un `usuario` puede tener muchos `agendamiento`; las citas se relacionan
   directamente con el usuario autenticado.
+- `padre_estudiante` relaciona dos cuentas de `usuario`: el padre y el
+  estudiante supervisado. La aplicación exige el rol padre y un código de
+  vinculación válido.
+- `bitacora_acceso` conserva el correo aunque se elimine el usuario; el
+  `usuario_id` queda en NULL por `ON DELETE SET NULL`.
+- `recuperacion_password` elimina sus tokens en cascada con el usuario y no
+  permite reutilizar un token ya usado o expirado.
 - Al borrar un usuario, sus datos dependientes se eliminan por cascada.
 
 ## 3. Triggers (mantienen saldo_actual)

@@ -1,9 +1,9 @@
-# REQUISITOS DEL PROYECTO — FinovaTech v10.3
+﻿# REQUISITOS DEL PROYECTO — FinovaTech v10.3
 
 **Proyecto:** Sistema de Finanzas Personales para Estudiantes de Bachillerato
 **Empresa desarrolladora:** RDV Systems
 **Entidad formadora:** SENA
-**Versión del documento:** 10.3.3
+**Versión del documento:** 10.3.6
 **Estado:** Documentación consolidada de la versión v10.3 (contexto educativo)
 
 ---
@@ -67,7 +67,8 @@ en línea, y despliegue en servidores de producción externos.
 - Cifra la contraseña (werkzeug `generate_password_hash`) y nunca la
   guarda en texto plano.
 - Rechaza correos/usuarios duplicados.
-- Crea automáticamente el perfil de estudiante asociado.
+- Crea automáticamente el perfil de estudiante solo cuando el rol es
+  `estudiante`; el rol `padre` no crea perfil financiero propio.
 
 ### RF-02 Inicio de sesión
 - Verifica correo + contraseña contra la base de datos.
@@ -130,6 +131,51 @@ en línea, y despliegue en servidores de producción externos.
 - Rechaza fechas anteriores al día actual y valores no permitidos.
 - Guarda cada agendamiento asociado al usuario autenticado.
 
+### RF-13 Perfil de usuario
+- Permite consultar los datos de la cuenta: nombre, usuario, correo, rol y fecha
+  de registro.
+- Permite actualizar el nombre y el nombre de usuario; el correo y el rol no se
+  editan desde este formulario.
+- Rechaza un nombre de usuario duplicado o con longitud menor a 4 caracteres.
+- Permite cambiar la contraseña verificando primero la contraseña actual,
+  exigiendo mínimo 8 caracteres y confirmación coincidente.
+- Actualiza el nombre mostrado en la sesión después de guardar los datos.
+
+### RF-15 Paginación y filtros en servidor
+- `/lista` acepta `q` (texto de descripción) y `tipo` (`Ingreso` o `Gasto`)
+  como filtros enviados por GET y resueltos en MySQL, no en el navegador.
+- Muestra 10 movimientos por página, conserva los filtros al navegar y
+  presenta el total de resultados filtrados.
+- Rechaza valores de `tipo` fuera de la lista blanca y limita el texto de
+  búsqueda para evitar consultas costosas.
+
+### RF-16 Supervisión para el rol padre
+- El estudiante ve en `/perfil` un código de vinculación único y no editable.
+- El padre ingresa ese código en `/supervision` para vincular una cuenta de
+  estudiante; no puede vincular por correo ni ver estudiantes sin código.
+- La vista de supervisión muestra, por estudiante vinculado, sus totales,
+  presupuesto y últimos movimientos en modo solo lectura.
+- El padre puede desvincular a un estudiante; la operación solo afecta sus
+  propios vínculos.
+
+### RF-17 Bitácora de accesos
+- Registra inicios de sesión correctos, intentos fallidos, bloqueos y cierres
+  de sesión con correo, IP, evento, detalle y fecha.
+- El rol administrador consulta los últimos 100 eventos en `/bitacora`.
+- La bitácora es solo de lectura y no permite modificar ni borrar registros
+  desde la aplicación.
+
+### RF-18 Recuperación de contraseña
+- `/recuperar` recibe un correo y responde siempre con el mismo mensaje para
+  no revelar si la cuenta existe.
+- Si la cuenta existe, genera un token de un solo uso, válido por 30 minutos,
+  y envía el enlace por SMTP configurado en variables de entorno.
+- Sin SMTP configurado, el enlace se escribe en el log del servidor para
+  permitir la prueba local, sin mostrarlo en la respuesta HTTP.
+- `/restablecer/<token>` valida el token, exige contraseña de mínimo 8
+  caracteres y confirmación coincidente, actualiza el hash y marca el token
+  como usado.
+
 ---
 
 ## 5. Requisitos no funcionales
@@ -145,14 +191,18 @@ en línea, y despliegue en servidores de producción externos.
 | RNF-07 | Sesiones y datos en español | interfaz 100% en español (formato moneda COP) |
 | RNF-08 | Portabilidad local | corre en Windows con XAMPP sin configuración extra |
 | RNF-09 | Animaciones accesibles | animaciones CSS/AOS respetan `prefers-reduced-motion` |
+| RNF-10 | Pruebas de escritura y anti fuerza bruta | `tests/test_smoke.py` cubre crear/eliminar movimientos reales y el bloqueo tras 5 intentos, sin mocks |
 
 ---
 
 ## 6. Requisitos de base de datos
 
 - Motor InnoDB en tablas de negocio; utf8mb4 / utf8mb4_general_ci.
-- Ocho tablas: `administrador`, `usuario`, `estudiante`, `ingreso`,
-  `gasto`, `presupuesto`, `reporte`, `agendamiento`.
+- Once tablas: `administrador`, `usuario`, `estudiante`, `ingreso`,
+  `gasto`, `presupuesto`, `reporte`, `agendamiento`, `padre_estudiante`,
+  `bitacora_acceso`, `recuperacion_password`.
+- `estudiante.codigo_vinculacion` es único y se genera bajo demanda para
+  autorizar la supervisión del padre.
 - Cuatro triggers que mantienen `estudiante.saldo_actual`.
 - Cuatro stored procedures: `sp_registrar_movimiento`,
   `sp_eliminar_movimiento`, `sp_resumen_mensual`, `sp_generar_reporte`.
@@ -173,16 +223,30 @@ en línea, y despliegue en servidores de producción externos.
 8. El usuario `root` de XAMPP (sin contraseña) conecta sin cambios.
 9. Una sesión válida de agendamiento se guarda asociada al usuario autenticado.
 10. Una fecha anterior al día actual o un valor no permitido se rechaza.
+11. El usuario puede cambiar su nombre y nombre de usuario, y el cambio persiste.
+12. Un nombre de usuario duplicado se rechaza.
+13. El cambio de contraseña exige la contraseña actual y permite entrar con la nueva.
+14. Una contraseña actual incorrecta o una nueva demasiado corta se rechaza.
+15. `/lista` filtra por texto y tipo en MySQL, pagina de 10 en 10 y mantiene
+    los filtros entre páginas.
+16. Un padre solo ve estudiantes vinculados con un código válido y no puede
+    modificar sus datos.
+17. El administrador consulta en `/bitacora` los eventos de acceso recientes.
+18. Un enlace de recuperación válido permite cambiar la contraseña una sola
+    vez y luego inicia sesión con la nueva.
 
 ---
 
 ## 8. Verificación
 
-- `tests/test_smoke.py` cubre 23 comprobaciones: públicas 200, protegidas →
+- `tests/test_smoke.py` cubre 34 comprobaciones: públicas 200, protegidas →
   login, aliases `.html`, registro de usuario, login demo + panel, acceso a
   lista, rechazo de POST sin token CSRF, presupuesto coherente y editable,
   notificaciones, validación del agendamiento (fecha, hora, categoría y
-  sesión) y logout solo por POST.
+  sesión), perfil (datos y contraseña), creación/eliminación real de un
+  movimiento, bloqueo del login tras 5 intentos, logout solo por POST, filtros
+  y paginación, supervisión padre–estudiante, bitácora y recuperación de
+  contraseña con token de un solo uso.
 - La suite smoke requiere MySQL/MariaDB encendido, el esquema aplicado y la
   cuenta demo disponible; no sustituye pruebas unitarias o de navegador.
 - Script `scripts/seed_demo.py` genera datos de demostración repetibles.
@@ -199,6 +263,8 @@ en línea, y despliegue en servidores de producción externos.
 | GET/POST | `/login` | Inicio de sesión y validación de credenciales. |
 | GET/POST | `/registro` | Creación de cuentas y perfil de estudiante. |
 | POST | `/logout` | Cierre de sesión protegido por CSRF. |
+| GET/POST | `/recuperar` | Solicitud de enlace de recuperación. |
+| GET/POST | `/restablecer/<token>` | Cambio de contraseña con token de un uso. |
 | GET | `/<pagina>.html` | Aliases de páginas públicas permitidas. |
 
 ### Rutas protegidas
@@ -213,6 +279,13 @@ en línea, y despliegue en servidores de producción externos.
 | GET | `/notificacion` | Notificaciones calculadas del usuario. |
 | GET | `/agendamiento` | Formulario para reservar una sesión. |
 | POST | `/agendamiento` | Validación y guardado de una sesión. Devuelve JSON. |
+| GET | `/perfil` | Datos de la cuenta y formularios de edición. |
+| POST | `/perfil` | Actualización de nombre y nombre de usuario. |
+| POST | `/perfil/password` | Cambio de contraseña con verificación de la actual. |
+| GET | `/supervision` | Supervisión de estudiantes vinculados (rol padre). |
+| POST | `/supervision/vincular` | Vinculación mediante código del estudiante. |
+| POST | `/supervision/desvincular/<id>` | Baja de un vínculo del padre actual. |
+| GET | `/bitacora` | Últimos 100 eventos de acceso (rol administrador). |
 
 Todas las rutas `POST` requieren `csrf_token`. Las rutas protegidas requieren
 una sesión activa y limitan las operaciones a los datos del usuario actual.

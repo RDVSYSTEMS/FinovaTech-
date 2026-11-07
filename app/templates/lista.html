@@ -55,6 +55,18 @@
             <a href="/notificacion" class="sidebar-enlace">
                 <span class="enlace-icono">🔔</span> Notificaciones
             </a>
+            <a href="/perfil" class="sidebar-enlace">
+                <span class="enlace-icono">👤</span> Perfil
+            </a>
+            {% if session.get('user_type') == 'padre' %}
+            <a href="/supervision" class="sidebar-enlace">
+                <span class="enlace-icono">&#9679;</span> Supervisión
+            </a>
+            {% elif session.get('user_type') == 'administrador' %}
+            <a href="/bitacora" class="sidebar-enlace">
+                <span class="enlace-icono">&#9679;</span> Bitácora
+            </a>
+            {% endif %}
         </nav>
 
         <!-- Reloj y fecha reales (bloque de la barra lateral) -->
@@ -140,18 +152,20 @@
             </article>
         </section>
 
-        <!-- Buscador y filtros -->
-        <div class="lista-toolbar" data-aos="fade-up">
+        <!-- Buscador y filtros (se resuelven en el servidor) -->
+        <form class="lista-toolbar" method="GET" action="/lista" data-aos="fade-up">
             <div class="lista-search">
-                <span>🔍</span>
-                <input type="text" id="buscador" placeholder="Buscar registros...">
+                <input type="text" id="buscar" name="q" maxlength="60"
+                       value="{{ filtros.q }}" placeholder="Buscar por descripci?n...">
             </div>
-            <select class="lista-filtro" id="filtroTipo">
-                <option value="">Todos</option>
-                <option value="Ingreso">Ingresos</option>
-                <option value="Gasto">Gastos</option>
+            <select class="lista-filtro" name="tipo">
+                <option value="" {{ 'selected' if not filtros.tipo else '' }}>Todos</option>
+                <option value="Ingreso" {{ 'selected' if filtros.tipo == 'Ingreso' else '' }}>Ingresos</option>
+                <option value="Gasto" {{ 'selected' if filtros.tipo == 'Gasto' else '' }}>Gastos</option>
             </select>
-        </div>
+            <button type="submit" class="btn-filtrar">Filtrar</button>
+            <a href="/lista" class="btn-limpiar">Limpiar</a>
+        </form>
 
         <!-- Tabla de movimientos REALES -->
         <div class="lista-tabla" data-aos="fade-up">
@@ -194,6 +208,23 @@
                 </tbody>
             </table>
         </div>
+
+        <p class="lista-resumen">
+            Mostrando {{ registros|length }} de {{ total }} registro{{ '' if total == 1 else 's' }}
+            {% if filtros.q or filtros.tipo %}(filtro aplicado){% endif %}
+        </p>
+
+        {% if total_paginas > 1 %}
+        <nav class="lista-paginacion" aria-label="Paginación de registros">
+            {% if pagina > 1 %}
+            <a class="pagina-enlace" href="{{ url_for('registros.lista', q=filtros.q, tipo=filtros.tipo, page=pagina - 1) }}">Anterior</a>
+            {% endif %}
+            <span class="pagina-actual">Página {{ pagina }} de {{ total_paginas }}</span>
+            {% if pagina < total_paginas %}
+            <a class="pagina-enlace" href="{{ url_for('registros.lista', q=filtros.q, tipo=filtros.tipo, page=pagina + 1) }}">Siguiente</a>
+            {% endif %}
+        </nav>
+        {% endif %}
 
     </main>
 </div>
@@ -328,23 +359,6 @@
             if (parseFloat(monto) <= 0) { e.preventDefault(); alert("Ingresa un monto mayor a cero."); }
         });
     })();
-
-    // ── Buscador y filtro (sin recargar la página) ─────────────────
-    const buscador = document.getElementById("buscador");
-    const filtro = document.getElementById("filtroTipo");
-    function filtrar() {
-        const texto = buscador.value.toLowerCase();
-        const tipo = filtro.value;
-        document.querySelectorAll("#cuerpoTabla tr").forEach(fila => {
-            const concepto = (fila.cells[0]?.textContent || "").toLowerCase();
-            const filaTipo = fila.cells[3]?.textContent || "*";
-            const coincideTexto = concepto.includes(texto);
-            const coincideTipo = !tipo || filaTipo === tipo || filaTipo.includes(tipo);
-            fila.style.display = (coincideTexto && coincideTipo) ? "" : "none";
-        });
-    }
-    buscador.addEventListener("input", filtrar);
-    filtro.addEventListener("change", filtrar);
 
     // ── Alerta de éxito/error (?ok=... o ?error=...) ───────────────
     // SEGURIDAD (XSS): el mensaje llega de la URL, así que se inserta con

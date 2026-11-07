@@ -1,4 +1,4 @@
-# Guion de presentación — FinovaTech v10.3
+# Guion de presentación — FinovaTech v10.3.6
 
 Duración objetivo: 10–15 minutos. Demo en local con Opera.
 
@@ -7,17 +7,21 @@ Duración objetivo: 10–15 minutos. Demo en local con Opera.
 1. MySQL de XAMPP activo en el puerto de `.env` (3307 en este equipo).
 2. Servidor arriba: `.venv\Scripts\python.exe run.py` o `iniciar.bat`.
 3. Abrir `http://localhost:5001` en Opera.
-4. Tener a mano la cuenta demo:
-   - Correo: `adminr123@gmail.com`
-   - Contraseña: `123456789`
-5. Respaldo previo de la base (opcional pero recomendado).
+4. Tener a mano las cuentas demo:
+   - Administrador/estudiante: `adminr123@gmail.com` / `123456789`
+   - Padre vinculado: `padredemo@gmail.com` / `123456789`
+5. Datos demo esperados: presupuesto `$600.000` con `$700.000` gastados
+   (117 %), 6 meses de movimientos, 12 categorías y 6 notificaciones.
+6. Respaldo previo de la base (opcional pero recomendado). Si hace falta
+   restaurar: `python -m scripts.seed_demo`.
 
 ## Recorrido sugerido
 
 ### 1. Portada (`/`) — 1 min
 
 - Qué es FinovaTech y para quién (estudiantes de bachillerato).
-- Estadísticas reales de usuarios y movimientos tomadas de la base.
+- Estadísticas reales de usuarios, movimientos y categorías de gasto tomadas
+  de la base.
 
 ### 2. Servicios y páginas informativas — 1 min
 
@@ -43,7 +47,8 @@ Duración objetivo: 10–15 minutos. Demo en local con Opera.
 
 ### 6. Lista de movimientos (`/lista`) — 2 min
 
-- Buscar y filtrar.
+- Buscar por descripción y filtrar por tipo (los filtros se resuelven en MySQL).
+- Recorrer la paginación de 10 en 10 conservando los filtros.
 - Crear un ingreso o gasto y mostrarlo en la lista.
 - Eliminar un movimiento propio.
 
@@ -56,14 +61,28 @@ Duración objetivo: 10–15 minutos. Demo en local con Opera.
 - Seleccionar fecha, hora, categoría, estado y comentarios.
 - Enviar y confirmar el mensaje de resultado.
 
-### 9. Seguridad — 1 min
+### 9. Supervisión del padre (`/supervision`) — 2 min
 
-- CSRF en formularios, cookies HttpOnly, cabeceras y consultas parametrizadas.
+- Cerrar sesión e iniciar con `padredemo@gmail.com` / `123456789`.
+- Mostrar el estudiante ya vinculado: totales, presupuesto y movimientos en
+  solo lectura.
+- Mencionar que la vinculación requiere el código que aparece en `/perfil` del
+  estudiante y que el padre puede desvincular.
+
+### 10. Seguridad y auditoría — 2 min
+
+- `/bitacora` (solo administrador): login correcto, fallido, bloqueo, logout y
+  recuperación.
+- `/recuperar`: mensaje genérico; sin SMTP el enlace queda en el log local.
+- CSRF en formularios, cookies HttpOnly, cabeceras, consultas parametrizadas y
+  bloqueo tras 5 intentos.
 - Cerrar sesión con el botón (POST con token).
 
 ## Cierre
 
-- Resumen del alcance logrado y de lo que no incluye (producción, móvil, pagos).
+- Resumen del alcance logrado: finanzas personales, presupuesto,
+  notificaciones, agendamiento, supervisión del padre, bitácora y recuperación
+  de contraseña. Aclarar lo que no incluye (producción, móvil, pagos).
 - Preguntas.
 
 ## Si algo falla

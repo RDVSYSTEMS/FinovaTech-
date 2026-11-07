@@ -1,0 +1,183 @@
+/* ============================================================================
+   FinovaTech - supervision.css
+   Estilos de la vista de solo lectura para el rol padre.
+   ============================================================================ */
+
+.supervision-vincular {
+    margin-top: 18px;
+}
+
+.supervision-ayuda {
+    color: var(--texto-apagado, #94a3b8);
+    font-size: 0.9rem;
+    margin: 12px 0 0;
+}
+
+.supervision-form {
+    display: flex;
+    gap: 10px;
+    margin-top: 16px;
+    flex-wrap: wrap;
+}
+
+.supervision-form input {
+    flex: 1;
+    min-width: 220px;
+    height: 42px;
+    padding: 0 14px;
+    border-radius: 10px;
+    border: 1px solid rgba(255,255,255,0.08);
+    background: rgba(255,255,255,0.05);
+    color: #fff;
+    font-size: 0.9rem;
+    outline: none;
+    text-transform: uppercase;
+}
+
+.supervision-form input:focus {
+    border-color: #60a5fa;
+}
+
+.supervision-lista {
+    display: flex;
+    flex-direction: column;
+    gap: 18px;
+    margin-top: 18px;
+}
+
+.supervision-card {
+    padding: 22px;
+}
+
+.supervision-cabecera {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 14px;
+}
+
+.supervision-cabecera h3 {
+    margin: 0;
+    font-size: 1.05rem;
+}
+
+.supervision-cabecera p {
+    margin: 4px 0 0;
+    color: #94a3b8;
+    font-size: 0.85rem;
+}
+
+.supervision-badge {
+    padding: 4px 10px;
+    border-radius: 20px;
+    background: rgba(96,165,250,0.14);
+    border: 1px solid rgba(96,165,250,0.24);
+    color: #bfdbfe;
+    font-size: 0.72rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+}
+
+.supervision-stats {
+    display: grid;
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    gap: 12px;
+    margin-top: 18px;
+}
+
+.supervision-stats > div {
+    background: rgba(255,255,255,0.03);
+    border: 1px solid rgba(255,255,255,0.06);
+    border-radius: 12px;
+    padding: 12px 14px;
+}
+
+.supervision-etiqueta {
+    display: block;
+    color: #64748b;
+    font-size: 0.72rem;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    margin-bottom: 6px;
+}
+
+.supervision-stats strong {
+    font-size: 0.95rem;
+}
+
+.supervision-presupuesto {
+    margin-top: 16px;
+}
+
+.supervision-presupuesto-texto {
+    display: flex;
+    justify-content: space-between;
+    gap: 12px;
+    color: #94a3b8;
+    font-size: 0.82rem;
+    margin-bottom: 8px;
+}
+
+.supervision-barra {
+    height: 8px;
+    border-radius: 20px;
+    background: rgba(255,255,255,0.06);
+    overflow: hidden;
+}
+
+.supervision-barra span {
+    display: block;
+    height: 100%;
+    background: linear-gradient(90deg, #60a5fa, #6ee7b7);
+}
+
+.supervision-tabla {
+    margin-top: 16px;
+}
+
+.supervision-tabla .lista-tabla table,
+.supervision-tabla table {
+    width: 100%;
+}
+
+.supervision-vacio {
+    color: #64748b;
+    font-size: 0.88rem;
+    padding: 18px 0 4px;
+}
+
+.supervision-desvincular {
+    margin-top: 14px;
+    display: flex;
+    justify-content: flex-end;
+}
+
+.supervision-desvincular .btn-limpiar {
+    height: 38px;
+}
+
+.supervision-vacio.panel-card {
+    margin-top: 18px;
+    text-align: center;
+    padding: 36px 20px;
+}
+
+.supervision-vacio.panel-card h3 {
+    margin: 0 0 8px;
+}
+
+.supervision-vacio.panel-card p {
+    margin: 0;
+    color: #94a3b8;
+    font-size: 0.9rem;
+}
+
+@media (max-width: 900px) {
+    .supervision-stats { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+}
+
+@media (max-width: 520px) {
+    .supervision-stats { grid-template-columns: 1fr; }
+    .supervision-cabecera { flex-direction: column; }
+}
