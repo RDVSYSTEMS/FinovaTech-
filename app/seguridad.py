@@ -55,6 +55,7 @@ def login_requerido(func):
 
     @wraps(func)
     def envoltura(*args, **kwargs):
+        """Ejecuta la vista únicamente cuando existe una sesión autenticada."""
         # Se usa user_email como indicador de sesión autenticada.
         if "user_email" not in session:
             return redirect(url_for("publicas.login"))
@@ -67,8 +68,11 @@ def rol_requerido(*roles):
     """Exige sesión activa y uno de los roles indicados."""
 
     def decorador(func):
+        """Envuelve la vista con la comprobación de sesión y rol permitido."""
+
         @wraps(func)
         def envoltura(*args, **kwargs):
+            """Rechaza la vista o la ejecuta según el rol guardado en sesión."""
             if "user_email" not in session:
                 return redirect(url_for("publicas.login"))
             if session.get("user_type") not in roles:

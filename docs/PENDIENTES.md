@@ -3,17 +3,18 @@
 Backlog vivo para la siguiente sesión. Fuente de verdad de requisitos:
 `docs/REQUISITOS.md`. Historial de cambios: `docs/CHANGELOG.md`.
 
-> **Recordatorio:** al retomar el proyecto, seguir por **RF-14** (exportar
-> movimientos en CSV). **RF-12 queda fuera de esta iteración** por decisión del
-> usuario. Antes de codificar, actualizar `docs/REQUISITOS.md` y el plan de fase.
+> **Recordatorio:** RF-12 y RF-14 ya están cerrados. Siguientes candidatos:
+> **RNF-11** (usuario MySQL dedicado) y **RNF-12** (probar restauración del
+> respaldo). Antes de codificar, actualizar `docs/REQUISITOS.md` y el plan de fase.
 
 ## Prioridad alta
 
-- [ ] **RF-12 Reportes en la app + exportar CSV**
-  - Ruta `/reportes` que use `sp_generar_reporte`, liste reportes y permita
+- [x] **RF-12 Reportes en la app + exportar CSV** — cerrado 2026-11-10
+  - Ruta `/reportes` que usa `sp_generar_reporte`, lista reportes y permite
     descargar CSV de movimientos.
-  - Corregir `servicios.html`, que promete PDF/Excel/PNG no implementados.
+  - Corregido `servicios.html`, que prometía PDF/Excel/PNG no implementados.
   - Aceptación: generar un reporte, verlo listado y descargar el CSV.
+  - Evidencia: prueba `test_reportes_genera_y_exporta_csv` en la suite smoke.
 - [x] **RF-13 Perfil de usuario** — cerrado 2026-11-06
   - Ver/editar nombre y usuario; cambiar contraseña con verificación actual.
   - Aceptación: cambio persistido, rechazo de duplicados y login con la nueva
@@ -25,7 +26,9 @@ Backlog vivo para la siguiente sesión. Fuente de verdad de requisitos:
 
 ## Prioridad media
 
-- [ ] **RF-14 Exportar movimientos (CSV)**
+- [x] **RF-14 Exportar movimientos (CSV)** — cerrado 2026-11-10
+  - `/exportar` descarga los movimientos del estudiante como CSV con BOM UTF-8.
+  - Evidencia: prueba `test_reportes_genera_y_exporta_csv` en la suite smoke.
 - [x] **RF-15 Paginación y filtros en servidor** — cerrado 2026-11-06
   - `/lista` resuelve `q`/`tipo` en MySQL, pagina de 10 en 10 y conserva filtros.
   - Evidencia: prueba `test_lista_filtros_y_paginacion` en la suite smoke.
@@ -51,7 +54,7 @@ Backlog vivo para la siguiente sesión. Fuente de verdad de requisitos:
 - Cuenta demo padre vinculada: `padredemo@gmail.com` / `123456789`.
 - Presupuesto demo: `$600.000` límite, `$700.000` gastado (117 %).
 - MySQL/MariaDB debe correr en `DB_PORT` (hoy `3307`).
-- Suite actual: `python -m tests.test_smoke` → **34 comprobaciones**.
+- Suite actual: `python -m tests.test_smoke` → **37 comprobaciones**.
 - Tras ejecutar la suite, restaurar datos con
   `python -m scripts.seed_demo` (la prueba de presupuesto modifica el demo).
-- RF-13, RNF-10 y RF-15 a RF-18 cerrados; siguiente requisito priorizado: RF-14.
+- RF-12 a RF-18, RF-13 y RNF-10 cerrados; siguientes candidatos: RNF-11 y RNF-12.

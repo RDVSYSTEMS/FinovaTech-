@@ -22,6 +22,7 @@ logger = logging.getLogger(__name__)
 
 
 def _hash_token(token: str) -> str:
+    """Devuelve el SHA-256 hexadecimal del token para almacenarlo en la BD."""
     return hashlib.sha256(token.encode("utf-8")).hexdigest()
 
 

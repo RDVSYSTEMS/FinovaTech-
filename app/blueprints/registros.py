@@ -4,12 +4,15 @@ FinovaTech v10 - Blueprint de registros (lista + alta/borrado)
 
 from urllib.parse import quote
 
-from flask import Blueprint, redirect, render_template, request, session, url_for
+from flask import Blueprint, Response, redirect, render_template, request, session, url_for
 
 from app.modelos.finanzas import (
     crear_registro,
     eliminar_registro,
+    exportar_csv,
+    generar_reporte,
     get_registros_paginados,
+    get_reportes,
     get_totales,
 )
 from app.seguridad import login_requerido
@@ -76,3 +79,41 @@ def registro_eliminar(tipo, registro_id):
     exito, mensaje = eliminar_registro(session["user_id"], tipo, registro_id)
     clave = "ok" if exito else "error"
     return redirect(url_for("registros.lista") + f"?{clave}=" + quote(mensaje))
+
+
+@registros_bp.route("/reportes")
+@login_requerido
+def reportes():
+    """Centro de reportes: totales, historial y descarga CSV."""
+    totales = get_totales(session["user_id"])
+    listado = get_reportes(session["user_id"])
+    return render_template(
+        "reportes.html",
+        reportes=listado,
+        hay_reportes=bool(listado),
+        **totales,
+    )
+
+
+@registros_bp.route("/reportes/generar", methods=["POST"])
+@login_requerido
+def reporte_generar():
+    """Genera un reporte con sp_generar_reporte y vuelve al listado."""
+    tipo = request.form.get("tipo", "")
+    exito, mensaje = generar_reporte(session["user_id"], tipo)
+    clave = "ok" if exito else "error"
+    return redirect(url_for("registros.reportes") + f"?{clave}=" + quote(mensaje))
+
+
+@registros_bp.route("/exportar")
+@login_requerido
+def exportar():
+    """Descarga los movimientos del usuario como CSV (solo lectura, GET)."""
+    contenido = exportar_csv(session["user_id"])
+    return Response(
+        "\ufeff" + contenido,
+        mimetype="text/csv; charset=utf-8",
+        headers={
+            "Content-Disposition": "attachment; filename=movimientos_finovatech.csv",
+        },
+    )

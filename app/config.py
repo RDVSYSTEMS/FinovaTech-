@@ -16,6 +16,8 @@ load_dotenv()
 
 
 class Config:
+    """Agrupa la configuración de Flask, MySQL, correo y sesiones desde .env."""
+
     DB_HOST = os.getenv("DB_HOST", "localhost")
     DB_PORT = int(os.getenv("DB_PORT", "3306"))
     DB_USER = os.getenv("DB_USER", "root")

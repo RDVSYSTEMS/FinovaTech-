@@ -1,4 +1,4 @@
-# FinovaTech v10.3.6
+# FinovaTech v10.3.7
 
 Sistema de Finanzas Personales para Estudiantes de Bachillerato.
 Aplicación web (HTML/CSS/JS + Flask + MySQL) con autenticación, control de
@@ -20,7 +20,7 @@ desarrollado por **RDV Systems**.
 
 ```powershell
 # 1. Entorno virtual
-py -m venv .venv
+ñ
 .venv\Scripts\pip install -r requirements.txt
 
 # 2. Configuración
@@ -221,8 +221,9 @@ La suite smoke valida rápidamente la integración local:
 - RF-16: vinculación padre–estudiante por código y desvinculación.
 - RF-17: bitácora de accesos visible para administrador y restringida a otros roles.
 - RF-18: recuperación de contraseña con token de un solo uso.
+- RF-12/RF-14: generación de reportes en `/reportes` y exportación CSV.
 
-La suite suma **34 comprobaciones** y requiere MySQL/MariaDB encendido, el
+La suite suma **37 comprobaciones** y requiere MySQL/MariaDB encendido, el
 esquema aplicado y la cuenta demo disponible. No reemplaza pruebas unitarias ni
 pruebas completas del navegador. Los tests crean cuentas `rnf10_*@test.local` y
 modifican el presupuesto demo; tras ejecutarla conviene restaurar los datos con
@@ -283,6 +284,7 @@ Estas páginas requieren una sesión iniciada. Sin sesión, Flask redirige a
 |---|---|---|
 | `panel.html` | `/panel` | Muestra ingresos, gastos, balance, registros, gráficas, presupuesto y movimientos recientes. |
 | `lista.html` | `/lista` | Lista movimientos, permite buscar y filtrar, crear registros y eliminar los propios. |
+| `reportes.html` | `/reportes` | Genera reportes con `sp_generar_reporte`, muestra el historial y exporta los movimientos en CSV (`/exportar`). |
 | `presupuesto.html` | `/presupuesto` | Define o actualiza el límite de gasto del mes y muestra el avance del periodo. |
 | `notificacion.html` | `/notificacion` | Presenta alertas de presupuesto, gastos elevados y comportamiento mensual. |
 | `agendamiento.html` | `/agendamiento` | Permite seleccionar fecha, hora, categoría, estado y comentarios de una sesión. |
@@ -396,3 +398,4 @@ actual:
 | v10.3.4 | Perfil de usuario (`/perfil` y cambio de contraseña), navegación actualizada y suite de 25 comprobaciones. |
 | v10.3.5 | RNF-10: alta/baja real de movimientos y bloqueo de login tras 5 intentos; suite de 27 comprobaciones. |
 | v10.3.6 | RF-15 a RF-18: filtros/paginación en servidor, supervisión del rol padre por código, bitácora de accesos y recuperación de contraseña con token de un uso; seed demo enriquecido, cuentas demo de padre/estudiante y suite de 34 comprobaciones. |
+| v10.3.7 | RF-12 y RF-14: centro de reportes `/reportes` con `sp_generar_reporte` y exportación de movimientos en CSV; `servicios.html` corregido y suite de 37 comprobaciones. |

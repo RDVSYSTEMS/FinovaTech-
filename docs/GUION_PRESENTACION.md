@@ -52,16 +52,22 @@ Duración objetivo: 10–15 minutos. Demo en local con Opera.
 - Crear un ingreso o gasto y mostrarlo en la lista.
 - Eliminar un movimiento propio.
 
-### 7. Notificaciones (`/notificacion`) — 1 min
+### 7. Reportes y exportación (`/reportes`) — 1 min
+
+- Totales del estudiante e historial de reportes generados.
+- Generar un reporte en vivo (usa el stored procedure `sp_generar_reporte`).
+- Descargar los movimientos en CSV; mencionar que abre en Excel o Google Sheets.
+
+### 8. Notificaciones (`/notificacion`) — 1 min
 
 - Alertas de presupuesto, gastos elevados y comportamiento mensual.
 
-### 8. Agendamiento (`/agendamiento`) — 1 min
+### 9. Agendamiento (`/agendamiento`) — 1 min
 
 - Seleccionar fecha, hora, categoría, estado y comentarios.
 - Enviar y confirmar el mensaje de resultado.
 
-### 9. Supervisión del padre (`/supervision`) — 2 min
+### 10. Supervisión del padre (`/supervision`) — 2 min
 
 - Cerrar sesión e iniciar con `padredemo@gmail.com` / `123456789`.
 - Mostrar el estudiante ya vinculado: totales, presupuesto y movimientos en
@@ -69,7 +75,7 @@ Duración objetivo: 10–15 minutos. Demo en local con Opera.
 - Mencionar que la vinculación requiere el código que aparece en `/perfil` del
   estudiante y que el padre puede desvincular.
 
-### 10. Seguridad y auditoría — 2 min
+### 11. Seguridad y auditoría — 2 min
 
 - `/bitacora` (solo administrador): login correcto, fallido, bloqueo, logout y
   recuperación.

@@ -1,0 +1,247 @@
+<!DOCTYPE html>
+<!-- ============================================================================
+     FinovaTech — reportes.html
+     Descripción: Centro de reportes del estudiante: totales, historial de
+     reportes generados (sp_generar_reporte) y exportación de movimientos en CSV.
+     ----------------------------------------------------------------------------
+     Proyecto SENA 2026 — Técnico en Programación de Software
+     Sistema: Gestión de finanzas personales para estudiantes de bachillerato
+     ============================================================================ -->
+
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <link rel="icon" type="image/svg+xml" href="/static/assets/img/favicon.svg" >
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Reportes - FinovaTech</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;900&display=swap" rel="stylesheet">
+    <link href="/static/vendor/aos.css" rel="stylesheet">
+    <link rel="stylesheet" href="/static/css/header_footer.css">
+    <link rel="stylesheet" href="/static/css/panel.css">
+    <link rel="stylesheet" href="/static/css/lista.css">
+</head>
+<body>
+
+<div id="header"></div>
+
+<div class="panel">
+
+    <!-- Botón menú móvil -->
+    <button id="sidebar-toggle" class="sidebar-toggle" aria-label="Abrir menú">☰</button>
+
+    <!-- SIDEBAR (misma estructura que el panel) -->
+    <aside class="panel-sidebar">
+        <div class="sidebar-logo">
+            <div class="sidebar-logo-icono">💰</div>
+            <div class="sidebar-logo-texto">
+                <strong>Finanzas</strong>
+                <span>FinovaTech</span>
+            </div>
+        </div>
+        <nav class="sidebar-nav">
+            <span class="sidebar-seccion">Menú</span>
+            <a href="/panel" class="sidebar-enlace">
+                <span class="enlace-icono">📊</span> Dashboard
+            </a>
+            <a href="/lista" class="sidebar-enlace">
+                <span class="enlace-icono">📋</span> Lista
+            </a>
+            <a href="/reportes" class="sidebar-enlace activo">
+                <span class="enlace-icono">📈</span> Reportes
+            </a>
+            <a href="/presupuesto" class="sidebar-enlace">
+                <span class="enlace-icono">🎯</span> Presupuesto
+            </a>
+            <a href="/agendamiento" class="sidebar-enlace">
+                <span class="enlace-icono">📅</span> Agendar
+            </a>
+            <a href="/notificacion" class="sidebar-enlace">
+                <span class="enlace-icono">🔔</span> Notificaciones
+            </a>
+            <a href="/perfil" class="sidebar-enlace">
+                <span class="enlace-icono">👤</span> Perfil
+            </a>
+            {% if session.get('user_type') == 'padre' %}
+            <a href="/supervision" class="sidebar-enlace">
+                <span class="enlace-icono">&#9679;</span> Supervisión
+            </a>
+            {% elif session.get('user_type') == 'administrador' %}
+            <a href="/bitacora" class="sidebar-enlace">
+                <span class="enlace-icono">&#9679;</span> Bitácora
+            </a>
+            {% endif %}
+        </nav>
+
+        <!-- Reloj y fecha reales (bloque de la barra lateral) -->
+        <div class="sidebar-tiempo">
+            <div class="tiempo-hora" id="hora-ahora">--:--:--</div>
+            <div class="tiempo-fecha">📅 <span id="fecha-hoy"></span></div>
+        </div>
+
+        <form action="/logout" method="POST" class="sidebar-salir-form">
+            <input type="hidden" name="csrf_token" value="{{ csrf_token }}">
+            <button type="submit" class="sidebar-salir">🚪 Cerrar sesión</button>
+        </form>
+    </aside>
+
+    <!-- CONTENIDO -->
+    <main class="panel-contenido">
+
+        <!-- Barra superior -->
+        <section class="panel-topbar">
+            <div class="topbar-saludo">
+                <h1>📈 Reportes</h1>
+                <p class="topbar-bienvenida">Genera reportes y exporta tus movimientos</p>
+            </div>
+            <div class="topbar-derecha">
+                <a href="/exportar" class="btn-agregar" style="text-decoration:none; display:inline-flex; align-items:center;">
+                    📥 Exportar CSV
+                </a>
+            </div>
+        </section>
+
+        <script>
+            // ── Reloj en vivo y fecha completa en español ──────────────
+            (function () {
+                document.getElementById("fecha-hoy").textContent =
+                    new Date().toLocaleDateString("es-CO", {
+                        weekday: "long", year: "numeric", month: "long", day: "numeric"
+                    });
+
+                function actualizarHora() {
+                    document.getElementById("hora-ahora").textContent =
+                        new Date().toLocaleTimeString("es-CO", {
+                            hour: "2-digit", minute: "2-digit", second: "2-digit", hour12: true
+                        });
+                }
+                actualizarHora();
+                setInterval(actualizarHora, 1000);
+            })();
+        </script>
+
+        <!-- Mensajes de éxito/error (llegan por la URL: ?ok=... o ?error=...) -->
+        <div id="alertaCaja"></div>
+
+        <!-- Resumen actual (datos REALES de MySQL, estilo panel) -->
+        <section class="panel-stats">
+            <article class="stat-card stat-verde">
+                <div class="stat-icono">💰</div>
+                <div class="stat-dato">
+                    <span class="stat-numero">{{ total_ingresos }}</span>
+                    <span class="stat-etiqueta">Total ingresos</span>
+                </div>
+            </article>
+            <article class="stat-card stat-rojo">
+                <div class="stat-icono">💸</div>
+                <div class="stat-dato">
+                    <span class="stat-numero">{{ total_gastos }}</span>
+                    <span class="stat-etiqueta">Total gastos</span>
+                </div>
+            </article>
+            <article class="stat-card stat-azul">
+                <div class="stat-icono">⚖️</div>
+                <div class="stat-dato">
+                    <span class="stat-numero">{{ balance }}</span>
+                    <span class="stat-etiqueta">Balance actual</span>
+                </div>
+            </article>
+            <article class="stat-card stat-ambar">
+                <div class="stat-icono">🧾</div>
+                <div class="stat-dato">
+                    <span class="stat-numero">{{ total_registros }}</span>
+                    <span class="stat-etiqueta">Registros</span>
+                </div>
+            </article>
+        </section>
+
+        <!-- Generar reporte (usa el stored procedure sp_generar_reporte) -->
+        <form class="lista-toolbar" method="POST" action="/reportes/generar" data-aos="fade-up">
+            <input type="hidden" name="csrf_token" value="{{ csrf_token }}">
+            <select class="lista-filtro" name="tipo" aria-label="Tipo de reporte">
+                <option value="Mensual">Mensual</option>
+                <option value="Completo">Completo</option>
+                <option value="Categorias">Por categorías</option>
+            </select>
+            <button type="submit" class="btn-filtrar">🧾 Generar reporte</button>
+            <a href="/exportar" class="btn-limpiar" download>📥 Descargar CSV</a>
+        </form>
+
+        <!-- Historial de reportes generados -->
+        <div class="lista-tabla" data-aos="fade-up">
+            <table>
+                <thead>
+                    <tr>
+                        <th>#</th>
+                        <th>Tipo</th>
+                        <th>Fecha de generación</th>
+                        <th>Ingresos</th>
+                        <th>Gastos</th>
+                        <th>Balance</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for r in reportes %}
+                    <tr>
+                        <td>{{ r.id }}</td>
+                        <td>{{ r.tipo }}</td>
+                        <td>{{ r.fecha }}</td>
+                        <td class="monto-ingreso">+ {{ r.total_ingresos }}</td>
+                        <td class="monto-gasto">- {{ r.total_gastos }}</td>
+                        <td>{{ r.balance }}</td>
+                    </tr>
+                    {% else %}
+                    <tr>
+                        <td colspan="6" class="lista-vacio">
+                            Aún no has generado reportes. Pulsa <strong>🧾 Generar reporte</strong> para crear el primero.
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+
+        <p class="lista-resumen">
+            El CSV incluye todos tus movimientos (tipo, descripción, monto, fecha y categoría)
+            y se puede abrir en Excel o Google Sheets.
+        </p>
+
+    </main>
+</div>
+
+<div id="footer"></div>
+<button id="btn-arriba" onclick="window.scrollTo({top:0, behavior:'smooth'})">↑</button>
+<script src="/static/vendor/aos.js"></script>
+<script src="/static/js/global.js"></script>
+<script>
+    // ── Alerta de éxito/error (?ok=... o ?error=...) ───────────────
+    // SEGURIDAD (XSS): el mensaje llega de la URL, así que se inserta con
+    // textContent (texto plano) y NUNCA con innerHTML.
+    (function mostrarAlerta() {
+        const q = new URLSearchParams(location.search);
+        const mensaje = q.get("ok") || q.get("error");
+        if (!mensaje) return;
+        const ok = Boolean(q.get("ok"));
+        const div = document.getElementById("alertaCaja");
+
+        const caja = document.createElement("div");
+        caja.className = "alerta " + (ok ? "alerta-ok" : "alerta-error");
+
+        const texto = document.createElement("span");
+        texto.textContent = mensaje;
+
+        const boton = document.createElement("button");
+        boton.type = "button";
+        boton.textContent = "×";
+        boton.addEventListener("click", function () {
+            caja.remove();
+            history.replaceState({}, "", "/reportes");
+        });
+
+        caja.appendChild(texto);
+        caja.appendChild(boton);
+        div.appendChild(caja);
+    })();
+</script>
+
+</body>
+</html>

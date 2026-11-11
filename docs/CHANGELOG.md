@@ -3,6 +3,25 @@
 Formato basado en [Keep a Changelog](https://keepachangelog.com/es-ES/1.1.0/).
 Las versiones anteriores están resumidas en el historial de `README.md`.
 
+## [10.3.7] — 2026-11-10
+
+### Añadido
+- RF-12: `/reportes` con totales del estudiante, historial de reportes
+  generados y generación vía `sp_generar_reporte` (tabla `reporte`).
+- RF-14: `/exportar` descarga los movimientos del estudiante como CSV con BOM
+  UTF-8 (abre en Excel y Google Sheets con tildes y eñes).
+- Enlace "Reportes" en el menú lateral de las páginas autenticadas.
+- Prueba `test_reportes_genera_y_exporta_csv` en la suite smoke.
+
+### Cambiado
+- `servicios.html` ya no promete exportación PDF/Excel/PNG: anuncia la
+  exportación CSV real.
+- Suite smoke ampliada a **37 comprobaciones**.
+
+### Documentación
+- `README.md`, `docs/REQUISITOS.md`, `docs/PENDIENTES.md` y
+  `docs/GUION_PRESENTACION.md` actualizados a v10.3.7.
+
 ## [10.3.6] — 2026-11-06
 
 ### Añadido

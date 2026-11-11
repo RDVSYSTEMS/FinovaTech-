@@ -88,7 +88,7 @@ def test_publicas():
 def test_protegidas_sin_sesion():
     """Las rutas privadas deben redirigir al login cuando no hay sesión."""
     client = app.test_client()
-    for url in ("/panel", "/lista", "/presupuesto", "/notificacion", "/agendamiento", "/perfil", "/supervision", "/bitacora"):
+    for url in ("/panel", "/lista", "/reportes", "/exportar", "/presupuesto", "/notificacion", "/agendamiento", "/perfil", "/supervision", "/bitacora"):
         r = client.get(url)
         assert r.status_code == 302, f"GET {url} sin sesión -> {r.status_code}"
         assert "/login" in r.headers["Location"], f"{url} no redirige a login"
@@ -490,6 +490,7 @@ def test_lista_filtros_y_paginacion():
     sufijo = uuid.uuid4().hex[:6]
 
     def crear(descripcion, tipo, monto=1000):
+        """Envía un movimiento de prueba y exige que el servidor lo acepte."""
         r = client.post("/registro/nuevo", data={
             "tipo": tipo,
             "descripcion": descripcion,
@@ -619,6 +620,33 @@ def test_recuperacion_password_token_un_uso():
     print("OK  RF-18 recuperación de contraseña con token de un uso")
 
 
+def test_reportes_genera_y_exporta_csv():
+    """RF-12/RF-14: reportes en la app y exportación CSV de movimientos."""
+    import re
+    client = login_demo(app.test_client())
+
+    r = client.get("/reportes")
+    assert r.status_code == 200, f"/reportes -> {r.status_code}"
+    texto = r.get_data(as_text=True)
+    token = re.search(r'name="csrf_token" value="([^"]+)"', texto).group(1)
+
+    r = client.post("/reportes/generar", data={"tipo": "Mensual", "csrf_token": token},
+                    follow_redirects=False)
+    assert r.status_code == 302, f"POST /reportes/generar -> {r.status_code}"
+    assert "ok=" in r.headers["Location"], "No confirmó la generación del reporte"
+
+    texto = client.get("/reportes").get_data(as_text=True)
+    assert "Mensual" in texto, "El reporte generado no aparece en el historial"
+
+    r = client.get("/exportar")
+    assert r.status_code == 200, f"GET /exportar -> {r.status_code}"
+    assert r.mimetype == "text/csv", f"/exportar mimetype -> {r.mimetype}"
+    contenido = r.get_data(as_text=True)
+    assert "Tipo,Descripcion,Monto,Fecha,Categoria" in contenido, "El CSV no tiene cabecera"
+    assert "Ingreso" in contenido or "Gasto" in contenido, "El CSV no trae movimientos del demo"
+    print("OK  RF-12/RF-14 reportes en la app y exportación CSV")
+
+
 if __name__ == "__main__":
     test_publicas()
     test_protegidas_sin_sesion()
@@ -640,4 +668,5 @@ if __name__ == "__main__":
     test_supervision_padre_vincula_y_desvincula()
     test_bitacora_accesos_admin()
     test_recuperacion_password_token_un_uso()
+    test_reportes_genera_y_exporta_csv()
     print("\nTodos los smoke tests v10 pasaron.")

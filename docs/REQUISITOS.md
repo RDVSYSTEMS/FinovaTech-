@@ -131,6 +131,13 @@ en línea, y despliegue en servidores de producción externos.
 - Rechaza fechas anteriores al día actual y valores no permitidos.
 - Guarda cada agendamiento asociado al usuario autenticado.
 
+### RF-12 Reportes en la app
+- `/reportes` muestra los totales del estudiante y el historial de los últimos
+  20 reportes generados.
+- El formulario genera un reporte mediante el stored procedure
+  `sp_generar_reporte` (tabla `reporte`) y confirma con un mensaje en pantalla.
+- El menú del panel incluye la sección Reportes para los roles autenticados.
+
 ### RF-13 Perfil de usuario
 - Permite consultar los datos de la cuenta: nombre, usuario, correo, rol y fecha
   de registro.
@@ -140,6 +147,13 @@ en línea, y despliegue en servidores de producción externos.
 - Permite cambiar la contraseña verificando primero la contraseña actual,
   exigiendo mínimo 8 caracteres y confirmación coincidente.
 - Actualiza el nombre mostrado en la sesión después de guardar los datos.
+
+### RF-14 Exportación de movimientos (CSV)
+- `/exportar` descarga todos los movimientos del estudiante autenticado como
+  CSV (tipo, descripción, monto, fecha y categoría).
+- El archivo viaja con BOM UTF-8 para que Excel muestre tildes y eñes
+  correctamente.
+- Exige sesión iniciada; cada usuario solo descarga sus propios movimientos.
 
 ### RF-15 Paginación y filtros en servidor
 - `/lista` acepta `q` (texto de descripción) y `tipo` (`Ingreso` o `Gasto`)

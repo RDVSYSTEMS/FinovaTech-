@@ -13,6 +13,9 @@ Formato de dinero: _fmt() convierte 440000 en "$440.000"
 
 import logging
 
+import csv
+import io
+
 import pymysql
 
 from datetime import date, datetime as _dt_datetime, timedelta
@@ -30,6 +33,7 @@ MESES_LARGOS = ["Enero", "Febrero", "Marzo", "Abril", "Mayo", "Junio",
 
 
 def _fmt(valor) -> str:
+    """Formatea un importe como pesos colombianos sin decimales."""
     return "$" + "{:,.0f}".format(float(valor)).replace(",", ".")
 
 
@@ -498,6 +502,110 @@ def eliminar_registro(usuario_id: int, tipo: str, registro_id: int) -> tuple:
     if afectadas == 0:
         return False, "El registro no existe o no te pertenece."
     return True, "Registro eliminado correctamente."
+
+
+# --- Reportes -----------------------------------------------------------------
+
+def get_reportes(usuario_id: int) -> list:
+    """Últimos reportes persistidos del estudiante (tabla reporte)."""
+    estudiante_id = get_estudiante_id(usuario_id)
+    if estudiante_id is None:
+        return []
+
+    conn = get_connection()
+    try:
+        with conn.cursor() as cur:
+            cur.execute(
+                "SELECT id, tipo, fecha_generacion, total_ingresos, total_gastos "
+                "FROM reporte WHERE estudiante_id=%s "
+                "ORDER BY fecha_generacion DESC, id DESC LIMIT 20",
+                (estudiante_id,),
+            )
+            return [
+                {
+                    "id": fila["id"],
+                    "tipo": fila["tipo"],
+                    "fecha": fila["fecha_generacion"].strftime("%d/%m/%Y %H:%M")
+                    if fila["fecha_generacion"] else "",
+                    "total_ingresos": _fmt(fila["total_ingresos"]),
+                    "total_gastos": _fmt(fila["total_gastos"]),
+                    "balance": _fmt(float(fila["total_ingresos"]) - float(fila["total_gastos"])),
+                }
+                for fila in cur.fetchall()
+            ]
+    finally:
+        conn.close()
+
+
+def generar_reporte(usuario_id: int, tipo: str) -> tuple:
+    """Persiste un reporte usando el stored procedure sp_generar_reporte.
+
+    RETORNA:
+        (True, mensaje) o (False, mensaje).
+    """
+    estudiante_id = get_estudiante_id(usuario_id)
+    if estudiante_id is None:
+        return False, "Tu cuenta aún no tiene perfil de estudiante."
+
+    tipo = (tipo or "").strip()[:50]
+    if not tipo:
+        return False, "Selecciona el tipo de reporte."
+
+    conn = get_connection()
+    try:
+        with conn.cursor() as cur:
+            # El procedure valida y calcula los totales dentro de MySQL.
+            cur.callproc("sp_generar_reporte", (estudiante_id, tipo, 0))
+            cur.execute("SELECT @p_reporte_id AS rid")
+            fila = cur.fetchone()
+        conn.commit()
+        reporte_id = fila["rid"] if fila else None
+    except pymysql.MySQLError:
+        conn.rollback()
+        logger.exception("No se pudo generar el reporte del usuario %s", usuario_id)
+        return False, "No fue posible generar el reporte"
+    finally:
+        conn.close()
+
+    return True, f"Reporte #{reporte_id} ({tipo}) generado correctamente."
+
+
+def exportar_csv(usuario_id: int) -> str:
+    """CSV con todos los movimientos del estudiante.
+
+    La ruta añade un BOM UTF-8 para que Excel reconozca tildes y eñes.
+    """
+    buffer = io.StringIO()
+    escritor = csv.writer(buffer, lineterminator="\r\n")
+    escritor.writerow(["Tipo", "Descripcion", "Monto", "Fecha", "Categoria"])
+
+    estudiante_id = get_estudiante_id(usuario_id)
+    if estudiante_id is not None:
+        conn = get_connection()
+        try:
+            with conn.cursor() as cur:
+                cur.execute(
+                    "SELECT tipo, descripcion, monto, fecha, categoria FROM ("
+                    "  SELECT 'Ingreso' AS tipo, descripcion, monto, fecha, categoria "
+                    "  FROM ingreso WHERE estudiante_id=%s "
+                    "  UNION ALL "
+                    "  SELECT 'Gasto' AS tipo, descripcion, monto, fecha, categoria "
+                    "  FROM gasto WHERE estudiante_id=%s"
+                    ") AS t ORDER BY t.fecha DESC",
+                    (estudiante_id, estudiante_id),
+                )
+                for fila in cur.fetchall():
+                    escritor.writerow([
+                        fila["tipo"],
+                        fila["descripcion"],
+                        f"{float(fila['monto']):.2f}",
+                        fila["fecha"].strftime("%Y-%m-%d %H:%M") if fila["fecha"] else "",
+                        fila["categoria"],
+                    ])
+        finally:
+            conn.close()
+
+    return buffer.getvalue()
 
 
 # --- Notificaciones ----------------------------------------------------------

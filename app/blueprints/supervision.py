@@ -18,6 +18,7 @@ supervision_bp = Blueprint("supervision", __name__)
 
 
 def _volver(clave: str, mensaje: str):
+    """Redirige a supervisión mostrando el resultado de la operación."""
     return redirect(url_for("supervision.supervision") + f"?{clave}=" + quote(mensaje))
 
 
