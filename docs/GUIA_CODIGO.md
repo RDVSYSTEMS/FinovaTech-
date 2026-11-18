@@ -34,6 +34,7 @@ Este índice complementa la documentación que ya está dentro del código: los 
 - [app/modelos/supervision.py](../app/modelos/supervision.py): códigos de vinculación y relaciones padre-estudiante.
 - [app/modelos/bitacora.py](../app/modelos/bitacora.py): registro y lectura de eventos de autenticación.
 - [app/modelos/recuperacion.py](../app/modelos/recuperacion.py): generación, hash, validación y consumo de tokens de recuperación.
+- [app/modelos/reportes.py](../app/modelos/reportes.py): resumen mensual, generación del PDF con fpdf2 y del gráfico PNG con matplotlib.
 
 ## Plantillas HTML/Jinja
 
@@ -54,6 +55,7 @@ Este índice complementa la documentación que ya está dentro del código: los 
 - [app/templates/perfil.html](../app/templates/perfil.html): datos de cuenta, código de vínculo y cambio de contraseña.
 - [app/templates/supervision.html](../app/templates/supervision.html): resumen de estudiantes asociados a la cuenta padre.
 - [app/templates/bitacora.html](../app/templates/bitacora.html): tabla de eventos accesible para administradores.
+- [app/templates/reportes.html](../app/templates/reportes.html): centro de reportes con CSV, descarga PDF y gráfico PNG.
 
 ## Frontend: JavaScript y estilos
 
@@ -86,7 +88,8 @@ Se documentan aquí como dependencias frontend, pero no se editan ni se insertan
 
 - [database/schema.sql](../database/schema.sql): crea las tablas, claves, vista, triggers y procedimientos almacenados del sistema.
 - [scripts/seed_demo.py](../scripts/seed_demo.py): prepara cuentas y movimientos reproducibles para una demostración local.
-- [tests/test_smoke.py](../tests/test_smoke.py): verifica rutas, sesiones, CSRF y flujos principales con la base configurada.
+- [tests/test_finovatech.py](../tests/test_finovatech.py): suite única de 28 casos; verifica rutas, sesiones, CSRF, flujos principales y los casos CP-01 a CP-06 (unitaria, límite, funcional, seguridad, integración y reporte PDF) contra la base configurada.
+- [colab/FinovaTech_Colab.ipynb](../colab/FinovaTech_Colab.ipynb): notebook para ejecutar la demostración en Google Colab.
 
 ## Relación de una solicitud
 

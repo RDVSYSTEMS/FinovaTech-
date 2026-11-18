@@ -14,7 +14,7 @@ de implementar.
 - D2: Configuración por `.env` (`DB_HOST`, `DB_PORT`, `DB_USER`,
   `DB_PASSWORD`, `DB_NAME`, `SECRET_KEY`); `.env` no se versiona.
 - D3: Orden de construcción por hitos funcionales (v1 a v10) y verificación
-  con `tests/test_smoke.py`.
+  con la suite única `tests/test_finovatech.py`.
 - D4: Datos de demostración repetibles con `scripts/seed_demo.py`.
 
 ## Alcance

@@ -15,6 +15,7 @@ from app.modelos.finanzas import (
     get_reportes,
     get_totales,
 )
+from app.modelos.reportes import generar_grafico_gastos, generar_pdf_resumen
 from app.seguridad import login_requerido
 
 registros_bp = Blueprint("registros", __name__)
@@ -103,6 +104,34 @@ def reporte_generar():
     exito, mensaje = generar_reporte(session["user_id"], tipo)
     clave = "ok" if exito else "error"
     return redirect(url_for("registros.reportes") + f"?{clave}=" + quote(mensaje))
+
+
+@registros_bp.route("/reportes/pdf")
+@login_requerido
+def reporte_pdf():
+    """Descarga en PDF el resumen mensual del usuario (solo lectura, GET)."""
+    contenido = generar_pdf_resumen(session["user_id"])
+    return Response(
+        contenido,
+        mimetype="application/pdf",
+        headers={
+            "Content-Disposition": "inline; filename=resumen_mensual_finovatech.pdf",
+        },
+    )
+
+
+@registros_bp.route("/reportes/grafico")
+@login_requerido
+def reporte_grafico():
+    """Descarga el gráfico PNG de gastos por categoría del mes (solo GET)."""
+    contenido = generar_grafico_gastos(session["user_id"])
+    return Response(
+        contenido,
+        mimetype="image/png",
+        headers={
+            "Content-Disposition": "inline; filename=gastos_por_categoria.png",
+        },
+    )
 
 
 @registros_bp.route("/exportar")

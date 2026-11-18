@@ -3,6 +3,26 @@
 Formato basado en [Keep a Changelog](https://keepachangelog.com/es-ES/1.1.0/).
 Las versiones anteriores están resumidas en el historial de `README.md`.
 
+## [10.3.8] — 2026-11-18
+
+### Añadido
+- Reporte PDF "Resumen mensual" (`/reportes/pdf`) con fpdf2: periodo,
+  movimientos, ingresos, gastos y saldo.
+- Gráfico PNG de gastos por categoría (`/reportes/grafico`) con matplotlib.
+- Botones de PDF y gráfico en `/reportes` junto a la exportación CSV.
+- Casos CP-01 a CP-06 de la actividad "Instructivo de pruebas y reportes
+  para el PMV" y documento `docs/BITACORA_PRUEBAS.md`.
+
+### Cambiado
+- `tests/test_smoke.py` y `tests/test_actividad.py` se unificaron en
+  `tests/test_finovatech.py`: una sola suite de **28 casos** con `pytest -v`.
+- `requirements.txt` incluye `pytest`, `fpdf2` y `matplotlib`.
+- RNF-11: la aplicación usa el usuario MySQL `finovatech_app` con permisos
+  solo sobre `finovatech`; `.env.example` actualizado.
+- RNF-12: respaldo `finovatech_2026-11-18.sql` y restauración verificada en
+  una base temporal (11 tablas, 1 vista, 4 rutinas, 4 triggers).
+- Preparación para Google Colab: notebook en `colab/FinovaTech_Colab.ipynb`.
+
 ## [10.3.7] — 2026-11-10
 
 ### Añadido

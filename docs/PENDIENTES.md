@@ -3,9 +3,9 @@
 Backlog vivo para la siguiente sesión. Fuente de verdad de requisitos:
 `docs/REQUISITOS.md`. Historial de cambios: `docs/CHANGELOG.md`.
 
-> **Recordatorio:** RF-12 y RF-14 ya están cerrados. Siguientes candidatos:
-> **RNF-11** (usuario MySQL dedicado) y **RNF-12** (probar restauración del
-> respaldo). Antes de codificar, actualizar `docs/REQUISITOS.md` y el plan de fase.
+> **Recordatorio:** RNF-11 y RNF-12 se cerraron el 2026-11-18. No quedan
+> requisitos funcionales ni no funcionales abiertos; las siguientes mejoras
+> son las candidatas de la fase 09 (pruebas de navegador, SMTP real).
 
 ## Prioridad alta
 
@@ -44,17 +44,24 @@ Backlog vivo para la siguiente sesión. Fuente de verdad de requisitos:
 
 ## Prioridad baja
 
-- [ ] **RNF-11 Usuario MySQL dedicado con contraseña** (dejar `root` solo para XAMPP).
-- [ ] **RNF-12 Respaldo y restauración automatizados y probados**
-  - Hoy existe `data/backups/finovatech_2026-11-03.sql`; falta probar la restauración.
+- [x] **RNF-11 Usuario MySQL dedicado con contraseña** — cerrado 2026-11-18
+  - Usuario `finovatech_app` con permisos solo sobre `finovatech`; `.env` y
+    `.env.example` actualizados; la suite pasa con ese usuario.
+- [x] **RNF-12 Respaldo y restauración automatizados y probados** — cerrado 2026-11-18
+  - Respaldo `data/backups/finovatech_2026-11-18.sql` (rutinas y triggers).
+  - Restauración verificada en `finovatech_restore_test`: 11 tablas, 1 vista,
+    4 rutinas, 4 triggers y los mismos registros; base temporal eliminada.
+  - Procedimiento documentado en `README.md`.
 
 ## Notas de estado
 
 - Cuenta demo administrador/estudiante: `adminr123@gmail.com` / `123456789`.
 - Cuenta demo padre vinculada: `padredemo@gmail.com` / `123456789`.
 - Presupuesto demo: `$600.000` límite, `$700.000` gastado (117 %).
-- MySQL/MariaDB debe correr en `DB_PORT` (hoy `3307`).
-- Suite actual: `python -m tests.test_smoke` → **37 comprobaciones**.
+- MySQL/MariaDB debe correr en `DB_PORT` (hoy `3306`; la guía menciona 3307).
+- Suite actual: `python -m pytest -v` → **28 casos** en
+  `tests/test_finovatech.py` (22 del flujo general + CP-01 a CP-06).
 - Tras ejecutar la suite, restaurar datos con
   `python -m scripts.seed_demo` (la prueba de presupuesto modifica el demo).
-- RF-12 a RF-18, RF-13 y RNF-10 cerrados; siguientes candidatos: RNF-11 y RNF-12.
+- RF-12 a RF-18, RF-13, RNF-10, RNF-11 y RNF-12 cerrados; solo quedan mejoras
+  candidatas (pruebas de navegador y SMTP real).

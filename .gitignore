@@ -9,6 +9,7 @@ __pycache__/
 # Environ / secretos (NUNCA subir la SECRET_KEY real)
 # ------------------------------------------------------------
 .env
+.env.bak
 
 # ------------------------------------------------------------
 # Datos locales / temporales

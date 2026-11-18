@@ -1,18 +1,53 @@
-"""Pruebas smoke del flujo principal de FinovaTech v10.
+"""=============================================================
+FinovaTech v10 - Suite única de pruebas automatizadas
+=============================================================
+Este archivo reúne TODAS las pruebas del proyecto en un solo
+lugar. Se ejecuta con:  pytest -v
 
-Comprueba que la aplicación pueda arrancar, que las rutas públicas respondan,
-que las rutas privadas exijan autenticación y que los formularios respeten
-la protección CSRF. Estas pruebas usan la base de datos configurada y la
-cuenta demo, por lo que sirven como verificación rápida de integración local.
-"""
+Contenido (28 casos):
+
+  1. Flujo general del sistema (21 casos)
+     - Páginas públicas, rutas protegidas y aliases .html.
+     - Registro, login demo, bloqueo tras 5 fallos y logout.
+     - Lista, filtros, paginación, creación y borrado de movimientos.
+     - Presupuesto, perfil, notificaciones, agendamiento, supervisión.
+     - Bitácora de accesos y recuperación de contraseña con token.
+     - Reportes en la app y exportación CSV.
+
+  2. Actividad "Instructivo de pruebas y reportes para el PMV" (6 casos)
+     - CP-01 Unitaria    -> crear_registro rechaza montos negativos.
+     - CP-02 Límite      -> monto 0 rechazado y monto 1 aceptado.
+     - CP-03 Funcional   -> gasto creado, visible y eliminado en /lista.
+     - CP-04 Seguridad   -> inyección SQL en el login no da acceso.
+      - CP-05 Integración -> app/db.py conecta y existe la tabla reporte.
+      - CP-06 Reporte     -> el PDF trae título, totales y no está vacío.
+
+   3. Configuración (1 caso)
+      - El .env del proyecto prevalece sobre variables heredadas del terminal.
+
+
+Aislamiento de datos:
+  Las pruebas de escritura usan cuentas y movimientos con sufijo uuid y
+  los eliminan al terminar, por lo que no alteran la cuenta demo. Las
+  pruebas que usan la demo solo leen o restauran su propio estado.
+============================================================="""
 import os
+import re
 import sys
 import uuid
+
+from datetime import date
 from unittest.mock import patch
+
+import pytest
 
 sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
 from app import create_app
+from app.db import get_connection
+from app.modelos.finanzas import _fmt, crear_registro
+from app.modelos.reportes import TITULO_REPORTE, generar_pdf_resumen
+from app.modelos.usuarios import registrar_usuario
 
 app = create_app()
 app.config["TESTING"] = True
@@ -647,6 +682,269 @@ def test_reportes_genera_y_exporta_csv():
     print("OK  RF-12/RF-14 reportes en la app y exportación CSV")
 
 
+# ============================================================================
+# Actividad "Instructivo de pruebas y reportes para el PMV" (CP-01 a CP-06)
+# Patrón usado en cada caso: preparar -> ejecutar -> verificar.
+# ============================================================================
+
+PATRON_CSRF = r'name="csrf_token" value="([^"]+)"'
+
+
+def _csrf(cliente, url):
+    """Lee el token CSRF que la aplicación inyecta en una página."""
+    html = cliente.get(url).get_data(as_text=True)
+    coincidencia = re.search(PATRON_CSRF, html)
+    assert coincidencia, f"No se encontró el token CSRF en {url}"
+    return coincidencia.group(1)
+
+
+def _borrar_cuenta(usuario_id: int, estudiante_id: int):
+    """Elimina en orden todos los datos generados por la cuenta de prueba."""
+    conn = get_connection()
+    try:
+        with conn.cursor() as cur:
+            for tabla in ("reporte", "ingreso", "gasto", "presupuesto"):
+                cur.execute(
+                    f"DELETE FROM {tabla} WHERE estudiante_id=%s", (estudiante_id,)
+                )
+            for tabla in ("agendamiento", "recuperacion_password", "bitacora_acceso"):
+                cur.execute(
+                    f"DELETE FROM {tabla} WHERE usuario_id=%s", (usuario_id,)
+                )
+            cur.execute(
+                "DELETE FROM padre_estudiante "
+                "WHERE estudiante_usuario_id=%s OR padre_id=%s",
+                (usuario_id, usuario_id),
+            )
+            cur.execute("DELETE FROM estudiante WHERE id=%s", (estudiante_id,))
+            cur.execute("DELETE FROM usuario WHERE id=%s", (usuario_id,))
+        conn.commit()
+    finally:
+        conn.close()
+
+
+@pytest.fixture()
+def cuenta():
+    """Prepara una cuenta de estudiante exclusiva y la borra al final."""
+    sufijo = uuid.uuid4().hex[:8]
+    email = f"actividad_{sufijo}@test.local"
+    username = f"actividad_{sufijo}"
+    password = "ClaveSegura123"
+
+    exito, mensaje = registrar_usuario(
+        "Cuenta Actividad", email, username, password, "estudiante"
+    )
+    assert exito, mensaje
+
+    conn = get_connection()
+    try:
+        with conn.cursor() as cur:
+            cur.execute("SELECT id FROM usuario WHERE email=%s", (email,))
+            usuario_id = cur.fetchone()["id"]
+            cur.execute(
+                "SELECT id FROM estudiante WHERE usuario_id=%s", (usuario_id,)
+            )
+            estudiante_id = cur.fetchone()["id"]
+    finally:
+        conn.close()
+
+    datos = {
+        "id": usuario_id,
+        "email": email,
+        "username": username,
+        "password": password,
+        "estudiante_id": estudiante_id,
+    }
+    yield datos
+    _borrar_cuenta(usuario_id, estudiante_id)
+
+
+def test_cp01_unitaria_monto_negativo(cuenta):
+    """CP-01: un monto negativo debe ser rechazado con mensaje."""
+    # Preparar
+    usuario_id = cuenta["id"]
+    descripcion = f"Gasto negativo {uuid.uuid4().hex[:6]}"
+
+    # Ejecutar
+    exito, mensaje = crear_registro(
+        usuario_id, "Gasto", descripcion, -5, "Prueba", date.today().isoformat()
+    )
+
+    # Verificar
+    assert exito is False
+    assert isinstance(mensaje, str) and mensaje
+    assert "mayor a cero" in mensaje.lower()
+
+
+def test_cp02_limite_cero_rechazado_uno_aceptado(cuenta):
+    """CP-02: el límite inferior es 1; cero se rechaza y uno se acepta."""
+    # Preparar
+    usuario_id = cuenta["id"]
+    sufijo = uuid.uuid4().hex[:6]
+
+    # Ejecutar
+    exito_cero, mensaje_cero = crear_registro(
+        usuario_id, "Gasto", f"Gasto cero {sufijo}", 0, "Prueba",
+        date.today().isoformat(),
+    )
+    exito_uno, mensaje_uno = crear_registro(
+        usuario_id, "Gasto", f"Gasto uno {sufijo}", 1, "Prueba",
+        date.today().isoformat(),
+    )
+
+    # Verificar
+    assert exito_cero is False
+    assert "mayor a cero" in mensaje_cero.lower()
+    assert exito_uno is True
+    assert "$1" in mensaje_uno
+
+
+def test_cp03_funcional_crear_ver_eliminar(cuenta):
+    """CP-03: crear un gasto, verlo en /lista, eliminarlo y confirmar."""
+    # Preparar
+    cliente = app.test_client()
+    login_usuario(cliente, cuenta["email"], cuenta["password"])
+    token = _csrf(cliente, "/lista")
+    descripcion = f"Gasto CP03 {uuid.uuid4().hex[:6]}"
+
+    # Ejecutar (crear)
+    respuesta = cliente.post(
+        "/registro/nuevo",
+        data={
+            "tipo": "Gasto",
+            "descripcion": descripcion,
+            "monto": "4321",
+            "categoria": "Prueba",
+            "csrf_token": token,
+        },
+        follow_redirects=False,
+    )
+
+    # Verificar (visible en /lista)
+    assert respuesta.status_code == 302
+    assert "ok=" in respuesta.headers["Location"]
+    html = cliente.get("/lista").get_data(as_text=True)
+    assert descripcion in html
+    assert "$4.321" in html
+
+    # Ejecutar (eliminar)
+    coincidencia = re.search(r"/registro/eliminar/Gasto/(\d+)", html)
+    assert coincidencia, "No apareció la acción de eliminar"
+    token = re.search(PATRON_CSRF, html).group(1)
+    respuesta = cliente.post(
+        f"/registro/eliminar/Gasto/{coincidencia.group(1)}",
+        data={"csrf_token": token},
+        follow_redirects=False,
+    )
+
+    # Verificar (desaparece)
+    assert respuesta.status_code == 302
+    assert "ok=" in respuesta.headers["Location"]
+    html = cliente.get("/lista").get_data(as_text=True)
+    assert descripcion not in html
+
+
+def test_cp04_seguridad_inyeccion_sql_login(cuenta):
+    """CP-04: una contraseña con inyección SQL no debe autenticar."""
+    # Preparar
+    cliente = app.test_client()
+    payload = "' OR '1'='1"
+    token = _csrf(cliente, "/login")
+
+    # Ejecutar
+    respuesta = cliente.post(
+        "/login",
+        data={"email": cuenta["email"], "password": payload, "csrf_token": token},
+        follow_redirects=False,
+    )
+
+    # Verificar
+    assert respuesta.status_code == 200
+    assert "Correo o contraseña incorrectos" in respuesta.get_data(as_text=True)
+    with cliente.session_transaction() as sesion:
+        assert not sesion.get("user_email")
+    respuesta = cliente.get("/panel")
+    assert respuesta.status_code == 302
+    assert "/login" in respuesta.headers["Location"]
+
+
+def test_cp05_integracion_conexion_y_tabla_reporte():
+    """CP-05: app/db.py conecta a MySQL y la tabla reporte existe."""
+    # Preparar / Ejecutar
+    conn = get_connection()
+    try:
+        with conn.cursor() as cur:
+            cur.execute("SELECT DATABASE() AS base")
+            base = cur.fetchone()["base"]
+            cur.execute(
+                "SELECT COUNT(*) AS total FROM information_schema.tables "
+                "WHERE table_schema=%s AND table_name='reporte'",
+                (base,),
+            )
+            fila = cur.fetchone()
+    finally:
+        conn.close()
+
+    # Verificar
+    assert base == "finovatech"
+    assert int(fila["total"]) == 1
+
+
+def test_cp06_reporte_pdf_con_titulo_y_total(cuenta):
+    """CP-06: el PDF generado existe, no está vacío y contiene título y total."""
+    # Preparar
+    usuario_id = cuenta["id"]
+    hoy = date.today().isoformat()
+    assert crear_registro(
+        usuario_id, "Ingreso", "Mesada CP06", 1000, "Mesada", hoy
+    )[0] is True
+    assert crear_registro(
+        usuario_id, "Gasto", "Transporte CP06", 250, "Transporte", hoy
+    )[0] is True
+
+    # Ejecutar
+    contenido = generar_pdf_resumen(usuario_id)
+
+    # Verificar
+    assert isinstance(contenido, (bytes, bytearray))
+    assert contenido[:5] == b"%PDF-"
+    assert len(contenido) > 900
+    texto = bytes(contenido).decode("latin-1")
+    assert TITULO_REPORTE in texto
+    assert _fmt(1000) in texto
+    assert _fmt(250) in texto
+    assert _fmt(750) in texto
+
+
+def test_config_env_proyecto_prevalece():
+    """El .env del proyecto gana aunque el terminal herede credenciales viejas."""
+    import subprocess
+    import sys
+    from pathlib import Path
+
+    from dotenv import dotenv_values
+
+    raiz = Path(__file__).resolve().parent.parent
+    esperado = dotenv_values(raiz / ".env")
+    entorno = os.environ.copy()
+    entorno["DB_USER"] = "root"
+    entorno["DB_PASSWORD"] = "clave_obsoleta"
+
+    resultado = subprocess.run(
+        [sys.executable, "-c",
+         "from app.config import Config; print(Config.DB_USER); print(Config.DB_PASSWORD)"],
+        cwd=str(raiz),
+        env=entorno,
+        capture_output=True,
+        text=True,
+        check=True,
+    )
+    user, password = resultado.stdout.strip().splitlines()
+
+    assert user == esperado["DB_USER"]
+    assert password == esperado["DB_PASSWORD"]
+
+
 if __name__ == "__main__":
     test_publicas()
     test_protegidas_sin_sesion()
@@ -669,4 +967,5 @@ if __name__ == "__main__":
     test_bitacora_accesos_admin()
     test_recuperacion_password_token_un_uso()
     test_reportes_genera_y_exporta_csv()
-    print("\nTodos los smoke tests v10 pasaron.")
+    test_config_env_proyecto_prevalece()
+    print("\nTodos los smoke tests v10 pasaron. Ejecuta 'pytest -v' para los 28 casos.")

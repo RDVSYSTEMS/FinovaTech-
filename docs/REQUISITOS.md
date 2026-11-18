@@ -3,7 +3,7 @@
 **Proyecto:** Sistema de Finanzas Personales para Estudiantes de Bachillerato
 **Empresa desarrolladora:** RDV Systems
 **Entidad formadora:** SENA
-**Versión del documento:** 10.3.6
+**Versión del documento:** 10.3.8
 **Estado:** Documentación consolidada de la versión v10.3 (contexto educativo)
 
 ---
@@ -127,9 +127,12 @@ en línea, y despliegue en servidores de producción externos.
   base de datos, no valores simulados.
 
 ### RF-10 Agendamiento de sesiones
-- Permite reservar una sesión indicando fecha, hora, categoría, estado y comentarios.
+- Permite reservar una sesión indicando fecha, hora, categoría y comentarios.
 - Rechaza fechas anteriores al día actual y valores no permitidos.
-- Guarda cada agendamiento asociado al usuario autenticado.
+- Guarda cada agendamiento asociado al usuario autenticado con estado `pendiente`.
+
+> Nota de numeración: la secuencia histórica de requisitos funcionales salta
+> de RF-10 a RF-12; no existe un RF-11.
 
 ### RF-12 Reportes en la app
 - `/reportes` muestra los totales del estudiante y el historial de los últimos
@@ -205,7 +208,9 @@ en línea, y despliegue en servidores de producción externos.
 | RNF-07 | Sesiones y datos en español | interfaz 100% en español (formato moneda COP) |
 | RNF-08 | Portabilidad local | corre en Windows con XAMPP sin configuración extra |
 | RNF-09 | Animaciones accesibles | animaciones CSS/AOS respetan `prefers-reduced-motion` |
-| RNF-10 | Pruebas de escritura y anti fuerza bruta | `tests/test_smoke.py` cubre crear/eliminar movimientos reales y el bloqueo tras 5 intentos, sin mocks |
+| RNF-10 | Pruebas de escritura y anti fuerza bruta | `tests/test_finovatech.py` cubre crear/eliminar movimientos reales y el bloqueo tras 5 intentos, sin mocks |
+| RNF-11 | Usuario MySQL dedicado | `finovatech_app` con permisos solo sobre `finovatech`; la aplicación no usa `root` |
+| RNF-12 | Respaldo y restauración probados | `mysqldump` con rutinas y triggers; restauración verificada en base temporal el 2026-11-18 |
 
 ---
 
@@ -234,7 +239,7 @@ en línea, y despliegue en servidores de producción externos.
 5. Un POST sin token CSRF es rechazado con 400.
 6. Tras 5 intentos fallidos de login, la cuenta se bloquea temporalmente.
 7. Con MySQL apagado, la aplicación avisa (no crashea) en el arranque.
-8. El usuario `root` de XAMPP (sin contraseña) conecta sin cambios.
+8. La aplicación conecta con el usuario dedicado `finovatech_app` definido en `.env`.
 9. Una sesión válida de agendamiento se guarda asociada al usuario autenticado.
 10. Una fecha anterior al día actual o un valor no permitido se rechaza.
 11. El usuario puede cambiar su nombre y nombre de usuario, y el cambio persiste.
@@ -253,16 +258,20 @@ en línea, y despliegue en servidores de producción externos.
 
 ## 8. Verificación
 
-- `tests/test_smoke.py` cubre 34 comprobaciones: públicas 200, protegidas →
-  login, aliases `.html`, registro de usuario, login demo + panel, acceso a
-  lista, rechazo de POST sin token CSRF, presupuesto coherente y editable,
-  notificaciones, validación del agendamiento (fecha, hora, categoría y
-  sesión), perfil (datos y contraseña), creación/eliminación real de un
-  movimiento, bloqueo del login tras 5 intentos, logout solo por POST, filtros
-  y paginación, supervisión padre–estudiante, bitácora y recuperación de
-  contraseña con token de un solo uso.
-- La suite smoke requiere MySQL/MariaDB encendido, el esquema aplicado y la
-  cuenta demo disponible; no sustituye pruebas unitarias o de navegador.
+- `tests/test_finovatech.py` es la suite única con 28 casos (`pytest -v`):
+  públicas 200, protegidas → login, aliases `.html`, registro de usuario,
+  login demo + panel, acceso a lista, rechazo de POST sin token CSRF,
+  presupuesto coherente y editable, notificaciones, validación del
+  agendamiento (fecha, hora, categoría y sesión), perfil (datos y contraseña),
+  creación/eliminación real de un movimiento, bloqueo del login tras 5
+  intentos, logout solo por POST, filtros y paginación, supervisión
+  padre–estudiante, bitácora, recuperación de contraseña con token de un solo
+  uso y reportes con CSV. Incluye los casos CP-01 a CP-06: unitaria (monto
+  negativo), límite (0 rechazado / 1 aceptado), funcional (crear, ver y
+  eliminar), seguridad (inyección SQL en login), integración (MySQL y tabla
+  `reporte`) y reporte PDF con título y totales.
+- La suite requiere MySQL/MariaDB encendido, el esquema aplicado y la
+  cuenta demo disponible; no sustituye pruebas de navegador.
 - Script `scripts/seed_demo.py` genera datos de demostración repetibles.
 
 ---
@@ -300,6 +309,10 @@ en línea, y despliegue en servidores de producción externos.
 | POST | `/supervision/vincular` | Vinculación mediante código del estudiante. |
 | POST | `/supervision/desvincular/<id>` | Baja de un vínculo del padre actual. |
 | GET | `/bitacora` | Últimos 100 eventos de acceso (rol administrador). |
+| GET | `/reportes` | Totales, historial de reportes y accesos a exportación. |
+| GET | `/reportes/pdf` | Descarga en línea del PDF "Resumen mensual". |
+| GET | `/reportes/grafico` | Gráfico PNG de gastos por categoría del mes. |
+| GET | `/exportar` | Descarga CSV de movimientos con BOM UTF-8. |
 
 Todas las rutas `POST` requieren `csrf_token`. Las rutas protegidas requieren
 una sesión activa y limitan las operaciones a los datos del usuario actual.
@@ -313,7 +326,7 @@ El formulario envía estos campos mediante `POST /agendamiento`:
 | `fecha` | Sí | `YYYY-MM-DD`, desde el día actual. |
 | `hora` | Sí | `HH:MM`. |
 | `categoria` | Sí | `reserva`, `consultoria` o `taller`. |
-| `estado` | No | `pendiente`, `confirmado`, `cancelado` o `completado`. |
+| `estado` | No | El endpoint fija `pendiente` al crear; los demás estados se gestionan internamente. |
 | `comentarios` | No | Texto de hasta 1000 caracteres. |
 | `csrf_token` | Sí | Token de seguridad de la sesión. |
 

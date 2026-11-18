@@ -1,4 +1,4 @@
-# FinovaTech v10.3.7
+# FinovaTech v10.3.8
 
 Sistema de Finanzas Personales para Estudiantes de Bachillerato.
 Aplicación web (HTML/CSS/JS + Flask + MySQL) con autenticación, control de
@@ -7,28 +7,31 @@ desarrollado por **RDV Systems**.
 
 > Nota de versionado: el historial que aparece abajo es una reconstrucción
 > retrospectiva de las etapas del proyecto. El repositorio actual conserva la
-> versión acumulada **v10.3.6**; las versiones anteriores representan hitos de
+> versión acumulada **v10.3.8**; las versiones anteriores representan hitos de
 > desarrollo y no necesariamente commits publicados por separado.
 
 ## Requisitos previos
 
-- Python 3.14 (última estable; probado con 3.14.8)
-- XAMPP con Apache + MySQL/MariaDB (usuario `root`, sin contraseña)
+- Python 3.11 o superior (probado con 3.14.8 en Windows y 3.12 en Colab)
+- XAMPP con Apache + MySQL/MariaDB (usuario dedicado `finovatech_app`)
 - Git
 
 ## Instalación
 
 ```powershell
 # 1. Entorno virtual
-ñ
+py -m venv .venv
 .venv\Scripts\pip install -r requirements.txt
 
 # 2. Configuración
-copy .env.example .env     # completa SECRET_KEY (o genera una: python -c "import secrets; print(secrets.token_hex(32))")
+copy .env.example .env     # completa SECRET_KEY y la clave de finovatech_app
 
 # 3. Base de datos (con MySQL de XAMPP encendido; el puerto se define en .env)
 $sql = Get-Content -Raw -LiteralPath "database\schema.sql"
 $sql | & "C:\xampp\mysql\bin\mysql.exe" -u root --default-character-set=utf8mb4
+
+# 3b. Usuario dedicado (no usar root para la aplicación)
+& "C:\xampp\mysql\bin\mysql.exe" -u root -e "CREATE USER IF NOT EXISTS 'finovatech_app'@'localhost' IDENTIFIED BY 'TU_CLAVE'; GRANT ALL PRIVILEGES ON finovatech.* TO 'finovatech_app'@'localhost'; FLUSH PRIVILEGES;"
 
 # 4. Datos de demostración
 .venv\Scripts\python -m scripts.seed_demo
@@ -75,7 +78,7 @@ FinovaTech v10/
 │   ├── blueprints/         # públicas, panel, registros, notificaciones, perfil,
 │   │                       # supervisión, bitácora y recuperación
 │   ├── modelos/            # usuarios, finanzas, agendamientos, supervisión,
-│   │                       # bitácora y recuperación
+│   │                       # bitácora, recuperación y reportes
 │   ├── templates/          # Plantillas HTML
 │   └── static/             # CSS, JS, imágenes, vendor
 ├── database/
@@ -83,16 +86,17 @@ FinovaTech v10/
 ├── scripts/
 │   └── seed_demo.py        # Datos de demostración repetibles
 ├── tests/
-│   └── test_smoke.py       # 34 comprobaciones de integración local
-├── plans/                  # Planes de fase MIDEGS
-│   ├── fase05_desarrollo_e_integracion.md
-│   └── fase06_verificacion_validacion.md
+│   └── test_finovatech.py  # suite única: 28 casos (flujo + CP-01…CP-06)
+├── plans/                  # Planes de fase MIDEGS (fase01 a fase10 + índice)
+├── colab/                  # Notebook para demostración en Google Colab
 └── docs/
     ├── REQUISITOS.md       # Documento SRS v10 (RF, RNF, criterios)
     ├── MODELO_DATOS.md     # ER v10, tablas, triggers, procedures, vista
     ├── CHANGELOG.md        # Historial de cambios por versión
     ├── PENDIENTES.md       # Backlog priorizado
-    └── GUION_PRESENTACION.md  # Guion de demo para la presentación
+    ├── GUION_PRESENTACION.md  # Guion de demo para la presentación
+    ├── GUIA_CODIGO.md      # Índice de módulos, plantillas y estilos
+    └── BITACORA_PRUEBAS.md # Evidencia de pruebas CP-01 a CP-06
 ```
 
 ## Seguridad
@@ -197,10 +201,10 @@ por defecto de MySQL.
 ## Pruebas
 
 ```powershell
-.venv\Scripts\python -m tests.test_smoke
+.venv\Scripts\python -m pytest -v
 ```
 
-La suite smoke valida rápidamente la integración local:
+La suite única `tests/test_finovatech.py` valida la integración local:
 
 - Rutas públicas y aliases `.html` de login y registro.
 - Redirección de rutas protegidas cuando no existe sesión.
@@ -222,12 +226,35 @@ La suite smoke valida rápidamente la integración local:
 - RF-17: bitácora de accesos visible para administrador y restringida a otros roles.
 - RF-18: recuperación de contraseña con token de un solo uso.
 - RF-12/RF-14: generación de reportes en `/reportes` y exportación CSV.
+- Reportes PDF (`/reportes/pdf`) y gráfico PNG de gastos (`/reportes/grafico`).
+- CP-01 a CP-06: pruebas unitaria, de límite, funcional, de seguridad, de
+  integración y de reporte PDF de la actividad SENA.
 
-La suite suma **37 comprobaciones** y requiere MySQL/MariaDB encendido, el
-esquema aplicado y la cuenta demo disponible. No reemplaza pruebas unitarias ni
-pruebas completas del navegador. Los tests crean cuentas `rnf10_*@test.local` y
-modifican el presupuesto demo; tras ejecutarla conviene restaurar los datos con
+La suite suma **28 casos** (22 del flujo general, incluido el de configuración, y 6 de la actividad) y
+requiere MySQL/MariaDB encendido, el esquema aplicado y la cuenta demo
+disponible. No reemplaza pruebas unitarias ni pruebas completas del navegador.
+Los tests del flujo general crean cuentas `rnf10_*@test.local` y modifican el
+presupuesto demo; los CP usan cuentas `actividad_*@test.local` y las eliminan
+al terminar. Tras ejecutar la suite conviene restaurar los datos con
 `python -m scripts.seed_demo`.
+
+## Respaldos y restauración
+
+```powershell
+# Respaldo completo (tablas, triggers, rutinas y vista)
+& "C:\xampp\mysql\bin\mysqldump.exe" --user=root --host=127.0.0.1 --port=3306 --routines --triggers --single-transaction --default-character-set=utf8mb4 finovatech > data\backups\finovatech_AAAAMMDD.sql
+
+# Prueba de restauración en una base temporal (no toca la real)
+& "C:\xampp\mysql\bin\mysql.exe" --user=root -e "CREATE DATABASE finovatech_restore_test"
+cmd /c "C:\xampp\mysql\bin\mysql.exe" --user=root finovatech_restore_test < data\backups\finovatech_AAAAMMDD.sql
+
+# Al terminar, eliminar la base temporal
+& "C:\xampp\mysql\bin\mysql.exe" --user=root -e "DROP DATABASE finovatech_restore_test"
+```
+
+El respaldo `data/backups/finovatech_2026-11-18.sql` se restauró con éxito en
+`finovatech_restore_test`: 11 tablas, 1 vista, 4 rutinas, 4 triggers y los
+mismos registros que la base real; luego se eliminó la base temporal.
 
 ## Documentación técnica del código
 
@@ -245,7 +272,8 @@ principales. La documentación está distribuida así:
 - `app/static/vendor/chart.umd.min.js`: biblioteca Chart.js usada para las gráficas del panel.
 - `database/schema.sql`: tablas, relaciones, triggers, procedimientos y vista.
 - `scripts/seed_demo.py`: datos demo, idempotencia y transacción de carga.
-- `tests/test_smoke.py`: cobertura de rutas, autenticación y protección CSRF.
+- `tests/test_finovatech.py`: suite única de 28 casos (rutas, autenticación,
+  CSRF, flujos principales y CP-01 a CP-06).
 - `docs/REQUISITOS.md`: requisitos, rutas y contrato del agendamiento.
 - `docs/MODELO_DATOS.md`: relaciones, persistencia y reglas de la base de datos.
 - `docs/GUION_PRESENTACION.md`: recorrido de demo y checklist previo.
@@ -284,7 +312,7 @@ Estas páginas requieren una sesión iniciada. Sin sesión, Flask redirige a
 |---|---|---|
 | `panel.html` | `/panel` | Muestra ingresos, gastos, balance, registros, gráficas, presupuesto y movimientos recientes. |
 | `lista.html` | `/lista` | Lista movimientos, permite buscar y filtrar, crear registros y eliminar los propios. |
-| `reportes.html` | `/reportes` | Genera reportes con `sp_generar_reporte`, muestra el historial y exporta los movimientos en CSV (`/exportar`). |
+| `reportes.html` | `/reportes` | Genera reportes con `sp_generar_reporte`, muestra el historial, exporta CSV (`/exportar`) y descarga el PDF (`/reportes/pdf`) o el gráfico PNG (`/reportes/grafico`). |
 | `presupuesto.html` | `/presupuesto` | Define o actualiza el límite de gasto del mes y muestra el avance del periodo. |
 | `notificacion.html` | `/notificacion` | Presenta alertas de presupuesto, gastos elevados y comportamiento mensual. |
 | `agendamiento.html` | `/agendamiento` | Permite seleccionar fecha, hora, categoría, estado y comentarios de una sesión. |
@@ -399,3 +427,4 @@ actual:
 | v10.3.5 | RNF-10: alta/baja real de movimientos y bloqueo de login tras 5 intentos; suite de 27 comprobaciones. |
 | v10.3.6 | RF-15 a RF-18: filtros/paginación en servidor, supervisión del rol padre por código, bitácora de accesos y recuperación de contraseña con token de un uso; seed demo enriquecido, cuentas demo de padre/estudiante y suite de 34 comprobaciones. |
 | v10.3.7 | RF-12 y RF-14: centro de reportes `/reportes` con `sp_generar_reporte` y exportación de movimientos en CSV; `servicios.html` corregido y suite de 37 comprobaciones. |
+| v10.3.8 | Reporte PDF "Resumen mensual" y gráfico PNG de gastos; pruebas CP-01 a CP-06 y bitácora de pruebas; suite unificada en `tests/test_finovatech.py` con 28 casos. |

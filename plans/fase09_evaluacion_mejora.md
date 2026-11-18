@@ -30,7 +30,7 @@ Referencias:
 
 ## Indicadores
 
-- Suite de regresión: 34/34 comprobaciones OK.
+- Suite de regresión: 28/28 casos OK (`pytest -v`).
 - Arranque reproducible siguiendo solo el `README.md`.
 - Documentación de fases 01–08 completa.
 
@@ -41,9 +41,11 @@ Detalle, prioridades y criterios de aceptación en `docs/PENDIENTES.md`.
 1. Completada en v10.3.5: flujos de escritura y bloqueo de login (RNF-10).
 2. Completada en v10.3.6: filtros/paginación, supervisión del padre, bitácora y
    recuperación de contraseña (RF-15 a RF-18).
-3. Restauración de respaldos probada y documentada.
-4. Contraseña de MySQL distinta de la de por defecto.
-5. Pruebas de navegador automatizadas.
+3. Completada en v10.3.8: restauración de respaldos probada y documentada
+   (RNF-12).
+4. Completada en v10.3.8: usuario MySQL dedicado `finovatech_app` (RNF-11).
+5. Pendiente: pruebas de navegador automatizadas.
+6. Completada en v10.3.8: reportes PDF y gráfico PNG, demostración en Colab.
 
 ## Riesgos
 

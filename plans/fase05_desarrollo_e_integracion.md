@@ -155,3 +155,41 @@ contraseña. RF-12 (reportes/CSV) sigue fuera de esta iteración.
 
 Estado: **cerrada** (2026-11-06) para v10.3.6; RF-15 a RF-18 verificados en
 fase 06.
+
+## Iteración v10.3.7–v10.3.8 - Reportes PDF/PNG, suite única y despliegue Colab
+
+### Objetivo
+
+Cerrar los reportes descargables del PMV, unificar las pruebas en un solo
+archivo, asegurar el acceso a MySQL con un usuario dedicado y dejar el proyecto
+listo para demostrarse en Google Colab.
+
+### Decisiones
+
+- D9: PDF con `fpdf2` generado en memoria (sin archivos temporales).
+- D10: gráfico con `matplotlib` backend `Agg`, también en memoria.
+- D11: una sola suite `tests/test_finovatech.py` con 28 casos y `pytest -v`.
+- D12: MySQL con usuario `finovatech_app` (permisos solo en `finovatech`).
+- D13: entorno Colab con MariaDB local, variables de entorno y proxy de
+  puertos de Colab; sin XAMPP.
+- Nota de entorno (2026-11-18): el servicio `MySQL80` de Windows está detenido;
+  XAMPP escucha en **3306**, valor vigente de `DB_PORT` en `.env`.
+
+### Alcance
+
+- `app/modelos/reportes.py`: `obtener_resumen_mensual`, `generar_pdf_resumen`
+  y `generar_grafico_gastos`.
+- Rutas `GET /reportes/pdf` y `GET /reportes/grafico` con `login_requerido`.
+- Botones de PDF y PNG en `reportes.html`.
+- `colab/FinovaTech_Colab.ipynb` para la demostración en Google Colab.
+
+### Evidencia
+
+- PDF 9.623 bytes (`%PDF-`) y PNG 43.326 bytes con el usuario demo.
+- Suite única: `28 passed` (`pytest -v`).
+- RNF-11: 28 pruebas OK conectando como `finovatech_app`.
+- RNF-12: respaldo del 2026-11-18 restaurado en `finovatech_restore_test`.
+- Detalle funcional en `docs/CHANGELOG.md` y de pruebas en
+  `docs/BITACORA_PRUEBAS.md`.
+
+Estado: **cerrada** (2026-11-18) para v10.3.8.

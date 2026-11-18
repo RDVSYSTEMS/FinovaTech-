@@ -1,6 +1,6 @@
 # MODELO DE DATOS — FinovaTech v10.3
 
-**Versión del documento:** 10.3.6
+**Versión del documento:** 10.3.8
 **Estado:** Documentación consolidada de la versión v10.3.
 
 Base de datos `finovatech` en MySQL/MariaDB (XAMPP). Codificación: utf8mb4.
@@ -161,14 +161,17 @@ del presupuesto del estudiante y usa `categoria` para clasificar el gasto.
 | trg_gasto_after_insert | AFTER INSERT | gasto |
 | trg_gasto_after_delete | AFTER DELETE | gasto |
 
+Ejemplo de los triggers de inserción:
+
 ```sql
 UPDATE estudiante SET saldo_actual =
   ((SELECT COALESCE(SUM(monto),0) FROM ingreso WHERE estudiante_id = NEW.estudiante_id)
- - (SELECT COALESCE(SUM(monto),0) FROM gasto   WHERE estudiante_id = NEW.estudiante_id))
+  - (SELECT COALESCE(SUM(monto),0) FROM gasto   WHERE estudiante_id = NEW.estudiante_id))
 WHERE id = NEW.estudiante_id;
 ```
 
-Los triggers de eliminación usan `OLD.estudiante_id`. El saldo no se calcula
+En los triggers de eliminación, las tres referencias a `NEW.estudiante_id` se
+sustituyen por `OLD.estudiante_id`. El saldo no se calcula
 desde el navegador: siempre se reconstruye en MySQL a partir de los ingresos
 y gastos existentes.
 

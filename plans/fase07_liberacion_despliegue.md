@@ -12,7 +12,7 @@ Referencias:
 ## Decisiones
 
 - D1: La liberación es local (XAMPP + Flask), no un despliegue en servidor.
-- D2: La versión se marca con la etiqueta Git `v10.3.6`.
+- D2: La versión se marca con la etiqueta Git `v10.3.8`.
 - D3: La entrega incluye código, `plans/`, `docs/` y datos demo; excluye
   `.env` y `.venv`.
 - D4: El respaldo de la base se hace con `mysqldump` antes de la presentación.
@@ -32,7 +32,7 @@ Referencias:
 
 ## Criterios de aceptación
 
-- `git tag` muestra `v10.3.6` sobre el commit de cierre.
+- `git tag` muestra `v10.3.8` sobre el commit de cierre.
 - El proyecto arranca siguiendo solo el `README.md`.
 - La demo funciona con las cuentas `adminr123@gmail.com` y
   `padredemo@gmail.com`.
@@ -46,10 +46,11 @@ Referencias:
 
 ## Evidencia
 
-- Etiqueta Git `v10.3.6` creada sobre el commit de cierre.
-- Respaldo histórico: `data/backups/finovatech_2026-11-03.sql` (mysqldump con
-  rutinas y triggers; 7 tablas y la vista). Ese respaldo es anterior a las
-  tablas de supervisión, bitácora y recuperación; regenerarlo antes de la
-  presentación con el esquema actual.
+- Etiqueta Git `v10.3.8` creada sobre el commit de cierre.
+- Respaldo vigente: `data/backups/finovatech_2026-11-18.sql` (mysqldump con
+  rutinas y triggers; 11 tablas, 1 vista, 4 rutinas y 4 triggers). Restauración
+  probada en `finovatech_restore_test`.
 - Arranque final verificado: `GET /` → HTTP 200 y cuentas demo operativas.
+- Suite de regresión: 28 pruebas en verde (`pytest -v`).
 - Guion de presentación disponible en `docs/GUION_PRESENTACION.md`.
+- Entrega para Google Colab: `colab/FinovaTech_Colab.ipynb`.

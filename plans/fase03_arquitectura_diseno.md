@@ -45,5 +45,5 @@ innecesaria, y el modelo de datos que la soporta.
 ## Evidencia
 
 - `docs/MODELO_DATOS.md`: ER v10, tablas, triggers, procedures y vista.
-- `database/schema.sql`: 8 tablas, relaciones y vista de resumen.
+- `database/schema.sql`: 11 tablas, relaciones y vista de resumen.
 - `README.md`: estructura del proyecto y descripción de capas.

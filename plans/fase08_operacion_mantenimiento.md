@@ -41,8 +41,10 @@ Referencias:
 ## Rutinas
 
 - Antes de una presentación: respaldo + verificación de arranque + login demo.
-- Tras cambios de código: ejecutar `python -m tests.test_smoke`.
+- Tras cambios de código: ejecutar `python -m pytest -v` (28 casos).
 - Al cambiar de equipo: recrear `.venv` y ajustar `.env`.
+- Cada mes: respaldo nuevo con `mysqldump` y prueba de restauración en una base
+  temporal (procedimiento en `README.md`).
 
 ## Riesgos
 
@@ -52,6 +54,12 @@ Referencias:
 
 ## Evidencia
 
-- Respaldo generado: `data/backups/finovatech_2026-11-03.sql`.
-- Suite de regresión en verde (ver `fase06_verificacion_validacion.md`).
-- Procedimientos de arranque y pruebas documentados en `README.md`.
+- Respaldo vigente: `data/backups/finovatech_2026-11-18.sql` (11 tablas, 1 vista,
+  4 rutinas del sistema, 4 triggers).
+- Restauración probada en `finovatech_restore_test` el 2026-11-18 con conteos
+  idénticos; base temporal eliminada.
+- Usuario dedicado `finovatech_app` con permisos solo sobre `finovatech`
+  (RNF-11); `root` queda solo para administración de XAMPP.
+- Suite de regresión en verde: 28 casos (ver
+  `fase06_verificacion_validacion.md`).
+- Procedimientos de arranque, pruebas y respaldo documentados en `README.md`.

@@ -11,7 +11,7 @@ Referencias:
 
 ## Decisiones
 
-- D1: La suite existente (`tests/test_smoke.py`) es la base de regresión.
+- D1: La suite `tests/test_finovatech.py` es la base de regresión (28 casos).
 - D2: La verificación requiere MySQL activo y el esquema aplicado.
 - D3: Los fallos encontrados se corrigen en Fase 05 antes de cerrar esta fase.
 
@@ -32,7 +32,7 @@ Referencias:
 
 ## Criterios de aceptación
 
-- `python -m tests.test_smoke` termina sin fallos.
+- `python -m pytest -v` termina sin fallos.
 - Login demo y acceso al panel funcionan en Opera.
 - Un POST sin `csrf_token` se rechaza con HTTP 400.
 - Sin errores en la consola del navegador en las páginas principales.
@@ -152,3 +152,31 @@ recuperación de contraseña con pruebas de integración reales.
   `_contar_categorias`.
 
 Estado: **cerrada** (2026-11-06) para v10.3.6; RF-15 a RF-18 verificados.
+
+## Iteración v10.3.7–v10.3.8 - Reportes, suite única y seguridad de datos
+
+### Criterios de aceptación
+
+- `pytest -v` ejecuta 28 casos en un solo archivo y termina en verde.
+- `/reportes/pdf` devuelve un PDF válido con título y totales.
+- `/reportes/grafico` devuelve un PNG válido.
+- Los botones de PDF y PNG aparecen en `/reportes`.
+- La aplicación funciona con el usuario MySQL `finovatech_app`.
+- El respaldo nuevo se puede restaurar sin errores.
+
+### Evidencia (2026-11-18)
+
+- Suite única `tests/test_finovatech.py`: **28 passed** (22 del flujo general +
+  CP-01 a CP-06).
+- PDF: HTTP 200, `application/pdf`, 9.623 bytes, inicia con `%PDF-`.
+- PNG: HTTP 200, `image/png`, 43.326 bytes, firma PNG correcta.
+- `/reportes` contiene los enlaces `/reportes/pdf` y `/reportes/grafico`
+  (verificado con el cliente de pruebas y con el servidor en vivo).
+- RNF-11: las 28 pruebas pasan conectando como `finovatech_app`.
+- RNF-12: restauración en `finovatech_restore_test` con 11 tablas, 1 vista,
+  4 rutinas, 4 triggers y conteos idénticos (152 usuarios, 26 ingresos,
+  150 gastos, 12 reportes); base temporal eliminada.
+- Preparación de Colab verificada en local; la ejecución final se hace en el
+  notebook `colab/FinovaTech_Colab.ipynb`.
+
+Estado: **cerrada** (2026-11-18) para v10.3.8.

@@ -1,10 +1,10 @@
-# Guion de presentación — FinovaTech v10.3.6
+# Guion de presentación — FinovaTech v10.3.8
 
 Duración objetivo: 10–15 minutos. Demo en local con Opera.
 
 ## Antes de empezar (checklist)
 
-1. MySQL de XAMPP activo en el puerto de `.env` (3307 en este equipo).
+1. MySQL de XAMPP activo en el puerto de `.env` (3306 en este equipo).
 2. Servidor arriba: `.venv\Scripts\python.exe run.py` o `iniciar.bat`.
 3. Abrir `http://localhost:5001` en Opera.
 4. Tener a mano las cuentas demo:
@@ -52,10 +52,12 @@ Duración objetivo: 10–15 minutos. Demo en local con Opera.
 - Crear un ingreso o gasto y mostrarlo en la lista.
 - Eliminar un movimiento propio.
 
-### 7. Reportes y exportación (`/reportes`) — 1 min
+### 7. Reportes, PDF y exportación (`/reportes`) — 2 min
 
 - Totales del estudiante e historial de reportes generados.
 - Generar un reporte en vivo (usa el stored procedure `sp_generar_reporte`).
+- Abrir "Resumen mensual (PDF)": periodo, movimientos, ingresos, gastos y saldo.
+- Mostrar el "Gráfico (PNG)" de gastos por categoría del mes.
 - Descargar los movimientos en CSV; mencionar que abre en Excel o Google Sheets.
 
 ### 8. Notificaciones (`/notificacion`) — 1 min
