@@ -1,4 +1,4 @@
-# Guion de presentación — FinovaTech v10.3.9
+# Guion de presentación — FinovaTech v10.3.10
 
 Duración objetivo: 15–18 minutos para el recorrido completo. Versión corta de
 8 minutos: secciones 1, 4, 5, 7, 10 y 11. Demo en local con Opera.

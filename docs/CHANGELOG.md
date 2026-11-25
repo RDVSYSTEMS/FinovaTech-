@@ -3,6 +3,17 @@
 Formato basado en [Keep a Changelog](https://keepachangelog.com/es-ES/1.1.0/).
 Las versiones anteriores están resumidas en el historial de `README.md`.
 
+## [10.3.10] — 2026-11-24
+
+### Corregido
+- Limpieza final del repositorio: se eliminaron cachés, `.env.bak`, el entorno
+  duplicado `.venvpy` (18 MB), configuración local de editor/agentes y cinco
+  recursos visuales sin referencia, incluido `banner de la pgina.png` (5,6 MB).
+
+### Cambiado
+- Versión final de entrega: demo con 27 ingresos y 65 gastos realistas,
+  accesibilidad WCAG 2.2 y evidencia completa en `entregable/`.
+
 ## [10.3.9] — 2026-11-24
 
 ### Corregido

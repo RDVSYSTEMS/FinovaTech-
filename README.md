@@ -1,4 +1,4 @@
-# FinovaTech v10.3.9
+# FinovaTech v10.3.10
 
 Sistema de Finanzas Personales para Estudiantes de Bachillerato.
 Aplicación web (HTML/CSS/JS + Flask + MySQL) con autenticación, control de
@@ -7,7 +7,7 @@ desarrollado por **RDV Systems**.
 
 > Nota de versionado: el historial que aparece abajo es una reconstrucción
 > retrospectiva de las etapas del proyecto. El repositorio actual conserva la
-> versión acumulada **v10.3.9**; las versiones anteriores representan hitos de
+> versión acumulada **v10.3.10**; las versiones anteriores representan hitos de
 > desarrollo y no necesariamente commits publicados por separado.
 
 ## Requisitos previos
@@ -433,3 +433,4 @@ actual:
 | v10.3.7 | RF-12 y RF-14: centro de reportes `/reportes` con `sp_generar_reporte` y exportación de movimientos en CSV; `servicios.html` corregido y suite de 37 comprobaciones. |
 | v10.3.8 | Reporte PDF "Resumen mensual" y gráfico PNG de gastos; pruebas CP-01 a CP-06 y bitácora de pruebas; suite unificada en `tests/test_finovatech.py` con 28 casos. |
 | v10.3.9 | Normalización de correo/usuario en registro y login; rechazo de montos `NaN`/`inf` y de valores no numéricos; documentación sincronizada y suite de 29 casos. |
+| v10.3.10 | Versión final de entrega: limpieza de archivos sin uso, demo con 27 ingresos y 65 gastos, accesibilidad WCAG 2.2 y evidencia en `entregable/`. |
