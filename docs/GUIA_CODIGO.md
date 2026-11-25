@@ -89,7 +89,8 @@ Se documentan aquí como dependencias frontend, pero no se editan ni se insertan
 - [database/schema.sql](../database/schema.sql): crea las tablas, claves, vista, triggers y procedimientos almacenados del sistema.
 - [scripts/seed_demo.py](../scripts/seed_demo.py): prepara cuentas y movimientos reproducibles para una demostración local.
 - [tests/test_finovatech.py](../tests/test_finovatech.py): suite única de 29 casos; verifica rutas, sesiones, CSRF, flujos principales y los casos CP-01 a CP-06 (unitaria, límite, funcional, seguridad, integración y reporte PDF) contra la base configurada.
-- [colab/FinovaTech_Colab.ipynb](../colab/FinovaTech_Colab.ipynb): notebook para ejecutar la demostración en Google Colab.
+- [colab/FinovaTech_Colab.ipynb](../colab/FinovaTech_Colab.ipynb): notebook para ejecutar la demostración en Google Colab ([enlace compartido](https://colab.research.google.com/drive/1RZSkcDzykf5ATWe3ADIyU6qzOH3SxfTd?usp=sharing)).
+- [colab/empaquetar_colab.ps1](../colab/empaquetar_colab.ps1): genera `FinovaTech_v10.3.10_Colab.zip` sin `.env`, cachés ni entorno virtual.
 
 ## Relación de una solicitud
 

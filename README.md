@@ -10,6 +10,14 @@ desarrollado por **RDV Systems**.
 > versión acumulada **v10.3.10**; las versiones anteriores representan hitos de
 > desarrollo y no necesariamente commits publicados por separado.
 
+## Demo en Google Colab
+
+[Abrir notebook compartido](https://colab.research.google.com/drive/1RZSkcDzykf5ATWe3ADIyU6qzOH3SxfTd?usp=sharing)
+ejecuta la aplicación sin XAMPP: instala MariaDB en la sesión, carga el
+esquema, siembra la demo, corre las 29 pruebas y expone el puerto 5001.
+En Windows genera el paquete con `.\colab\empaquetar_colab.ps1` y sube el ZIP
+resultante cuando el notebook lo solicite.
+
 ## Requisitos previos
 
 - Python 3.11 o superior (probado con 3.14.8 en Windows y 3.12 en Colab)

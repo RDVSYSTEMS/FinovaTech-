@@ -13,6 +13,8 @@ Las versiones anteriores están resumidas en el historial de `README.md`.
 ### Cambiado
 - Versión final de entrega: demo con 27 ingresos y 65 gastos realistas,
   accesibilidad WCAG 2.2 y evidencia completa en `entregable/`.
+- Google Colab: notebook actualizado a v10.3.10 con enlace compartido y script
+  `colab/empaquetar_colab.ps1` para generar el ZIP sin secretos ni cachés.
 
 ## [10.3.9] — 2026-11-24
 
