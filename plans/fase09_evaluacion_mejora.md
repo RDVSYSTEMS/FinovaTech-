@@ -30,7 +30,7 @@ Referencias:
 
 ## Indicadores
 
-- Suite de regresión: 28/28 casos OK (`pytest -v`).
+- Suite de regresión: 29/29 casos OK (`pytest -v`).
 - Arranque reproducible siguiendo solo el `README.md`.
 - Documentación de fases 01–08 completa.
 

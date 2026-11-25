@@ -1,4 +1,4 @@
-# FinovaTech v10.3.8
+# FinovaTech v10.3.9
 
 Sistema de Finanzas Personales para Estudiantes de Bachillerato.
 Aplicación web (HTML/CSS/JS + Flask + MySQL) con autenticación, control de
@@ -7,7 +7,7 @@ desarrollado por **RDV Systems**.
 
 > Nota de versionado: el historial que aparece abajo es una reconstrucción
 > retrospectiva de las etapas del proyecto. El repositorio actual conserva la
-> versión acumulada **v10.3.8**; las versiones anteriores representan hitos de
+> versión acumulada **v10.3.9**; las versiones anteriores representan hitos de
 > desarrollo y no necesariamente commits publicados por separado.
 
 ## Requisitos previos
@@ -57,8 +57,8 @@ Servidor en http://localhost:5001
 - Administrador/estudiante: `adminr123@gmail.com` / `123456789`
 - Padre vinculado al estudiante demo: `padredemo@gmail.com` / `123456789`
 
-El seed carga 6 meses de movimientos (15 ingresos y 40 gastos), 12 categorías,
-un presupuesto de `$600.000` con `$700.000` gastados (117 %) y notificaciones
+El seed carga 6 meses de movimientos (27 ingresos y 65 gastos), 12 categorías,
+un presupuesto de `$600.000` con `$738.000` gastados (123 %) y notificaciones
 de presupuesto, gasto elevado y mes en negativo. También vincula la cuenta de
 padre con el estudiante demo para mostrar `/supervision` sin pasos manuales.
 
@@ -86,7 +86,7 @@ FinovaTech v10/
 ├── scripts/
 │   └── seed_demo.py        # Datos de demostración repetibles
 ├── tests/
-│   └── test_finovatech.py  # suite única: 28 casos (flujo + CP-01…CP-06)
+│   └── test_finovatech.py  # suite única: 29 casos (flujo + CP-01…CP-06)
 ├── plans/                  # Planes de fase MIDEGS (fase01 a fase10 + índice)
 ├── colab/                  # Notebook para demostración en Google Colab
 └── docs/
@@ -108,6 +108,9 @@ FinovaTech v10/
   Permissions-Policy).
 - Bloqueo anti fuerza bruta (5 fallos → 2 min, duplicado progresivo).
 - SQL con parámetros `%s` y nombres de tabla en lista blanca.
+- Normalización de correo y usuario (`strip`/`lower`) al registrar y autenticar;
+  montos no numéricos, `NaN` o `inf`, fechas mal formadas y textos fuera de
+  longitud rechazados antes de insertar.
 - Bitácora de accesos (login correcto/fallido, bloqueo, logout y recuperación)
   visible solo para administradores.
 - Recuperación de contraseña con token de un solo uso, hash SHA-256 y caducidad
@@ -210,6 +213,7 @@ La suite única `tests/test_finovatech.py` valida la integración local:
 - Redirección de rutas protegidas cuando no existe sesión.
 - Registro de un usuario con datos únicos.
 - Login de la cuenta demo y acceso al panel.
+- Login con correo en mayúsculas o con espacios circundantes.
 - Acceso autenticado a la lista de movimientos.
 - Rechazo de operaciones POST sin token CSRF.
 - Coherencia del presupuesto mostrado en el panel.
@@ -230,7 +234,7 @@ La suite única `tests/test_finovatech.py` valida la integración local:
 - CP-01 a CP-06: pruebas unitaria, de límite, funcional, de seguridad, de
   integración y de reporte PDF de la actividad SENA.
 
-La suite suma **28 casos** (22 del flujo general, incluido el de configuración, y 6 de la actividad) y
+La suite suma **29 casos** (23 del flujo general, incluidos los de configuración y normalización de correo, y 6 de la actividad) y
 requiere MySQL/MariaDB encendido, el esquema aplicado y la cuenta demo
 disponible. No reemplaza pruebas unitarias ni pruebas completas del navegador.
 Los tests del flujo general crean cuentas `rnf10_*@test.local` y modifican el
@@ -272,7 +276,7 @@ principales. La documentación está distribuida así:
 - `app/static/vendor/chart.umd.min.js`: biblioteca Chart.js usada para las gráficas del panel.
 - `database/schema.sql`: tablas, relaciones, triggers, procedimientos y vista.
 - `scripts/seed_demo.py`: datos demo, idempotencia y transacción de carga.
-- `tests/test_finovatech.py`: suite única de 28 casos (rutas, autenticación,
+- `tests/test_finovatech.py`: suite única de 29 casos (rutas, autenticación,
   CSRF, flujos principales y CP-01 a CP-06).
 - `docs/REQUISITOS.md`: requisitos, rutas y contrato del agendamiento.
 - `docs/MODELO_DATOS.md`: relaciones, persistencia y reglas de la base de datos.
@@ -428,3 +432,4 @@ actual:
 | v10.3.6 | RF-15 a RF-18: filtros/paginación en servidor, supervisión del rol padre por código, bitácora de accesos y recuperación de contraseña con token de un uso; seed demo enriquecido, cuentas demo de padre/estudiante y suite de 34 comprobaciones. |
 | v10.3.7 | RF-12 y RF-14: centro de reportes `/reportes` con `sp_generar_reporte` y exportación de movimientos en CSV; `servicios.html` corregido y suite de 37 comprobaciones. |
 | v10.3.8 | Reporte PDF "Resumen mensual" y gráfico PNG de gastos; pruebas CP-01 a CP-06 y bitácora de pruebas; suite unificada en `tests/test_finovatech.py` con 28 casos. |
+| v10.3.9 | Normalización de correo/usuario en registro y login; rechazo de montos `NaN`/`inf` y de valores no numéricos; documentación sincronizada y suite de 29 casos. |

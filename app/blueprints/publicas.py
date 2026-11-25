@@ -92,7 +92,7 @@ def login():
             )
             return render_template("login.html", error_message=error_message)
 
-        email = request.form.get("email", "")
+        email = correo
         password = request.form.get("password", "")
 
         user = verificar_login(email, password)

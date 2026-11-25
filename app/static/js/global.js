@@ -67,20 +67,22 @@ document.addEventListener("DOMContentLoaded", function () {
     const rutasLogueadas = ['/panel', '/lista', '/presupuesto', '/notificacion', '/agendamiento', '/perfil', '/supervision', '/bitacora'];
     const estaLogueado = rutasLogueadas.some(r => pagina.includes(r));
 
+    const navActivo = (ruta) => pagina === ruta ? ' aria-current="page"' : "";
+
     const menuHTML = estaLogueado ? `
-        <nav class="menu-superior">
-            <a href="/panel">Dashboard</a>
-            <a href="/lista">Lista</a>
-            <a href="/agendamiento">Agendar</a>
-            <a href="/notificacion">Notificaciones</a>
-            <a href="/perfil">Perfil</a>
+        <nav class="menu-superior" id="menu-superior" aria-label="Menú principal">
+            <a href="/panel"${navActivo("/panel")}>Dashboard</a>
+            <a href="/lista"${navActivo("/lista")}>Lista</a>
+            <a href="/agendamiento"${navActivo("/agendamiento")}>Agendar</a>
+            <a href="/notificacion"${navActivo("/notificacion")}>Notificaciones</a>
+            <a href="/perfil"${navActivo("/perfil")}>Perfil</a>
         </nav>
     ` : `
-        <nav class="menu-superior">
-            <a href="/">Inicio</a>
-            <a href="/servicios.html">Servicios</a>
-            <a href="/login">Iniciar sesión</a>
-            <a href="/registro" class="btn-nav">Registrarse</a>
+        <nav class="menu-superior" id="menu-superior" aria-label="Menú principal">
+            <a href="/"${navActivo("/")}>Inicio</a>
+            <a href="/servicios.html"${navActivo("/servicios.html")}>Servicios</a>
+            <a href="/login"${navActivo("/login")}>Iniciar sesión</a>
+            <a href="/registro" class="btn-nav"${navActivo("/registro")}>Registrarse</a>
         </nav>
     `;
 
@@ -88,6 +90,7 @@ document.addEventListener("DOMContentLoaded", function () {
     const headerDiv = document.getElementById("header");
     if (headerDiv) {
         headerDiv.innerHTML = `
+        <a class="salto-contenido" href="#contenido-principal">Saltar al contenido principal</a>
         <header class="header-glass">
             <div class="logo">
                 <div class="logo-img-wrap">
@@ -98,7 +101,7 @@ document.addEventListener("DOMContentLoaded", function () {
                     <span>FinovaTech</span>
                 </div>
             </div>
-            <button id="menu-toggle" class="menu-toggle" aria-label="Abrir menú">☰</button>
+            <button id="menu-toggle" class="menu-toggle" aria-label="Abrir menú" aria-expanded="false" aria-controls="menu-superior">☰</button>
             ${menuHTML}
         </header>`;
     }
@@ -118,12 +121,22 @@ document.addEventListener("DOMContentLoaded", function () {
         </footer>`;
     }
 
+    // ── Accesibilidad: destino del salto y página actual ──
+    const contenido = document.querySelector("main");
+    if (contenido && !contenido.id) {
+        contenido.id = "contenido-principal";
+    }
+    document.querySelectorAll(".sidebar-enlace.activo").forEach(function (enlace) {
+        enlace.setAttribute("aria-current", "page");
+    });
+
     // ── Menú hamburguesa ───────────────────────
     const toggle = document.getElementById("menu-toggle");
     const menu   = document.querySelector(".menu-superior");
     if (toggle && menu) {
         toggle.addEventListener("click", function () {
             menu.classList.toggle("abierto");
+            toggle.setAttribute("aria-expanded", String(menu.classList.contains("abierto")));
         });
     }
 
@@ -131,10 +144,17 @@ document.addEventListener("DOMContentLoaded", function () {
     const btnSidebar = document.getElementById("sidebar-toggle");
     const sidebar    = document.querySelector(".panel-sidebar");
     if (btnSidebar && sidebar) {
+        if (!sidebar.id) {
+            sidebar.id = "sidebar-finovatech";
+        }
+        btnSidebar.setAttribute("aria-controls", sidebar.id);
+        btnSidebar.setAttribute("aria-expanded", "false");
+
         btnSidebar.addEventListener("click", function () {
             sidebar.classList.toggle("abierto");
             btnSidebar.classList.toggle("activo");
             btnSidebar.textContent = sidebar.classList.contains("abierto") ? "✕" : "☰";
+            btnSidebar.setAttribute("aria-expanded", String(sidebar.classList.contains("abierto")));
         });
 
         // Cerrar sidebar al hacer clic fuera
@@ -143,6 +163,7 @@ document.addEventListener("DOMContentLoaded", function () {
                 sidebar.classList.remove("abierto");
                 btnSidebar.classList.remove("activo");
                 btnSidebar.textContent = "☰";
+                btnSidebar.setAttribute("aria-expanded", "false");
             }
         });
     }

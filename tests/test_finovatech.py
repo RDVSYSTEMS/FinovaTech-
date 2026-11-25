@@ -47,7 +47,7 @@ from app import create_app
 from app.db import get_connection
 from app.modelos.finanzas import _fmt, crear_registro
 from app.modelos.reportes import TITULO_REPORTE, generar_pdf_resumen
-from app.modelos.usuarios import registrar_usuario
+from app.modelos.usuarios import registrar_usuario, verificar_login
 
 app = create_app()
 app.config["TESTING"] = True
@@ -161,6 +161,13 @@ def test_registro():
     assert r.status_code == 200
     assert "Cuenta creada correctamente" in r.get_data(as_text=True), "No creó la cuenta"
     print("OK  registro nuevo usuario")
+
+
+def test_login_normaliza_correo():
+    """El login acepta mayúsculas y espacios alrededor del correo."""
+    usuario = verificar_login("  ADMINR123@GMAIL.COM  ", "123456789")
+    assert usuario is not None
+    assert usuario["email"].lower() == "adminr123@gmail.com"
 
 
 def test_login_panel():
@@ -676,6 +683,8 @@ def test_reportes_genera_y_exporta_csv():
     r = client.get("/exportar")
     assert r.status_code == 200, f"GET /exportar -> {r.status_code}"
     assert r.mimetype == "text/csv", f"/exportar mimetype -> {r.mimetype}"
+    assert r.headers["Content-Type"] == "text/csv; charset=utf-8", \
+        f"/exportar Content-Type -> {r.headers['Content-Type']}"
     contenido = r.get_data(as_text=True)
     assert "Tipo,Descripcion,Monto,Fecha,Categoria" in contenido, "El CSV no tiene cabecera"
     assert "Ingreso" in contenido or "Gasto" in contenido, "El CSV no trae movimientos del demo"
@@ -774,6 +783,42 @@ def test_cp01_unitaria_monto_negativo(cuenta):
     assert exito is False
     assert isinstance(mensaje, str) and mensaje
     assert "mayor a cero" in mensaje.lower()
+
+    for monto_invalido in ("texto", float("nan"), float("inf")):
+        exito, mensaje = crear_registro(
+            usuario_id,
+            "Gasto",
+            f"Gasto inválido {uuid.uuid4().hex[:6]}",
+            monto_invalido,
+            "Prueba",
+            date.today().isoformat(),
+        )
+        assert exito is False
+        assert "inválido" in mensaje.lower()
+
+    for fecha_invalida in ("31/11/2026", "2026-13-01", "texto"):
+        exito, mensaje = crear_registro(
+            usuario_id,
+            "Gasto",
+            f"Gasto con fecha inválida {uuid.uuid4().hex[:6]}",
+            5,
+            "Prueba",
+            fecha_invalida,
+        )
+        assert exito is False
+        assert "fecha" in mensaje.lower()
+
+    exito, mensaje = crear_registro(
+        usuario_id, "Gasto", "x" * 256, 5, "Prueba", date.today().isoformat()
+    )
+    assert exito is False
+    assert "descripción" in mensaje.lower()
+
+    exito, mensaje = crear_registro(
+        usuario_id, "Gasto", "Descripción válida", 5, "x" * 51, date.today().isoformat()
+    )
+    assert exito is False
+    assert "categoría" in mensaje.lower()
 
 
 def test_cp02_limite_cero_rechazado_uno_aceptado(cuenta):

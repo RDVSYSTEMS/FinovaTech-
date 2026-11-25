@@ -20,6 +20,8 @@ logger = logging.getLogger(__name__)
 
 def usuario_existe(email: str, username: str) -> bool:
     """Comprueba duplicados antes de crear una cuenta."""
+    email = (email or "").strip().lower()
+    username = (username or "").strip()
     conn = get_connection()
     try:
         with conn.cursor() as cur:
@@ -38,6 +40,10 @@ def registrar_usuario(nombre: str, email: str, username: str, password: str, rol
     RETORNA:
         (True, "Cuenta creada correctamente") o (False, mensaje_error).
     """
+    email = (email or "").strip().lower()
+    nombre = (nombre or "").strip()
+    username = (username or "").strip()
+
     if usuario_existe(email, username):
         return False, "Ya existe una cuenta con ese correo o nombre de usuario"
 
@@ -74,6 +80,7 @@ def registrar_usuario(nombre: str, email: str, username: str, password: str, rol
 def verificar_login(email: str, password: str):
     """Devuelve el usuario (dict) si las credenciales son correctas, si no None."""
     # La contraseña se verifica contra el hash recuperado, nunca en SQL plano.
+    email = (email or "").strip().lower()
     conn = get_connection()
     try:
         with conn.cursor() as cur:

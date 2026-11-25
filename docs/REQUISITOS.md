@@ -3,7 +3,7 @@
 **Proyecto:** Sistema de Finanzas Personales para Estudiantes de Bachillerato
 **Empresa desarrolladora:** RDV Systems
 **Entidad formadora:** SENA
-**Versión del documento:** 10.3.8
+**Versión del documento:** 10.3.9
 **Estado:** Documentación consolidada de la versión v10.3 (contexto educativo)
 
 ---
@@ -258,7 +258,7 @@ en línea, y despliegue en servidores de producción externos.
 
 ## 8. Verificación
 
-- `tests/test_finovatech.py` es la suite única con 28 casos (`pytest -v`):
+- `tests/test_finovatech.py` es la suite única con 29 casos (`pytest -v`):
   públicas 200, protegidas → login, aliases `.html`, registro de usuario,
   login demo + panel, acceso a lista, rechazo de POST sin token CSRF,
   presupuesto coherente y editable, notificaciones, validación del

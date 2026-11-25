@@ -41,7 +41,7 @@ Referencias:
 ## Rutinas
 
 - Antes de una presentación: respaldo + verificación de arranque + login demo.
-- Tras cambios de código: ejecutar `python -m pytest -v` (28 casos).
+- Tras cambios de código: ejecutar `python -m pytest -v` (29 casos).
 - Al cambiar de equipo: recrear `.venv` y ajustar `.env`.
 - Cada mes: respaldo nuevo con `mysqldump` y prueba de restauración en una base
   temporal (procedimiento en `README.md`).
@@ -60,6 +60,6 @@ Referencias:
   idénticos; base temporal eliminada.
 - Usuario dedicado `finovatech_app` con permisos solo sobre `finovatech`
   (RNF-11); `root` queda solo para administración de XAMPP.
-- Suite de regresión en verde: 28 casos (ver
+- Suite de regresión en verde: 29 casos (ver
   `fase06_verificacion_validacion.md`).
 - Procedimientos de arranque, pruebas y respaldo documentados en `README.md`.

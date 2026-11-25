@@ -25,12 +25,13 @@
 .venv\Scripts\python.exe -m pytest -v
 ```
 
-Resultado obtenido el 18/11/2026:
+Resultado verificado el 24/11/2026 tras ampliar la suite a 29 casos:
 
 ```text
-28 passed in 29.16s
-  tests/test_finovatech.py .... 28 passed
-    · 22 casos del flujo general del sistema (incluye configuración .env)
+29 passed in 23.89s
+  tests/test_finovatech.py .... 29 passed
+    · 23 casos del flujo general del sistema (incluye configuración .env y
+      normalización de correo)
     ·  6 casos de la actividad (CP-01 a CP-06)
 ```
 
@@ -97,6 +98,35 @@ El PDF incluye: título, fecha y hora de generación, periodo, encabezados con
 unidad `($)`, movimientos ordenados por fecha, total de ingresos, total de
 gastos y saldo. El gráfico usa matplotlib con backend `Agg` (sin ventana) y
 agrupa los gastos por categoría del mes.
+
+### Trazabilidad de requisitos a evidencia
+
+| Requisito | Verificación automática o manual | Evidencia |
+|---|---|---|
+| RF-01 Registro | `test_registro` | captura de pytest |
+| RF-02 Login | `test_login_panel`, `test_login_normaliza_correo`, `test_cp04_seguridad_inyeccion_sql_login` | captura de pytest |
+| RF-02.1 Validación en vivo | Revisión manual en `login.html`, `registro.html` y `global.js` | demo en navegador |
+| RF-03 Cierre de sesión | `test_logout_requiere_post_y_csrf` | captura de pytest |
+| RF-04 Panel | `test_panel_presupuesto_coherente` | captura de pytest |
+| RF-05 Movimientos | `test_movimiento_crea_y_elimina`, CP-01, CP-02, CP-03 | captura de pytest |
+| RF-06 Presupuesto | `test_presupuesto_actualiza` | captura de pytest |
+| RF-07 Notificaciones | `test_notificaciones_autenticado` | captura de pytest |
+| RF-08 Reportes backend | CP-05, CP-06 | `reporte_resumen_mensual.pdf` |
+| RF-09 Páginas informativas | `test_publicas` | captura de pytest |
+| RF-10 Agendamiento | `test_agendamiento_recibe_datos_y_csrf`, `test_agendamiento_validacion`, `test_agendamiento_sin_sesion` | captura de pytest |
+| RF-12 Reportes en la app | `test_reportes_genera_y_exporta_csv` | captura de pytest |
+| RF-13 Perfil | `test_perfil_actualiza_datos_y_password` | captura de pytest |
+| RF-14 Exportación CSV | `test_reportes_genera_y_exporta_csv` | `movimientos.csv` |
+| RF-15 Filtros y paginación | `test_lista_filtros_y_paginacion` | captura de pytest |
+| RF-16 Supervisión del padre | `test_supervision_padre_vincula_y_desvincula` | captura de pytest |
+| RF-17 Bitácora | `test_bitacora_accesos_admin` | captura de pytest |
+| RF-18 Recuperación | `test_recuperacion_password_token_un_uso` | captura de pytest |
+| RNF-01 a RNF-06 Seguridad | `test_lista_y_csrf`, `test_login_bloquea_tras_cinco_fallos`, CP-04 y revisión de `app/seguridad.py` | captura de pytest |
+| RNF-07 a RNF-09 Interfaz | Revisión manual de español, moneda COP, arranque local y `prefers-reduced-motion` | demo en navegador |
+| RNF-10 a RNF-12 Operación | `test_movimiento_crea_y_elimina`, `test_config_env_proyecto_prevalece`, respaldo restaurado el 2026-11-18 | `.env.example`, `data/backups/` |
+
+Las 29 pruebas se ejecutan con `.venv\Scripts\python -m pytest -v`; la
+captura íntegra y los archivos PDF, PNG y CSV quedan en `entregable/`.
 
 ---
 
@@ -218,7 +248,7 @@ defecto si alguna fila dijera "No" en la columna "¿Pasa?".
 Cuando todas las pruebas críticas (unitarias, de límite, funcionales, de
 integración, de seguridad y de reportes) están aprobadas, no quedan defectos
 de prioridad alta y los reportes muestran datos correctos. En este caso la
-evidencia es: `28 passed`, matriz con 6 de 6 casos aprobados, PDF válido y
+evidencia es: `29 passed`, matriz con 6 de 6 casos aprobados, PDF válido y
 gráfico PNG generado.
 
 ---
@@ -231,7 +261,9 @@ gráfico PNG generado.
 | `app/modelos/reportes.py` | Nuevo módulo: resumen mensual, PDF y gráfico PNG (matplotlib `Agg`). |
 | `app/blueprints/registros.py` | Rutas `GET /reportes/pdf` y `GET /reportes/grafico` con sesión obligatoria. |
 | `app/templates/reportes.html` | Botones "Resumen mensual (PDF)" y "Gráfico (PNG)" junto al CSV. |
-| `tests/test_finovatech.py` | Suite única con los 28 casos: 22 del flujo general + CP-01 a CP-06 con fixtures y limpieza de datos. |
+| `tests/test_finovatech.py` | Suite única con los 29 casos: 23 del flujo general + CP-01 a CP-06 con fixtures y limpieza de datos. |
 
-No se modificó la lógica existente: se reutilizan `crear_registro`,
-`get_estudiante_id`, `_fmt` y `get_connection`.
+En la actividad original no se modificó la lógica existente: se reutilizan
+`crear_registro`, `get_estudiante_id`, `_fmt` y `get_connection`. En v10.3.9 sí
+se ajustaron `app/modelos/usuarios.py` (normalización de correo y usuario) y
+`app/modelos/finanzas.py` (rechazo de montos no finitos), sin cambiar firmas.

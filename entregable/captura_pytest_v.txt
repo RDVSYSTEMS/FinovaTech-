@@ -1,0 +1,37 @@
+============================= test session starts =============================
+platform win32 -- Python 3.14.8, pytest-9.2.0, pluggy-1.7.0 -- D:\tecnico sofware\presentacion\Proyect_final\FinovaTech v10\.venv\Scripts\python.exe
+cachedir: .pytest_cache
+rootdir: D:\tecnico sofware\presentacion\Proyect_final\FinovaTech v10
+collecting ... collected 29 items
+
+tests/test_finovatech.py::test_publicas PASSED                           [  3%]
+tests/test_finovatech.py::test_protegidas_sin_sesion PASSED              [  6%]
+tests/test_finovatech.py::test_aliases_login_registro_html PASSED        [ 10%]
+tests/test_finovatech.py::test_registro PASSED                           [ 13%]
+tests/test_finovatech.py::test_login_normaliza_correo PASSED             [ 17%]
+tests/test_finovatech.py::test_login_panel PASSED                        [ 20%]
+tests/test_finovatech.py::test_lista_y_csrf PASSED                       [ 24%]
+tests/test_finovatech.py::test_agendamiento_recibe_datos_y_csrf PASSED   [ 27%]
+tests/test_finovatech.py::test_panel_presupuesto_coherente PASSED        [ 31%]
+tests/test_finovatech.py::test_presupuesto_actualiza PASSED              [ 34%]
+tests/test_finovatech.py::test_perfil_actualiza_datos_y_password PASSED  [ 37%]
+tests/test_finovatech.py::test_movimiento_crea_y_elimina PASSED          [ 41%]
+tests/test_finovatech.py::test_login_bloquea_tras_cinco_fallos PASSED    [ 44%]
+tests/test_finovatech.py::test_logout_requiere_post_y_csrf PASSED        [ 48%]
+tests/test_finovatech.py::test_notificaciones_autenticado PASSED         [ 51%]
+tests/test_finovatech.py::test_agendamiento_validacion PASSED            [ 55%]
+tests/test_finovatech.py::test_agendamiento_sin_sesion PASSED            [ 58%]
+tests/test_finovatech.py::test_lista_filtros_y_paginacion PASSED         [ 62%]
+tests/test_finovatech.py::test_supervision_padre_vincula_y_desvincula PASSED [ 65%]
+tests/test_finovatech.py::test_bitacora_accesos_admin PASSED             [ 68%]
+tests/test_finovatech.py::test_recuperacion_password_token_un_uso PASSED [ 72%]
+tests/test_finovatech.py::test_reportes_genera_y_exporta_csv PASSED      [ 75%]
+tests/test_finovatech.py::test_cp01_unitaria_monto_negativo PASSED       [ 79%]
+tests/test_finovatech.py::test_cp02_limite_cero_rechazado_uno_aceptado PASSED [ 82%]
+tests/test_finovatech.py::test_cp03_funcional_crear_ver_eliminar PASSED  [ 86%]
+tests/test_finovatech.py::test_cp04_seguridad_inyeccion_sql_login PASSED [ 89%]
+tests/test_finovatech.py::test_cp05_integracion_conexion_y_tabla_reporte PASSED [ 93%]
+tests/test_finovatech.py::test_cp06_reporte_pdf_con_titulo_y_total PASSED [ 96%]
+tests/test_finovatech.py::test_config_env_proyecto_prevalece PASSED      [100%]
+
+============================= 29 passed in 21.68s =============================

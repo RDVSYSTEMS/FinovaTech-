@@ -141,7 +141,7 @@ def exportar():
     contenido = exportar_csv(session["user_id"])
     return Response(
         "\ufeff" + contenido,
-        mimetype="text/csv; charset=utf-8",
+        content_type="text/csv; charset=utf-8",
         headers={
             "Content-Disposition": "attachment; filename=movimientos_finovatech.csv",
         },

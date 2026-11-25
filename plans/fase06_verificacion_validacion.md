@@ -11,7 +11,7 @@ Referencias:
 
 ## Decisiones
 
-- D1: La suite `tests/test_finovatech.py` es la base de regresión (28 casos).
+- D1: La suite `tests/test_finovatech.py` es la base de regresión (29 casos).
 - D2: La verificación requiere MySQL activo y el esquema aplicado.
 - D3: Los fallos encontrados se corrigen en Fase 05 antes de cerrar esta fase.
 
@@ -144,7 +144,7 @@ recuperación de contraseña con pruebas de integración reales.
 - RF-18: `test_recuperacion_password_token_un_uso` confirmó el mensaje genérico,
   el cambio de contraseña, el login con la nueva clave y el rechazo de
   reutilización del token.
-- Verificación de datos demo: 15 ingresos, 40 gastos, 12 categorías, presupuesto
+- Verificación de datos demo: 27 ingresos, 65 gastos, 12 categorías, presupuesto
   `$600.000` con `$700.000` gastados (117 %), 6 notificaciones y cuenta de padre
   `padredemo@gmail.com` con acceso a `/supervision`.
 - La portada mostró estadísticas reales de la base (usuarios, movimientos y

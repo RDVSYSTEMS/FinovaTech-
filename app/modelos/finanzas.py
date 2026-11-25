@@ -12,6 +12,7 @@ Formato de dinero: _fmt() convierte 440000 en "$440.000"
 =============================================================="""
 
 import logging
+import math
 
 import csv
 import io
@@ -445,12 +446,32 @@ def crear_registro(usuario_id: int, tipo: str, descripcion: str,
     if tabla is None:
         return False, "Tipo de movimiento inválido."
 
-    monto = float(monto)
+    try:
+        monto = float(monto)
+    except (TypeError, ValueError):
+        return False, "Monto inválido."
+
+    if not math.isfinite(monto):
+        return False, "Monto inválido."
     if monto <= 0:
         return False, "El monto debe ser mayor a cero."
 
+    descripcion = (descripcion or "").strip()
+    categoria = (categoria or "").strip()
+    if not descripcion or len(descripcion) > 255:
+        return False, "La descripción debe tener entre 1 y 255 caracteres."
+    if not categoria or len(categoria) > 50:
+        return False, "La categoría debe tener entre 1 y 50 caracteres."
+
     if not fecha:
         fecha = date.today().isoformat()
+    elif isinstance(fecha, date):
+        fecha = fecha.isoformat()
+    else:
+        try:
+            date.fromisoformat(str(fecha))
+        except ValueError:
+            return False, "Fecha inválida. Usa el formato AAAA-MM-DD."
 
     # El estudiante_id en el DELETE impide borrar registros de otra cuenta.
     conn = get_connection()

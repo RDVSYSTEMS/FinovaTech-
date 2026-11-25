@@ -59,8 +59,8 @@ Backlog vivo para la siguiente sesión. Fuente de verdad de requisitos:
 - Cuenta demo padre vinculada: `padredemo@gmail.com` / `123456789`.
 - Presupuesto demo: `$600.000` límite, `$700.000` gastado (117 %).
 - MySQL/MariaDB debe correr en `DB_PORT` (hoy `3306`; la guía menciona 3307).
-- Suite actual: `python -m pytest -v` → **28 casos** en
-  `tests/test_finovatech.py` (22 del flujo general + CP-01 a CP-06).
+- Suite actual: `python -m pytest -v` → **29 casos** en
+  `tests/test_finovatech.py` (23 del flujo general + CP-01 a CP-06).
 - Tras ejecutar la suite, restaurar datos con
   `python -m scripts.seed_demo` (la prueba de presupuesto modifica el demo).
 - RF-12 a RF-18, RF-13, RNF-10, RNF-11 y RNF-12 cerrados; solo quedan mejoras

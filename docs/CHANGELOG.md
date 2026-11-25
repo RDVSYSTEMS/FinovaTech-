@@ -3,6 +3,32 @@
 Formato basado en [Keep a Changelog](https://keepachangelog.com/es-ES/1.1.0/).
 Las versiones anteriores están resumidas en el historial de `README.md`.
 
+## [10.3.9] — 2026-11-24
+
+### Corregido
+- Normalización de correo y nombre de usuario (`strip()`/`lower()`) en
+  `usuario_existe`, `registrar_usuario` y `verificar_login`: evita duplicados y
+  fallos de login por mayúsculas o espacios alrededor del correo.
+- `crear_registro` rechaza montos no numéricos, `NaN` e `inf`, fechas fuera del
+  formato `AAAA-MM-DD` y descripciones/categorías vacías o demasiado largas,
+  antes de tocar MySQL; `publicas.login` reutiliza el correo normalizado.
+- `/exportar` envía un único `Content-Type: text/csv; charset=utf-8` (antes
+  duplicaba el charset) y la suite verifica la cabecera exacta.
+
+### Cambiado
+- Suite única ampliada a **29 casos**: nuevo `test_login_normaliza_correo` y
+  CP-01 cubre también `"texto"`, `NaN`, `inf`, fechas inválidas y textos fuera
+  de longitud.
+- `README.md` y documentación de requisitos, modelo de datos, guion, guía de
+  código, bitácora y backlog sincronizados con la versión y el estado real.
+- Guion de presentación con argumento de 30 segundos, versión corta, preguntas
+  probables del jurado y lista de evidencia; bitácora con trazabilidad
+  RF/RNF → prueba → archivo.
+- `scripts/seed_demo.py`: datos demo ampliados a 27 ingresos y 65 gastos con
+  descripciones cotidianas; el mes actual queda en 123 % del presupuesto.
+- Accesibilidad WCAG 2.2: enlace "Saltar al contenido", foco visible,
+  `aria-current`, `aria-expanded` y reducción global de movimiento.
+
 ## [10.3.8] — 2026-11-18
 
 ### Añadido

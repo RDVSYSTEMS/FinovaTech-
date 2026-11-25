@@ -1,0 +1,56 @@
+﻿Tipo,Descripcion,Monto,Fecha,Categoria
+Gasto,Pasajes adicionales,15000.00,2026-11-06 00:00,Transporte
+Gasto,Comida con amigos,30000.00,2026-11-06 00:00,Alimentación
+Gasto,Audífonos inalámbricos,280000.00,2026-11-06 00:00,Tecnología
+Gasto,Regalo para mamá,20000.00,2026-11-06 00:00,Regalos
+Gasto,Ahorro personal,25000.00,2026-11-05 00:00,Ahorro
+Gasto,Suscripción streaming,15000.00,2026-11-05 00:00,Suscripciones
+Gasto,Alimento para mascota,15000.00,2026-11-05 00:00,Mascotas
+Gasto,Zapatos,30000.00,2026-11-04 00:00,Ropa
+Gasto,Aseo del hogar,35000.00,2026-11-04 00:00,Hogar
+Ingreso,Trabajo fin de semana,120000.00,2026-11-03 00:00,Ingreso
+Gasto,Farmacia,20000.00,2026-11-03 00:00,Salud
+Gasto,Cine con amigos,25000.00,2026-11-03 00:00,Ocio
+Ingreso,Premio académico,40000.00,2026-11-02 00:00,Ingreso
+Gasto,Comidas fuera de casa,50000.00,2026-11-02 00:00,Alimentación
+Gasto,Útiles escolares,30000.00,2026-11-02 00:00,Educación
+Ingreso,Mesada,280000.00,2026-11-01 00:00,Ingreso
+Gasto,Pasajes del mes,40000.00,2026-11-01 00:00,Transporte
+Gasto,Mercado semanal,70000.00,2026-11-01 00:00,Alimentación
+Gasto,Aseo del hogar,30000.00,2026-10-25 00:00,Hogar
+Ingreso,Premio académico,40000.00,2026-10-20 00:00,Ingreso
+Gasto,Farmacia,22000.00,2026-10-19 00:00,Salud
+Gasto,Ahorro personal,50000.00,2026-10-13 00:00,Ahorro
+Ingreso,Trabajo fin de semana,60000.00,2026-10-10 00:00,Ingreso
+Gasto,Transporte,45000.00,2026-10-08 00:00,Transporte
+Gasto,Comidas,60000.00,2026-10-03 00:00,Alimentación
+Ingreso,Mesada,270000.00,2026-10-02 00:00,Ingreso
+Gasto,Suscripción streaming,12000.00,2026-09-27 00:00,Suscripciones
+Gasto,Regalo cumpleaños,18000.00,2026-09-22 00:00,Regalos
+Ingreso,Beca de transporte,45000.00,2026-09-16 00:00,Ingreso
+Gasto,Transporte,42000.00,2026-09-16 00:00,Transporte
+Gasto,Entretenimiento,35000.00,2026-09-10 00:00,Ocio
+Ingreso,Mesada,260000.00,2026-09-05 00:00,Ingreso
+Gasto,Comidas,55000.00,2026-09-04 00:00,Alimentación
+Gasto,Alimento para mascota,12000.00,2026-08-26 00:00,Mascotas
+Ingreso,Venta de libros,30000.00,2026-08-22 00:00,Ingreso
+Gasto,Útiles escolares,25000.00,2026-08-20 00:00,Educación
+Gasto,Ahorro personal,30000.00,2026-08-14 00:00,Ahorro
+Ingreso,Premio académico,40000.00,2026-08-12 00:00,Ingreso
+Gasto,Comidas,50000.00,2026-08-09 00:00,Alimentación
+Gasto,Transporte,45000.00,2026-08-05 00:00,Transporte
+Ingreso,Mesada,250000.00,2026-08-03 00:00,Ingreso
+Gasto,Ropa,25000.00,2026-07-26 00:00,Ropa
+Gasto,Accesorios tecnológicos,60000.00,2026-07-21 00:00,Tecnología
+Ingreso,Trabajo fin de semana,50000.00,2026-07-18 00:00,Ingreso
+Gasto,Farmacia,18000.00,2026-07-15 00:00,Salud
+Gasto,Transporte,40000.00,2026-07-11 00:00,Transporte
+Gasto,Comidas,45000.00,2026-07-06 00:00,Alimentación
+Ingreso,Mesada,240000.00,2026-07-04 00:00,Ingreso
+Gasto,Aseo del hogar,20000.00,2026-06-27 00:00,Hogar
+Gasto,Cine,25000.00,2026-06-25 00:00,Ocio
+Gasto,Comidas,40000.00,2026-06-19 00:00,Alimentación
+Ingreso,Premio académico,35000.00,2026-06-16 00:00,Ingreso
+Gasto,Transporte,35000.00,2026-06-14 00:00,Transporte
+Gasto,Útiles escolares,30000.00,2026-06-08 00:00,Educación
+Ingreso,Mesada,230000.00,2026-06-05 00:00,Ingreso
