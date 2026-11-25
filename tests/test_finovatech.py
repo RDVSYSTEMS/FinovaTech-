@@ -32,8 +32,6 @@ Aislamiento de datos:
   pruebas que usan la demo solo leen o restauran su propio estado.
 ============================================================="""
 
-
-
 import os
 import re
 import sys
